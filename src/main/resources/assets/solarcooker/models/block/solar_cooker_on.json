@@ -1,0 +1,8 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "solarcooker:block/solar_cooker_top",
+        "front": "solarcooker:block/solar_cooker_front_on",
+        "side": "solarcooker:block/solar_cooker_side"
+    }
+}

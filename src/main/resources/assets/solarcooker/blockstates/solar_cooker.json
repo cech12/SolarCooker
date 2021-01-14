@@ -1,0 +1,12 @@
+{
+    "variants": {
+        "facing=north,lit=false": { "model": "solarcooker:block/solar_cooker", "uvlock": true },
+        "facing=south,lit=false": { "model": "solarcooker:block/solar_cooker", "uvlock": true, "y": 180 },
+        "facing=west,lit=false":  { "model": "solarcooker:block/solar_cooker", "uvlock": true, "y": 270 },
+        "facing=east,lit=false":  { "model": "solarcooker:block/solar_cooker", "uvlock": true, "y": 90 },
+        "facing=north,lit=true": { "model": "solarcooker:block/solar_cooker_on", "uvlock": true },
+        "facing=south,lit=true": { "model": "solarcooker:block/solar_cooker_on", "uvlock": true, "y": 180 },
+        "facing=west,lit=true":  { "model": "solarcooker:block/solar_cooker_on", "uvlock": true, "y": 270 },
+        "facing=east,lit=true":  { "model": "solarcooker:block/solar_cooker_on", "uvlock": true, "y": 90 }
+    }
+}
