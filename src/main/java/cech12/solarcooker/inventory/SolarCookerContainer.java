@@ -7,7 +7,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.FurnaceResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.AbstractCookingRecipe;
@@ -41,7 +40,7 @@ public class SolarCookerContainer extends Container {
 
         //add cooker inventory slots
         this.addSlot(new Slot(cookerInventoryIn, 0, 56, 17));
-        this.addSlot(new FurnaceResultSlot(playerInventoryIn.player, cookerInventoryIn, 1, 116, 35));
+        this.addSlot(new SolarCookerResultSlot(playerInventoryIn.player, cookerInventoryIn, 1, 116, 35));
 
         //add player inventory
         for(int playerInvRow = 0; playerInvRow < 3; ++playerInvRow) {
@@ -133,7 +132,6 @@ public class SolarCookerContainer extends Container {
 
     @OnlyIn(Dist.CLIENT)
     public int getCookProgressionScaled() {
-        //TODO
         int i = this.cookerData.get(0);
         int j = this.cookerData.get(1);
         return j != 0 && i != 0 ? i * 24 / j : 0;
@@ -141,13 +139,11 @@ public class SolarCookerContainer extends Container {
 
     @OnlyIn(Dist.CLIENT)
     public boolean isBurning() {
-        //TODO
         return this.cookerData.get(0) > 0;
     }
 
     @OnlyIn(Dist.CLIENT)
     public boolean isSunlit() {
-        //TODO
         return this.cookerData.get(2) > 0;
     }
 }

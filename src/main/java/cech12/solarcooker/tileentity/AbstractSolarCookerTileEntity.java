@@ -18,6 +18,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -79,7 +81,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     };
 
     protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
-    private final Object2IntOpenHashMap<ResourceLocation> field_214022_n = new Object2IntOpenHashMap<>();
+    private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
 
     public AbstractSolarCookerTileEntity(TileEntityType<?> tileTypeIn,
                                          IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
@@ -91,14 +93,22 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected ItemStack failedMatch = ItemStack.EMPTY;
 
     private boolean isSunlit() {
-        return this.world != null
-                && this.world.func_230315_m_().hasSkyLight()
-                && this.world.isDaytime()
-                && !this.world.isRaining()
-                && this.world.canSeeSky(this.pos.up());
+        if (this.world != null) {
+            if (!this.world.isRemote) {
+                return this.world.func_230315_m_().hasSkyLight()
+                        && this.world.isDaytime()
+                        && !this.world.isRaining()
+                        && this.world.canSeeSky(this.pos.up());
+            } else {
+                //world.isDaytime() returns always true on client side
+                return AbstractSolarCookerTileEntity.this.world.getBlockState(AbstractSolarCookerTileEntity.this.pos).get(SolarCookerBlock.SUNLIT);
+            }
+        }
+        return false;
     }
 
-    public void read(BlockState stateIn, CompoundNBT nbtIn) {
+    @Override
+    public void read(@Nonnull BlockState stateIn, @Nonnull CompoundNBT nbtIn) {
         super.read(stateIn, nbtIn);
         this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbtIn, this.items);
@@ -106,7 +116,9 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         this.cookTimeTotal = nbtIn.getInt("CookTimeTotal");
     }
 
-    public CompoundNBT write(CompoundNBT compound) {
+    @Override
+    @Nonnull
+    public CompoundNBT write(@Nonnull CompoundNBT compound) {
         super.write(compound);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
@@ -115,11 +127,26 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
+    @Nonnull
+    public CompoundNBT getUpdateTag() {
+        return this.write(new CompoundNBT());
+    }
+
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.pos, 0, this.getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        this.read(this.getBlockState(), pkt.getNbtCompound());
+    }
+
+    @Override
     public void tick() {
-        boolean dirty = false;
-        if (this.world != null && !this.world.isRemote) {
-            boolean wasBurning = this.world.getBlockState(this.pos).get(SolarCookerBlock.BURNING);
-            boolean wasSunlit = this.world.getBlockState(this.pos).get(SolarCookerBlock.SUNLIT);
+        if (this.world != null) {
+            boolean dirty = false;
             boolean isSunlit = this.isSunlit();
             if (isSunlit && !this.items.get(INPUT).isEmpty()) {
                 AbstractCookingRecipe recipe = getRecipe();
@@ -128,8 +155,10 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                     if (this.cookTime == this.cookTimeTotal) {
                         this.cookTime = 0;
                         this.cookTimeTotal = this.getCookTime();
-                        this.smeltItem(recipe);
-                        dirty = true;
+                        if (!this.world.isRemote) {
+                            this.smeltItem(recipe);
+                            dirty = true;
+                        }
                     }
                 } else {
                     this.cookTime = 0;
@@ -139,15 +168,17 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             }
 
             boolean isBurning = this.cookTime > 0;
-            if (wasBurning != isBurning || wasSunlit != isSunlit) {
+            if (!this.world.isRemote &&
+                    (this.getBlockState().get(SolarCookerBlock.BURNING) != isBurning
+                            || this.getBlockState().get(SolarCookerBlock.SUNLIT) != isSunlit)) {
                 dirty = true;
                 this.world.setBlockState(this.pos, this.world.getBlockState(this.pos)
                         .with(SolarCookerBlock.SUNLIT, isSunlit)
                         .with(SolarCookerBlock.BURNING, isBurning), 3);
             }
-        }
-        if (dirty) {
-            this.markDirty();
+            if (dirty) {
+                this.markDirty();
+            }
         }
     }
 
@@ -335,32 +366,27 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     @Override
     public void setRecipeUsed(@Nullable IRecipe<?> recipe) {
-        //TODO
-        /*
         if (recipe != null) {
-            ResourceLocation resourcelocation = recipe.getId();
-            this.field_214022_n.addTo(resourcelocation, 1);
+            this.usedRecipes.addTo(recipe.getId(), 1);
         }
-         */
     }
 
     @Override
     @Nullable
     public IRecipe<?> getRecipeUsed() {
-        //TODO
         return null;
     }
 
     public void func_235645_d_(PlayerEntity p_235645_1_) {
         List<IRecipe<?>> list = this.func_235640_a_(p_235645_1_.world, p_235645_1_.getPositionVec());
         p_235645_1_.unlockRecipes(list);
-        this.field_214022_n.clear();
+        this.usedRecipes.clear();
     }
 
     public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_) {
         List<IRecipe<?>> list = Lists.newArrayList();
 
-        for(Object2IntMap.Entry<ResourceLocation> entry : this.field_214022_n.object2IntEntrySet()) {
+        for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
             p_235640_1_.getRecipeManager().getRecipe(entry.getKey()).ifPresent((p_235642_4_) -> {
                 list.add(p_235642_4_);
                 func_235641_a_(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).getExperience());
