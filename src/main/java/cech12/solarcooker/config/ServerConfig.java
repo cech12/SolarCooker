@@ -29,7 +29,7 @@ public class ServerConfig {
                 .define("vanillaRecipeType", "smoking");
         COOK_TIME_FACTOR = builder
                 .comment("Cook time factor of the solar cooker in relation to corresponding vanilla furnace. (i. e. 0.5 - half the time, 1.0 same time, 2.0 twice the time)")
-                .defineInRange("cookTimeFactor", 1.0, 0.0, 100.0);
+                .defineInRange("cookTimeFactor", 4.0, 0.0, 100.0);
         RECIPE_BLACKLIST = builder
                 .comment("A comma separated list of all vanilla recipes that should not be used by the solar cooker. Example: \"baked_potato,baked_potato_from_smoking,othermod:other_baked_food\"")
                 .define("recipeBlacklist", "");
