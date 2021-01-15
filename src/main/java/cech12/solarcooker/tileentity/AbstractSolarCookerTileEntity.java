@@ -1,41 +1,96 @@
 package cech12.solarcooker.tileentity;
 
+import cech12.solarcooker.block.SolarCookerBlock;
 import cech12.solarcooker.config.ServerConfig;
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DaylightDetectorBlock;
+import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IRecipeHelperPopulator;
+import net.minecraft.inventory.IRecipeHolder;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.crafting.AbstractCookingRecipe;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
+import net.minecraft.item.crafting.RecipeItemHelper;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.LightType;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
-public abstract class AbstractSolarCookerTileEntity extends AbstractFurnaceTileEntity {
+public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity {
+
+    private static final int[] SLOTS = new int[]{0, 1};
+    private static final int[] SLOTS_UP = new int[]{};
+
+    protected static final int INPUT = 0;
+    protected static final int OUTPUT = 1;
+
+    protected NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    protected int cookTime;
+    protected int cookTimeTotal;
+
+    public final IIntArray cookerData = new IIntArray() {
+        public int get(int index) {
+            switch(index) {
+                case 0:
+                    return AbstractSolarCookerTileEntity.this.cookTime;
+                case 1:
+                    return AbstractSolarCookerTileEntity.this.cookTimeTotal;
+                case 2:
+                    return AbstractSolarCookerTileEntity.this.isSunlit() ? 1 : 0;
+                default:
+                    return 0;
+            }
+        }
+        public void set(int index, int value) {
+            switch(index) {
+                case 0:
+                    AbstractSolarCookerTileEntity.this.cookTime = value;
+                    break;
+                case 1:
+                    AbstractSolarCookerTileEntity.this.cookTimeTotal = value;
+            }
+
+        }
+        public int size() {
+            return 3;
+        }
+    };
 
     protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
+    private final Object2IntOpenHashMap<ResourceLocation> field_214022_n = new Object2IntOpenHashMap<>();
 
     public AbstractSolarCookerTileEntity(TileEntityType<?> tileTypeIn,
                                          IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
-        super(tileTypeIn, null);
+        super(tileTypeIn);
         this.specificRecipeType = specificRecipeTypeIn;
     }
-
-    public static final int COOK_TIME = 2;
-    public static final int COOK_TIME_TOTAL = 3;
-
-    public static final int INPUT = 0;
-    public static final int OUTPUT = 2;
 
     protected AbstractCookingRecipe curRecipe;
     protected ItemStack failedMatch = ItemStack.EMPTY;
 
-    private boolean isSunny() {
+    private boolean isSunlit() {
         return this.world != null
                 && this.world.func_230315_m_().hasSkyLight()
                 && this.world.isDaytime()
@@ -43,43 +98,59 @@ public abstract class AbstractSolarCookerTileEntity extends AbstractFurnaceTileE
                 && this.world.canSeeSky(this.pos.up());
     }
 
+    public void read(BlockState stateIn, CompoundNBT nbtIn) {
+        super.read(stateIn, nbtIn);
+        this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+        ItemStackHelper.loadAllItems(nbtIn, this.items);
+        this.cookTime = nbtIn.getInt("CookTime");
+        this.cookTimeTotal = nbtIn.getInt("CookTimeTotal");
+    }
+
+    public CompoundNBT write(CompoundNBT compound) {
+        super.write(compound);
+        compound.putInt("CookTime", this.cookTime);
+        compound.putInt("CookTimeTotal", this.cookTimeTotal);
+        ItemStackHelper.saveAllItems(compound, this.items);
+        return compound;
+    }
+
     @Override
     public void tick() {
         boolean dirty = false;
         if (this.world != null && !this.world.isRemote) {
-            boolean wasLit = this.world.getBlockState(this.pos).get(AbstractFurnaceBlock.LIT);
-            boolean isSunny = this.isSunny();
-            if (isSunny && !this.items.get(INPUT).isEmpty()) {
-                AbstractCookingRecipe irecipe = getRecipe();
-                if (this.canSmelt(irecipe)) {
-                    this.furnaceData.set(COOK_TIME, this.furnaceData.get(COOK_TIME) + 1);
-                    if (this.furnaceData.get(COOK_TIME) == this.furnaceData.get(COOK_TIME_TOTAL)) {
-                        this.furnaceData.set(COOK_TIME, 0);
-                        this.furnaceData.set(COOK_TIME_TOTAL, this.getCookTime());
-                        this.smeltItem(irecipe);
+            boolean wasBurning = this.world.getBlockState(this.pos).get(SolarCookerBlock.BURNING);
+            boolean wasSunlit = this.world.getBlockState(this.pos).get(SolarCookerBlock.SUNLIT);
+            boolean isSunlit = this.isSunlit();
+            if (isSunlit && !this.items.get(INPUT).isEmpty()) {
+                AbstractCookingRecipe recipe = getRecipe();
+                if (this.canSmelt(recipe)) {
+                    this.cookTime++;
+                    if (this.cookTime == this.cookTimeTotal) {
+                        this.cookTime = 0;
+                        this.cookTimeTotal = this.getCookTime();
+                        this.smeltItem(recipe);
                         dirty = true;
                     }
                 } else {
-                    this.furnaceData.set(COOK_TIME, 0);
+                    this.cookTime = 0;
                 }
-            } else if (!isSunny && this.furnaceData.get(COOK_TIME) > 0) {
-                this.furnaceData.set(COOK_TIME, MathHelper.clamp(this.furnaceData.get(COOK_TIME) - 2, 0, this.furnaceData.get(COOK_TIME_TOTAL)));
+            } else if (!isSunlit && this.cookTime > 0) {
+                this.cookTime = MathHelper.clamp(this.cookTime - 2, 0, this.cookTimeTotal);
             }
 
-            boolean isLit = this.furnaceData.get(COOK_TIME) > 0;
-            if (wasLit != isLit) {
+            boolean isBurning = this.cookTime > 0;
+            if (wasBurning != isBurning || wasSunlit != isSunlit) {
                 dirty = true;
-                this.world.setBlockState(this.pos, this.world.getBlockState(this.pos).with(AbstractFurnaceBlock.LIT, isLit), 3);
+                this.world.setBlockState(this.pos, this.world.getBlockState(this.pos)
+                        .with(SolarCookerBlock.SUNLIT, isSunlit)
+                        .with(SolarCookerBlock.BURNING, isBurning), 3);
             }
         }
-
         if (dirty) {
             this.markDirty();
         }
-
     }
 
-    @Override
     protected boolean canSmelt(@Nullable IRecipe<?> recipe) {
         if (!this.items.get(0).isEmpty() && recipe != null) {
             ItemStack recipeOutput = recipe.getRecipeOutput();
@@ -97,9 +168,9 @@ public abstract class AbstractSolarCookerTileEntity extends AbstractFurnaceTileE
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(0);
             ItemStack itemstack1 = recipe.getRecipeOutput();
-            ItemStack itemstack2 = this.items.get(2);
+            ItemStack itemstack2 = this.items.get(1);
             if (itemstack2.isEmpty()) {
-                this.items.set(2, itemstack1.copy());
+                this.items.set(1, itemstack1.copy());
             } else if (itemstack2.getItem() == itemstack1.getItem()) {
                 itemstack2.grow(itemstack1.getCount());
             }
@@ -108,15 +179,10 @@ public abstract class AbstractSolarCookerTileEntity extends AbstractFurnaceTileE
                 this.setRecipeUsed(recipe);
             }
 
-            if (itemstack.getItem() == Blocks.WET_SPONGE.asItem() && !this.items.get(1).isEmpty() && this.items.get(1).getItem() == Items.BUCKET) {
-                this.items.set(1, new ItemStack(Items.WATER_BUCKET));
-            }
-
             itemstack.shrink(1);
         }
     }
 
-    @Override
     protected int getCookTime() {
         AbstractCookingRecipe rec = getRecipe();
         if (rec == null) {
@@ -151,6 +217,201 @@ public abstract class AbstractSolarCookerTileEntity extends AbstractFurnaceTileE
             }
             return curRecipe = rec;
         }
+    }
+
+    @Override
+    @Nonnull
+    public int[] getSlotsForFace(@Nonnull Direction side) {
+        if (side == Direction.UP) {
+            return SLOTS_UP;
+        }
+        return SLOTS;
+    }
+
+    /**
+     * Returns true if automation can insert the given item in the given slot from the given side.
+     */
+    @Override
+    public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nullable Direction direction) {
+        return this.isItemValidForSlot(index, itemStackIn);
+    }
+
+    /**
+     * Returns true if automation can extract the given item in the given slot from the given side.
+     */
+    @Override
+    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nullable Direction direction) {
+        return direction != Direction.UP && index == OUTPUT;
+    }
+
+    /**
+     * Returns the number of slots in the inventory.
+     */
+    @Override
+    public int getSizeInventory() {
+        return this.items.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        for (ItemStack itemstack : this.items) {
+            if (!itemstack.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns the stack in the given slot.
+     */
+    @Override
+    @Nonnull
+    public ItemStack getStackInSlot(int index) {
+        return this.items.get(index);
+    }
+
+    /**
+     * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
+     */
+    @Override
+    @Nonnull
+    public ItemStack decrStackSize(int index, int count) {
+        return ItemStackHelper.getAndSplit(this.items, index, count);
+    }
+
+    /**
+     * Removes a stack from the given slot and returns it.
+     */
+    @Override
+    @Nonnull
+    public ItemStack removeStackFromSlot(int index) {
+        return ItemStackHelper.getAndRemove(this.items, index);
+    }
+
+    /**
+     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
+     */
+    @Override
+    public void setInventorySlotContents(int index, ItemStack stack) {
+        ItemStack itemstack = this.items.get(index);
+        boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
+        this.items.set(index, stack);
+        if (stack.getCount() > this.getInventoryStackLimit()) {
+            stack.setCount(this.getInventoryStackLimit());
+        }
+        if (index == 0 && !flag) {
+            this.cookTimeTotal = this.getCookTime();
+            this.cookTime = 0;
+            this.markDirty();
+        }
+    }
+
+    /**
+     * Don't rename this method to canInteractWith due to conflicts with Container
+     */
+    @Override
+    public boolean isUsableByPlayer(@Nonnull PlayerEntity player) {
+        if (this.world != null && this.world.getTileEntity(this.pos) != this) {
+            return false;
+        } else {
+            return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
+        }
+    }
+
+    /**
+     * Returns true if automation is allowed to insert the given stack (ignoring stack size) into the given slot. For
+     * guis use Slot.isItemValid
+     */
+    @Override
+    public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
+        return index == INPUT;
+    }
+
+    @Override
+    public void clear() {
+        this.items.clear();
+    }
+
+    @Override
+    public void setRecipeUsed(@Nullable IRecipe<?> recipe) {
+        //TODO
+        /*
+        if (recipe != null) {
+            ResourceLocation resourcelocation = recipe.getId();
+            this.field_214022_n.addTo(resourcelocation, 1);
+        }
+         */
+    }
+
+    @Override
+    @Nullable
+    public IRecipe<?> getRecipeUsed() {
+        //TODO
+        return null;
+    }
+
+    public void func_235645_d_(PlayerEntity p_235645_1_) {
+        List<IRecipe<?>> list = this.func_235640_a_(p_235645_1_.world, p_235645_1_.getPositionVec());
+        p_235645_1_.unlockRecipes(list);
+        this.field_214022_n.clear();
+    }
+
+    public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_) {
+        List<IRecipe<?>> list = Lists.newArrayList();
+
+        for(Object2IntMap.Entry<ResourceLocation> entry : this.field_214022_n.object2IntEntrySet()) {
+            p_235640_1_.getRecipeManager().getRecipe(entry.getKey()).ifPresent((p_235642_4_) -> {
+                list.add(p_235642_4_);
+                func_235641_a_(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).getExperience());
+            });
+        }
+
+        return list;
+    }
+
+    private static void func_235641_a_(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
+        int i = MathHelper.floor((float)p_235641_2_ * p_235641_3_);
+        float f = MathHelper.frac((float)p_235641_2_ * p_235641_3_);
+        if (f != 0.0F && Math.random() < (double)f) {
+            ++i;
+        }
+
+        while(i > 0) {
+            int j = ExperienceOrbEntity.getXPSplit(i);
+            i -= j;
+            p_235641_0_.addEntity(new ExperienceOrbEntity(p_235641_0_, p_235641_1_.x, p_235641_1_.y, p_235641_1_.z, j));
+        }
+
+    }
+
+    public void fillStackedContents(RecipeItemHelper helper) {
+        for(ItemStack itemstack : this.items) {
+            helper.accountStack(itemstack);
+        }
+    }
+
+    LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this, Direction.UP, Direction.NORTH);
+
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+        if (!this.removed && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (facing == Direction.UP)
+                return handlers[0].cast();
+            else
+                return handlers[1].cast();
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    /**
+     * invalidates a tile entity
+     */
+    @Override
+    public void remove() {
+        super.remove();
+        for (int x = 0; x < handlers.length; x++)
+            handlers[x].invalidate();
     }
 
 }

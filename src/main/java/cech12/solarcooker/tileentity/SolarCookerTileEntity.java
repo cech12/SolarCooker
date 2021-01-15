@@ -2,9 +2,9 @@ package cech12.solarcooker.tileentity;
 
 import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.api.tileentity.SolarCookerTileEntities;
+import cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.FurnaceContainer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -25,7 +25,7 @@ public class SolarCookerTileEntity extends AbstractSolarCookerTileEntity {
     @Override
     @Nonnull
     protected Container createMenu(int id, @Nonnull PlayerInventory player) {
-        return new FurnaceContainer(id, player, this, this.furnaceData);
+        return new SolarCookerContainer(RecipeTypes.SOLAR_COOKING, id, player, this, this.cookerData);
     }
 
 }
