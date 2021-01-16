@@ -1,10 +1,17 @@
 package cech12.solarcooker.block;
 
 import cech12.solarcooker.tileentity.SolarCookerTileEntity;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -58,5 +65,21 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
             worldIn.addParticle(ParticleTypes.SMOKE, d0, d1 + 0.6D, d2, 0.0D, 0.0D, 0.0D);
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void setISTER(Item.Properties props) {
+        props.setISTER(() -> () -> new ItemStackTileEntityRenderer() {
+            private SolarCookerTileEntity tile;
+
+            @Override
+            //render
+            public void func_239207_a_(@Nonnull ItemStack stack, ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
+                if (tile == null) {
+                    tile = new SolarCookerTileEntity();
+                }
+                TileEntityRendererDispatcher.instance.renderItem(tile, matrix, buffer, x, y);
+            }
+        });
     }
 }

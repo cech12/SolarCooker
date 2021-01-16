@@ -23,7 +23,13 @@ public final class ModBlocks {
     }
 
     public static Block registerBlock(String name, ItemGroup itemGroup, Block block) {
-        BlockItem itemBlock = new BlockItem(block, new Item.Properties().group(itemGroup));
+        Item.Properties itemProperties = new Item.Properties().group(itemGroup);
+        try {
+            if (block instanceof SolarCookerBlock) {
+                ((SolarCookerBlock)block).setISTER(itemProperties);
+            }
+        } catch (NoSuchMethodError ignore) {}
+        BlockItem itemBlock = new BlockItem(block, itemProperties);
         block.setRegistryName(name);
         itemBlock.setRegistryName(name);
         ForgeRegistries.BLOCKS.register(block);
