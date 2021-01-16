@@ -25,13 +25,18 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
+
+    protected static final VoxelShape SHAPE = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
 
     protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
         super(properties);
@@ -111,7 +116,12 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      */
     @Override
     public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return SHAPE;
     }
 
     /**
