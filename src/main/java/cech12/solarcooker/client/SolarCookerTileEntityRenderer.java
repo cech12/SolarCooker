@@ -9,11 +9,14 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
@@ -73,6 +76,17 @@ public class SolarCookerTileEntityRenderer extends TileEntityRenderer<SolarCooke
             IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(TEXTURE));
             float lidAngle = isInWorld ? 1 : 0;
             this.renderModels(matrixStackIn, ivertexbuilder, this.singleLid, this.singleLatch, this.singleBottom, this.singleInner, lidAngle, combinedLightIn, combinedOverlayIn);
+
+            //render item
+            if (isInWorld) {
+                ItemStack stack = tileEntityIn.getStackInSlot(0);
+                if (!stack.isEmpty()) {
+                    matrixStackIn.push();
+                    matrixStackIn.translate(0.5, 0.4, 0.5);
+                    Minecraft.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.GROUND, combinedLightIn, combinedOverlayIn, matrixStackIn, bufferIn);
+                    matrixStackIn.pop();
+                }
+            }
 
             matrixStackIn.pop();
         }
