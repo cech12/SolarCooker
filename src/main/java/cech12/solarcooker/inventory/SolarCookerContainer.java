@@ -4,14 +4,12 @@ import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.tileentity.AbstractSolarCookerTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.AbstractCookingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,24 +21,20 @@ import static cech12.solarcooker.api.inventory.ContainerTypes.SOLAR_COOKER;
 
 public class SolarCookerContainer extends Container {
     private final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
-    private final IInventory cookerInventory;
-    private final IIntArray cookerData;
+    private final AbstractSolarCookerTileEntity cooker;
     protected final World world;
 
     public SolarCookerContainer(IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
-                                PlayerInventory playerInventoryIn, IInventory cookerInventoryIn,
-                                IIntArray cookerDataIn) {
+                                PlayerInventory playerInventoryIn, AbstractSolarCookerTileEntity cooker) {
         super(SOLAR_COOKER, id);
         this.specificRecipeType = specificRecipeTypeIn;
-        assertInventorySize(cookerInventoryIn, 2);
-        assertIntArraySize(cookerDataIn, 2);
-        this.cookerInventory = cookerInventoryIn;
-        this.cookerData = cookerDataIn;
+        assertInventorySize(cooker, 2);
+        this.cooker = cooker;
         this.world = playerInventoryIn.player.world;
 
         //add cooker inventory slots
-        this.addSlot(new Slot(cookerInventoryIn, 0, 56, 17));
-        this.addSlot(new SolarCookerResultSlot(playerInventoryIn.player, cookerInventoryIn, 1, 116, 35));
+        this.addSlot(new Slot(cooker, 0, 56, 17));
+        this.addSlot(new SolarCookerResultSlot(playerInventoryIn.player, cooker, 1, 116, 35));
 
         //add player inventory
         for(int playerInvRow = 0; playerInvRow < 3; ++playerInvRow) {
@@ -55,12 +49,12 @@ public class SolarCookerContainer extends Container {
 
     public SolarCookerContainer(IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
                                 PlayerInventory playerInventoryIn, BlockPos pos) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerTileEntity) playerInventoryIn.player.world.getTileEntity(pos), ((AbstractSolarCookerTileEntity) playerInventoryIn.player.world.getTileEntity(pos)).cookerData);
+        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerTileEntity) playerInventoryIn.player.world.getTileEntity(pos));
     }
 
     @Override
     public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-        return this.cookerInventory.isUsableByPlayer(playerIn);
+        return this.cooker.isUsableByPlayer(playerIn);
     }
 
     /**
@@ -132,18 +126,18 @@ public class SolarCookerContainer extends Container {
 
     @OnlyIn(Dist.CLIENT)
     public int getCookProgressionScaled() {
-        int i = this.cookerData.get(0);
-        int j = this.cookerData.get(1);
+        int i = this.cooker.getCookTime();
+        int j = this.cooker.getCookTimeTotal();
         return j != 0 && i != 0 ? i * 24 / j : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
     public boolean isBurning() {
-        return this.cookerData.get(0) > 0;
+        return this.cooker.getCookTime() > 0;
     }
 
     @OnlyIn(Dist.CLIENT)
     public boolean isSunlit() {
-        return this.cookerData.get(2) > 0;
+        return this.cooker.isSunlit();
     }
 }

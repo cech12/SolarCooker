@@ -25,7 +25,7 @@ public class SolarCookerTileEntity extends AbstractSolarCookerTileEntity {
     @Override
     @Nonnull
     protected Container createMenu(int id, @Nonnull PlayerInventory player) {
-        return new SolarCookerContainer(RecipeTypes.SOLAR_COOKING, id, player, this, this.cookerData);
+        return new SolarCookerContainer(RecipeTypes.SOLAR_COOKING, id, player, this);
     }
 
 }

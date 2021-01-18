@@ -24,7 +24,6 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -52,34 +51,6 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected int cookTime;
     protected int cookTimeTotal;
 
-    public final IIntArray cookerData = new IIntArray() {
-        public int get(int index) {
-            switch(index) {
-                case 0:
-                    return AbstractSolarCookerTileEntity.this.cookTime;
-                case 1:
-                    return AbstractSolarCookerTileEntity.this.cookTimeTotal;
-                case 2:
-                    return AbstractSolarCookerTileEntity.this.isSunlit() ? 1 : 0;
-                default:
-                    return 0;
-            }
-        }
-        public void set(int index, int value) {
-            switch(index) {
-                case 0:
-                    AbstractSolarCookerTileEntity.this.cookTime = value;
-                    break;
-                case 1:
-                    AbstractSolarCookerTileEntity.this.cookTimeTotal = value;
-            }
-
-        }
-        public int size() {
-            return 3;
-        }
-    };
-
     protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
 
@@ -92,7 +63,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected AbstractCookingRecipe curRecipe;
     protected ItemStack failedMatch = ItemStack.EMPTY;
 
-    private boolean isSunlit() {
+    public boolean isSunlit() {
         if (this.world != null) {
             if (!this.world.isRemote) {
                 return this.world.func_230315_m_().hasSkyLight()
@@ -101,10 +72,18 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                         && this.world.canSeeSky(this.pos.up());
             } else {
                 //world.isDaytime() returns always true on client side
-                return AbstractSolarCookerTileEntity.this.world.getBlockState(AbstractSolarCookerTileEntity.this.pos).get(SolarCookerBlock.SUNLIT);
+                return AbstractSolarCookerTileEntity.this.getBlockState().get(SolarCookerBlock.SUNLIT);
             }
         }
         return false;
+    }
+
+    public int getCookTime() {
+        return cookTime;
+    }
+
+    public int getCookTimeTotal() {
+        return this.cookTimeTotal;
     }
 
     @Override
@@ -154,7 +133,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                     this.cookTime++;
                     if (this.cookTime == this.cookTimeTotal) {
                         this.cookTime = 0;
-                        this.cookTimeTotal = this.getCookTime();
+                        this.cookTimeTotal = this.getRecipeCookTime();
                         if (!this.world.isRemote) {
                             this.smeltItem(recipe);
                             dirty = true;
@@ -214,7 +193,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         }
     }
 
-    protected int getCookTime() {
+    protected int getRecipeCookTime() {
         AbstractCookingRecipe rec = getRecipe();
         if (rec == null) {
             return 200;
@@ -332,7 +311,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             stack.setCount(this.getInventoryStackLimit());
         }
         if (index == 0 && !flag) {
-            this.cookTimeTotal = this.getCookTime();
+            this.cookTimeTotal = this.getRecipeCookTime();
             this.cookTime = 0;
             this.markDirty();
         }
@@ -411,7 +390,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     }
 
-    public void fillStackedContents(RecipeItemHelper helper) {
+    public void fillStackedContents(@Nonnull RecipeItemHelper helper) {
         for(ItemStack itemstack : this.items) {
             helper.accountStack(itemstack);
         }
@@ -436,8 +415,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     @Override
     public void remove() {
         super.remove();
-        for (int x = 0; x < handlers.length; x++)
-            handlers[x].invalidate();
+        for (LazyOptional<? extends IItemHandler> handler : handlers) handler.invalidate();
     }
 
 }
