@@ -1,16 +1,19 @@
 package cech12.solarcooker.jei;
 
 import cech12.solarcooker.SolarCookerMod;
+import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.crafting.SolarCookingRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -47,6 +50,11 @@ public class SolarCookerJEIPlugin implements IModPlugin {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(
                 new SolarCookingCategory(guiHelper));
+    }
+
+    @Override
+    public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(new ItemStack(SolarCookerBlocks.SOLAR_COOKER), RecipeTypes.SOLAR_COOKING_ID);
     }
 
 }
