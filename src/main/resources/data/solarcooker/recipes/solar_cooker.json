@@ -7,13 +7,13 @@
   ],
   "key": {
     "G": {
-      "item": "minecraft:glass_pane"
+      "tag": "forge:glass_panes"
     },
     "I": {
-      "item": "minecraft:iron_ingot"
+      "tag": "forge:ingots/iron"
     },
     "C": {
-      "item": "minecraft:chest"
+      "tag": "forge:chests/wooden"
     }
   },
   "result": {
