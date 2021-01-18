@@ -30,6 +30,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
@@ -41,6 +42,11 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
         super(properties);
         this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH).with(SUNLIT, false).with(BURNING, false));
+    }
+
+    @Override
+    public boolean isToolEffective(BlockState state, ToolType tool) {
+        return tool == ToolType.AXE;
     }
 
     @Override

@@ -19,7 +19,7 @@ public final class ModBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        SolarCookerBlocks.SOLAR_COOKER = registerBlock("solar_cooker", ItemGroup.DECORATIONS, new SolarCookerBlock(Block.Properties.create(Material.WOOD).setRequiresTool().hardnessAndResistance(2.5F, 3.5F).sound(SoundType.WOOD)));
+        SolarCookerBlocks.SOLAR_COOKER = registerBlock("solar_cooker", ItemGroup.DECORATIONS, new SolarCookerBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(2.5F, 3.5F).sound(SoundType.WOOD)));
     }
 
     public static Block registerBlock(String name, ItemGroup itemGroup, Block block) {
