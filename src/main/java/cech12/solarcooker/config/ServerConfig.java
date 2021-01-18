@@ -20,7 +20,7 @@ public class ServerConfig {
     static {
         final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
-        builder.comment("Options that affect the added furnaces.").push("Solar Cooker Settings");
+        builder.comment("Options that affect the added Solar Cooker.").push("Solar Cooker Settings");
         VANILLA_RECIPES_ENABLED = builder
                 .comment("If enabled, the vanilla blasting, smelting, or smoking recipes are used by the solar cooker.")
                 .define("vanillaRecipesEnabled", true);
