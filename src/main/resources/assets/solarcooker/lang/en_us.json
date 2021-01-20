@@ -1,4 +1,6 @@
 {
   "block.solarcooker.solar_cooker": "Solar Cooker",
-  "block.solarcooker.reflector": "Reflector"
+  "block.solarcooker.reflector": "Reflector",
+
+  "item.solarcooker.reflector.description": "Up to four Reflectors can be placed to the left and right side of a Solar Cooker to improve the incidence of light and reduce cooking time."
 }
