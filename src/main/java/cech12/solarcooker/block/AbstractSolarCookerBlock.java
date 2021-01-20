@@ -32,12 +32,15 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
+import javax.annotation.Nonnull;
+
 public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
 
-    protected static final VoxelShape SHAPE = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
+    protected static final VoxelShape SHAPE_OPEN = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
+    protected static final VoxelShape SHAPE_CLOSED = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
     protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
         super(properties);
@@ -126,8 +129,13 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return SHAPE;
+    @Nonnull
+    public VoxelShape getShape(@Nonnull BlockState state, IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof AbstractSolarCookerTileEntity && ((AbstractSolarCookerTileEntity) tile).shouldLidBeOpen()) {
+            return SHAPE_OPEN;
+        }
+        return SHAPE_CLOSED;
     }
 
     /**

@@ -175,20 +175,24 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         }
     }
 
+    public boolean shouldLidBeOpen() {
+        return this.numPlayersUsing > 0 || (this.canSmelt(getRecipe()) && this.isSunlit());
+    }
+
     private void calculateLidAngle() {
         if (this.world != null) {
             this.prevLidAngle = this.lidAngle;
 
-            boolean shouldLidBeOpened = this.numPlayersUsing > 0 || (this.canSmelt(getRecipe()) && this.isSunlit());
-            if (shouldLidBeOpened && this.lidAngle == 0.0F) {
+            boolean shouldLidBeOpen = shouldLidBeOpen();
+            if (shouldLidBeOpen && this.lidAngle == 0.0F) {
                 this.playSound(SoundEvents.BLOCK_CHEST_OPEN);
                 if (!this.world.isRemote) {
                     this.markDirty();
                 }
             }
-            if (!shouldLidBeOpened && this.lidAngle > 0.0F || shouldLidBeOpened && this.lidAngle < 1.0F) {
+            if (!shouldLidBeOpen && this.lidAngle > 0.0F || shouldLidBeOpen && this.lidAngle < 1.0F) {
                 float f1 = this.lidAngle;
-                if (shouldLidBeOpened) {
+                if (shouldLidBeOpen) {
                     this.lidAngle += 0.1F;
                 } else {
                     this.lidAngle -= 0.1F;
