@@ -1,5 +1,7 @@
 package cech12.solarcooker.tileentity;
 
+import cech12.solarcooker.block.AbstractSolarCookerBlock;
+import cech12.solarcooker.block.ReflectorBlock;
 import cech12.solarcooker.block.SolarCookerBlock;
 import cech12.solarcooker.config.ServerConfig;
 import com.google.common.collect.Lists;
@@ -30,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
@@ -61,8 +64,10 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected float lidAngle;
     /** The angle of the lid last tick */
     protected float prevLidAngle;
-    /** The number of players currently using this chest */
+    /** The number of players currently using this cooker */
     protected int numPlayersUsing;
+    /** The number of reflectors next to the cooker */
+    protected int reflectorCount = 0;
 
     protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
@@ -295,10 +300,13 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         AbstractCookingRecipe rec = getRecipe();
         if (rec == null) {
             return 200;
-        } else if (this.specificRecipeType.getClass().isInstance(rec.getType())) {
-            return rec.getCookTime();
         }
-        return (int) (rec.getCookTime() * ServerConfig.COOK_TIME_FACTOR.get());
+        this.checkForReflectors();
+        double reflectorFactor = (this.reflectorCount > 0) ? 1 - ((1 - ServerConfig.MAX_REFLECTOR_TIME_FACTOR.get()) / 4.0D) * this.reflectorCount : 1;
+        if (this.specificRecipeType.getClass().isInstance(rec.getType())) {
+            return (int) (rec.getCookTime() * reflectorFactor);
+        }
+        return (int) (rec.getCookTime() * (ServerConfig.COOK_TIME_FACTOR.get() * reflectorFactor));
     }
 
     @SuppressWarnings("unchecked")
@@ -325,6 +333,33 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             }
             return curRecipe = rec;
         }
+    }
+
+    private void checkForReflectors() {
+        this.reflectorCount = 0;
+        if (this.world != null) {
+            BlockState state = this.world.getBlockState(this.pos);
+            if (state.getBlock() instanceof AbstractSolarCookerBlock) {
+                Direction facing = state.get(AbstractSolarCookerBlock.FACING);
+                this.reflectorCount += countReflectorsOnSide(facing.rotateY());
+                this.reflectorCount += countReflectorsOnSide(facing.rotateYCCW());
+            }
+        }
+    }
+
+    private int countReflectorsOnSide(Direction direction) {
+        int count = 0;
+        if (this.world != null) {
+            BlockPos blockPos = this.pos.offset(direction);
+            for (BlockPos position : new BlockPos[] {blockPos, blockPos.up()}) {
+                BlockState state = this.world.getBlockState(position);
+                if (state.getBlock() instanceof ReflectorBlock
+                        && state.get(ReflectorBlock.HORIZONTAL_FACING) == direction.getOpposite()) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     @Override
