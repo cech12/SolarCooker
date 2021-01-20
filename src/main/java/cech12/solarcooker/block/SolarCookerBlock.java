@@ -74,7 +74,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
             @Override
             //render
-            public void func_239207_a_(@Nonnull ItemStack stack, ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
+            public void func_239207_a_(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
                 if (tile == null) {
                     tile = new SolarCookerTileEntity();
                 }

@@ -108,7 +108,7 @@ public class SolarCookerContainer extends Container {
     }
 
     @Override
-    public void putStackInSlot(int slotID, ItemStack stack) {
+    public void putStackInSlot(int slotID, @Nonnull ItemStack stack) {
         super.putStackInSlot(slotID, stack);
     }
 

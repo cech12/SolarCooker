@@ -53,7 +53,8 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    @Nonnull
+    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
         if (worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         } else {
@@ -76,7 +77,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      * Called by ItemBlocks after a block is set in the world
      */
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
         if (stack.hasDisplayName()) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
@@ -88,7 +89,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Deprecated
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.isIn(newState.getBlock())) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
@@ -101,22 +102,15 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
         }
     }
 
-    /**
-     * @deprecated call via {@link IBlockState#hasComparatorInputOverride()} whenever possible. Implementing/overriding
-     * is fine.
-     */
     @Override
     @Deprecated
-    public boolean hasComparatorInputOverride(BlockState state) {
+    public boolean hasComparatorInputOverride(@Nonnull BlockState state) {
         return true;
     }
 
-    /**
-     * @deprecated call via {@link IBlockState#getComparatorInputOverride(World
-     */
     @Override
     @Deprecated
-    public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos) {
+    public int getComparatorInputOverride(@Nonnull BlockState blockState, World worldIn, @Nonnull BlockPos pos) {
         return Container.calcRedstone(worldIn.getTileEntity(pos));
     }
 
@@ -124,7 +118,8 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      * The type of render function called. MODEL for mixed tesr and static model
      */
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
+    @Nonnull
+    public BlockRenderType getRenderType(@Nonnull BlockState state) {
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
@@ -143,6 +138,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      */
     @Override
     @Deprecated
+    @Nonnull
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.with(FACING, rot.rotate(state.get(FACING)));
     }
@@ -152,6 +148,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      */
     @Override
     @Deprecated
+    @Nonnull
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
         return state.rotate(mirrorIn.toRotation(state.get(FACING)));
     }
