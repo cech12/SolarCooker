@@ -2,6 +2,7 @@ package cech12.solarcooker.init;
 
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
+import cech12.solarcooker.block.ReflectorBlock;
 import cech12.solarcooker.block.SolarCookerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -20,6 +21,7 @@ public final class ModBlocks {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         SolarCookerBlocks.SOLAR_COOKER = registerBlock("solar_cooker", ItemGroup.DECORATIONS, new SolarCookerBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(2.5F, 3.5F).sound(SoundType.WOOD)));
+        SolarCookerBlocks.REFLECTOR = registerBlock("reflector", ItemGroup.DECORATIONS, new ReflectorBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(2.0F).sound(SoundType.WOOD)));
     }
 
     public static Block registerBlock(String name, ItemGroup itemGroup, Block block) {

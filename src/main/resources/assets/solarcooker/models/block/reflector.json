@@ -1,0 +1,64 @@
+{
+    "parent": "minecraft:block/block",
+    "textures": {
+        "bottom": "solarcooker:block/reflector_back",
+        "top": "solarcooker:block/reflector_front",
+        "side": "solarcooker:block/reflector_side",
+        "particle": "solarcooker:block/reflector_back"
+    },
+    "elements": [
+        {
+            "from": [
+                0,
+                0,
+                0
+            ],
+            "to": [
+                16,
+                16,
+                5
+            ],
+            "faces": {
+                "down": {
+                    "texture": "#side",
+                    "uv": [
+                        0.0,
+                        0.0,
+                        5.0,
+                        16.0
+                    ],
+                    "rotation": 90
+                },
+                "up": {
+                    "texture": "#side",
+                    "uv": [
+                        0.0,
+                        0.0,
+                        5.0,
+                        16.0
+                    ],
+                    "rotation": 270
+                },
+                "north": {
+                    "texture": "#top"
+                },
+                "south": {
+                    "texture": "#bottom"
+                },
+                "west": {
+                    "texture": "#side"
+                },
+                "east": {
+                    "texture": "#side",
+                    "uv": [
+                        0.0,
+                        0.0,
+                        5.0,
+                        16.0
+                    ],
+                    "rotation": 180
+                }
+            }
+        }
+    ]
+}
