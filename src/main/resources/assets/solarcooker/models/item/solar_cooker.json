@@ -1,7 +1,7 @@
 {
     "parent": "builtin/entity",
     "textures": {
-        "particle": "block/oak_planks"
+        "particle": "solarcooker:block/reflector_back"
     },
     "display": {
         "gui": {

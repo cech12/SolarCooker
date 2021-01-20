@@ -1,5 +1,5 @@
 {
     "textures": {
-        "particle": "minecraft:block/oak_planks"
+        "particle": "solarcooker:block/reflector_back"
     }
 }
