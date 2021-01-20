@@ -5,6 +5,7 @@ import cech12.solarcooker.config.ServerConfig;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,9 +27,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -50,6 +56,13 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
     protected int cookTime;
     protected int cookTimeTotal;
+
+    /** The current angle of the lid (between 0 and 1) */
+    protected float lidAngle;
+    /** The angle of the lid last tick */
+    protected float prevLidAngle;
+    /** The number of players currently using this chest */
+    protected int numPlayersUsing;
 
     protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
@@ -126,6 +139,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     public void tick() {
         if (this.world != null) {
             boolean dirty = false;
+            this.calculateLidAngle();
             boolean isSunlit = this.isSunlit();
             if (isSunlit && !this.items.get(INPUT).isEmpty()) {
                 AbstractCookingRecipe recipe = getRecipe();
@@ -161,8 +175,88 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         }
     }
 
+    private void calculateLidAngle() {
+        if (this.world != null) {
+            this.prevLidAngle = this.lidAngle;
+
+            boolean shouldLidBeOpened = this.numPlayersUsing > 0 || (this.canSmelt(getRecipe()) && this.isSunlit());
+            if (shouldLidBeOpened && this.lidAngle == 0.0F) {
+                this.playSound(SoundEvents.BLOCK_CHEST_OPEN);
+                if (!this.world.isRemote) {
+                    this.markDirty();
+                }
+            }
+            if (!shouldLidBeOpened && this.lidAngle > 0.0F || shouldLidBeOpened && this.lidAngle < 1.0F) {
+                float f1 = this.lidAngle;
+                if (shouldLidBeOpened) {
+                    this.lidAngle += 0.1F;
+                } else {
+                    this.lidAngle -= 0.1F;
+                }
+                if (this.lidAngle > 1.0F) {
+                    this.lidAngle = 1.0F;
+                }
+                if (this.lidAngle < 0.5F && f1 >= 0.5F) {
+                    this.playSound(SoundEvents.BLOCK_CHEST_CLOSE);
+                }
+                if (this.lidAngle < 0.0F) {
+                    this.lidAngle = 0.0F;
+                }
+            }
+        }
+    }
+
+    /**
+     * This must return true serverside before it is called clientside.
+     */
+    @Override
+    public boolean receiveClientEvent(int id, int type) {
+        if (id == 1) {
+            this.numPlayersUsing = type;
+            return true;
+        } else {
+            return super.receiveClientEvent(id, type);
+        }
+    }
+
+    @Override
+    public void openInventory(PlayerEntity player) {
+        if (!player.isSpectator()) {
+            if (this.numPlayersUsing < 0) {
+                this.numPlayersUsing = 0;
+            }
+            ++this.numPlayersUsing;
+            this.onOpenOrClose();
+        }
+    }
+
+    @Override
+    public void closeInventory(PlayerEntity player) {
+        if (!player.isSpectator()) {
+            --this.numPlayersUsing;
+            this.onOpenOrClose();
+        }
+    }
+
+    protected void onOpenOrClose() {
+        Block block = this.getBlockState().getBlock();
+        if (this.world != null && block instanceof SolarCookerBlock) {
+            this.world.addBlockEvent(this.pos, block, 1, this.numPlayersUsing);
+            //this.world.notifyNeighborsOfStateChange(this.pos, block);
+        }
+    }
+
+    private void playSound(SoundEvent soundIn) {
+        if (this.world != null && !this.world.isRemote) {
+            double x = (double)this.pos.getX() + 0.5D;
+            double y = (double)this.pos.getY() + 0.5D;
+            double z = (double)this.pos.getZ() + 0.5D;
+            this.world.playSound(null, x, y, z, soundIn, SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
+        }
+    }
+
     protected boolean canSmelt(@Nullable IRecipe<?> recipe) {
-        if (!this.items.get(0).isEmpty() && recipe != null) {
+        if (!this.items.get(INPUT).isEmpty() && recipe != null) {
             ItemStack recipeOutput = recipe.getRecipeOutput();
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
@@ -176,9 +270,9 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     private void smeltItem(@Nullable IRecipe<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
-            ItemStack itemstack = this.items.get(0);
+            ItemStack itemstack = this.items.get(INPUT);
             ItemStack itemstack1 = recipe.getRecipeOutput();
-            ItemStack itemstack2 = this.items.get(1);
+            ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
             } else if (itemstack2.getItem() == itemstack1.getItem()) {
@@ -416,6 +510,14 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     public void remove() {
         super.remove();
         for (LazyOptional<? extends IItemHandler> handler : handlers) handler.invalidate();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public float getLidAngle(float partialTicks) {
+        if (this.world != null) {
+            return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
+        }
+        return 0;
     }
 
 }

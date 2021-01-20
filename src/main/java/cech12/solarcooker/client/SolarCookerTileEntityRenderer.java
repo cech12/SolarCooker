@@ -61,20 +61,8 @@ public class SolarCookerTileEntityRenderer extends TileEntityRenderer<SolarCooke
             matrixStackIn.translate(0.5D, 0.5D, 0.5D);
             matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-f));
             matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
-            /*
-            TileEntityMerger.ICallbackWrapper<? extends AbstractSolarCookerTileEntity> icallbackwrapper;
-             if (isInWorld) {
-                icallbackwrapper = abstractBlock.func_225536_a_(blockstate, world, tileEntityIn.getPos(), true);
-             } else {
-                icallbackwrapper = TileEntityMerger.ICallback::func_225537_b_;
-             }
-            float f1 = icallbackwrapper.<Float2FloatFunction>apply(AbstractSolarCookerBlock.func_226917_a_(tileEntityIn)).get(partialTicks);
-            f1 = 1.0F - f1;
-            f1 = 1.0F - f1 * f1 * f1;
-            int i = icallbackwrapper.<Int2IntFunction>apply(new DualBrightnessCallback<>()).applyAsInt(combinedLightIn);
-            */
             IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderType.getEntityTranslucent(TEXTURE));
-            float lidAngle = isInWorld ? 1 : 0;
+            float lidAngle = tileEntityIn.getLidAngle(partialTicks);
             this.renderModels(matrixStackIn, ivertexbuilder, this.singleLid, this.singleLatch, this.singleBottom, this.singleInner, lidAngle, combinedLightIn, combinedOverlayIn);
 
             //render item

@@ -30,6 +30,7 @@ public class SolarCookerContainer extends Container {
         this.specificRecipeType = specificRecipeTypeIn;
         assertInventorySize(cooker, 2);
         this.cooker = cooker;
+        cooker.openInventory(playerInventoryIn.player);
         this.world = playerInventoryIn.player.world;
 
         //add cooker inventory slots
@@ -122,6 +123,15 @@ public class SolarCookerContainer extends Container {
             }
         }
         return false;
+    }
+
+    /**
+     * Called when the container is closed.
+     */
+    @Override
+    public void onContainerClosed(@Nonnull PlayerEntity playerIn) {
+        super.onContainerClosed(playerIn);
+        this.cooker.closeInventory(playerIn);
     }
 
     @OnlyIn(Dist.CLIENT)
