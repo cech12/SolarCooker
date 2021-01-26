@@ -40,7 +40,7 @@ public class ReflectorBlock extends HorizontalBlock {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("item.solarcooker.reflector.description").func_240701_a_(TextFormatting.BLUE));
+        tooltip.add(new TranslationTextComponent("item.solarcooker.reflector.description").applyTextStyle(TextFormatting.BLUE)); //1.15
     }
 
     @Override

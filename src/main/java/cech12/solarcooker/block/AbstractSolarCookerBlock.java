@@ -1,7 +1,7 @@
 package cech12.solarcooker.block;
 
 import cech12.solarcooker.tileentity.AbstractSolarCookerTileEntity;
-import net.minecraft.block.AbstractBlock;
+//import net.minecraft.block.AbstractBlock; //1.16
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -25,9 +25,10 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d; //1.15
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
+//import net.minecraft.util.math.vector.Vector3d; //1.16
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -42,7 +43,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     protected static final VoxelShape SHAPE_OPEN = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
     protected static final VoxelShape SHAPE_CLOSED = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
-    protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
+    protected AbstractSolarCookerBlock(Block.Properties properties) { //1.15
         super(properties);
         this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH).with(SUNLIT, false).with(BURNING, false));
     }
@@ -90,11 +91,11 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     @Override
     @Deprecated
     public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.isIn(newState.getBlock())) {
+        if (state.getBlock() != newState.getBlock()) { //1.15
             TileEntity tileentity = worldIn.getTileEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
                 InventoryHelper.dropInventoryItems(worldIn, pos, (AbstractSolarCookerTileEntity)tileentity);
-                ((AbstractSolarCookerTileEntity)tileentity).func_235640_a_(worldIn, Vector3d.func_237489_a_(pos));
+                ((AbstractSolarCookerTileEntity)tileentity).func_235640_a_(worldIn, new Vec3d(pos.getX(), pos.getY(), pos.getZ())); //1.15
                 worldIn.updateComparatorOutputLevel(pos, this);
             }
 

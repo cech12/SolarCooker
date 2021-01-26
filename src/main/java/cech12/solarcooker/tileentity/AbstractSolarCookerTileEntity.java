@@ -34,7 +34,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d; //1.15
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -84,7 +84,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     public boolean isSunlit() {
         if (this.world != null) {
             if (!this.world.isRemote) {
-                return this.world.func_230315_m_().hasSkyLight()
+                return this.world.getDimension().hasSkyLight() //1.15
                         && this.world.isDaytime()
                         && !this.world.isRaining()
                         && this.world.canSeeSky(this.pos.up());
@@ -105,8 +105,8 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void read(@Nonnull BlockState stateIn, @Nonnull CompoundNBT nbtIn) {
-        super.read(stateIn, nbtIn);
+    public void read(@Nonnull CompoundNBT nbtIn) { //1.15
+        super.read(nbtIn); //1.15
         this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbtIn, this.items);
         this.cookTime = nbtIn.getInt("CookTime");
@@ -137,7 +137,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.read(this.getBlockState(), pkt.getNbtCompound());
+        this.read(pkt.getNbtCompound()); //1.15
     }
 
     @Override
@@ -495,7 +495,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         this.usedRecipes.clear();
     }
 
-    public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_) {
+    public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vec3d p_235640_2_) { //1.15
         List<IRecipe<?>> list = Lists.newArrayList();
 
         for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
@@ -508,7 +508,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         return list;
     }
 
-    private static void func_235641_a_(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
+    private static void func_235641_a_(World p_235641_0_, Vec3d p_235641_1_, int p_235641_2_, float p_235641_3_) { //1.15
         int i = MathHelper.floor((float)p_235641_2_ * p_235641_3_);
         float f = MathHelper.frac((float)p_235641_2_ * p_235641_3_);
         if (f != 0.0F && Math.random() < (double)f) {
