@@ -94,7 +94,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
             TileEntity tileentity = worldIn.getTileEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
                 InventoryHelper.dropInventoryItems(worldIn, pos, (AbstractSolarCookerTileEntity)tileentity);
-                ((AbstractSolarCookerTileEntity)tileentity).func_235640_a_(worldIn, Vector3d.func_237489_a_(pos));
+                ((AbstractSolarCookerTileEntity)tileentity).func_235640_a_(worldIn, Vector3d.copy(pos));
                 worldIn.updateComparatorOutputLevel(pos, this);
             }
 

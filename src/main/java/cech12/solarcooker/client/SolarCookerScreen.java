@@ -20,18 +20,21 @@ public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
         super(screenContainer, inv, titleIn);
     }
 
+    @Override
     public void init() {
         super.init();
-        this.field_238742_p_ = (this.xSize - this.font.func_238414_a_(this.title)) / 2;
+        this.titleX = (this.xSize - this.font.func_238414_a_(this.title)) / 2;
     }
 
+    @Override
     public void render(@Nonnull MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
         this.renderBackground(p_230430_1_);
         super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
         this.func_230459_a_(p_230430_1_, p_230430_2_, p_230430_3_);
     }
 
-    protected void func_230450_a_(@Nonnull MatrixStack p_230450_1_, float p_230450_2_, int p_230450_3_, int p_230450_4_) {
+    @Override
+    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack p_230450_1_, float partialTicks, int x, int y) {
         if (this.minecraft != null) {
             this.minecraft.getTextureManager().bindTexture(guiTexture);
             //draw gui
@@ -52,6 +55,7 @@ public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
         }
     }
 
+    @Override
     protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeftIn, int guiTopIn, int mouseButton) {
         return mouseX < (double)guiLeftIn || mouseY < (double)guiTopIn || mouseX >= (double)(guiLeftIn + this.xSize) || mouseY >= (double)(guiTopIn + this.ySize);
     }
