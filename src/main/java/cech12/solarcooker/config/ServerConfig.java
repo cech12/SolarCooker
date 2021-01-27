@@ -26,7 +26,7 @@ public class ServerConfig {
                 .comment("If enabled, the vanilla blasting, smelting, or smoking recipes are used by the solar cooker.")
                 .define("vanillaRecipesEnabled", true);
         VANILLA_RECIPE_TYPE = builder
-                .comment("Defines which vanilla recipes (blasting, smelting, smoking) the solar cooker can use. Possible values: \"smoking\" (default), \"smelting\", \"blasting\"")
+                .comment("Defines which vanilla recipes the solar cooker can use. Possible values: \"smoking\" (default), \"smelting\", \"blasting\", \"campfire_cooking\"")
                 .define("vanillaRecipeType", "smoking");
         COOK_TIME_FACTOR = builder
                 .comment("Cook time factor of the solar cooker in relation to corresponding vanilla furnace. (i. e. 0.5 - half the time, 1.0 same time, 2.0 twice the time)")
@@ -54,6 +54,8 @@ public class ServerConfig {
                 return IRecipeType.SMOKING;
             case "smelting":
                 return IRecipeType.SMELTING;
+            case "campfire_cooking":
+                return IRecipeType.CAMPFIRE_COOKING;
             case "blasting":
                 return IRecipeType.BLASTING;
         }
