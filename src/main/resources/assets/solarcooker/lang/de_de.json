@@ -1,6 +1,8 @@
 {
   "block.solarcooker.solar_cooker": "Solarkocher",
   "block.solarcooker.reflector": "Reflektor",
+  "block.solarcooker.shining_diamond_block": "Strahlender Diamantblock",
 
-  "item.solarcooker.reflector.description": "Links und rechts neben einem Solarkocher können bis zu vier Reflektoren platziert werden, um den Lichteinfall zu verbessern und die Kochzeit zu reduzieren."
+  "item.solarcooker.reflector.description": "Links und rechts neben einem Solarkocher können bis zu vier Reflektoren platziert werden, um den Lichteinfall zu verbessern und die Kochzeit zu reduzieren.",
+  "item.solarcooker.shining_diamond_block.description": "Shine bright! Kann über einem Solarkocher platziert werden, um ihn unabhängig von der Sonne zu nutzen."
 }

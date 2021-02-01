@@ -6,5 +6,6 @@ public class SolarCookerBlocks {
 
     public static Block SOLAR_COOKER;
     public static Block REFLECTOR;
+    public static Block SHINING_DIAMOND_BLOCK;
 
 }

@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "all": "solarcooker:block/shining_diamond_block"
+    }
+}

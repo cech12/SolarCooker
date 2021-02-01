@@ -4,6 +4,7 @@ import cech12.solarcooker.block.AbstractSolarCookerBlock;
 import cech12.solarcooker.block.ReflectorBlock;
 import cech12.solarcooker.block.SolarCookerBlock;
 import cech12.solarcooker.config.ServerConfig;
+import cech12.solarcooker.init.ModTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -81,13 +82,33 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected AbstractCookingRecipe curRecipe;
     protected ItemStack failedMatch = ItemStack.EMPTY;
 
+    private boolean hasShiningBlockAbove() {
+        if (this.world != null && !this.world.isRemote) {
+            BlockPos checkPos = this.pos.up();
+            if (this.world.getBlockState(checkPos).propagatesSkylightDown(this.world, checkPos)) {
+                for (int i = 0; i < 5; i++) {
+                    checkPos = checkPos.up();
+                    BlockState state = this.world.getBlockState(checkPos);
+                    if (state.isIn(ModTags.Blocks.SOLAR_COOKER_SHINING)) {
+                        return true;
+                    }
+                    if (!state.propagatesSkylightDown(this.world, checkPos)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isSunlit() {
         if (this.world != null) {
             if (!this.world.isRemote) {
-                return this.world.func_230315_m_().hasSkyLight()
+                return this.hasShiningBlockAbove() || (
+                        this.world.func_230315_m_().hasSkyLight()
                         && this.world.isDaytime()
                         && !this.world.isRaining()
-                        && this.world.canSeeSky(this.pos.up());
+                        && this.world.canSeeSky(this.pos.up()));
             } else {
                 //world.isDaytime() returns always true on client side
                 return AbstractSolarCookerTileEntity.this.getBlockState().get(SolarCookerBlock.SUNLIT);

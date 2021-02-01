@@ -3,13 +3,17 @@ package cech12.solarcooker.init;
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.block.ReflectorBlock;
+import cech12.solarcooker.block.ShiningDiamondBlock;
 import cech12.solarcooker.block.SolarCookerBlock;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +26,7 @@ public final class ModBlocks {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         SolarCookerBlocks.SOLAR_COOKER = registerBlock("solar_cooker", ItemGroup.DECORATIONS, new SolarCookerBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(2.5F, 3.5F).sound(SoundType.WOOD)));
         SolarCookerBlocks.REFLECTOR = registerBlock("reflector", ItemGroup.DECORATIONS, new ReflectorBlock(Block.Properties.create(Material.WOOD).hardnessAndResistance(2.0F).sound(SoundType.WOOD)));
+        SolarCookerBlocks.SHINING_DIAMOND_BLOCK = registerBlock("shining_diamond_block", ItemGroup.BUILDING_BLOCKS, new ShiningDiamondBlock(AbstractBlock.Properties.create(Material.IRON, MaterialColor.DIAMOND).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(5.0F, 6.0F).sound(SoundType.METAL).setLightLevel(state -> 15)));
     }
 
     public static Block registerBlock(String name, ItemGroup itemGroup, Block block) {

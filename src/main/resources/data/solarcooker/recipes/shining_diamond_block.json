@@ -1,0 +1,9 @@
+{
+  "type": "solarcooker:solarcooking",
+  "ingredient": {
+    "item": "minecraft:diamond_block"
+  },
+  "result": "solarcooker:shining_diamond_block",
+  "experience": 0.3,
+  "cookingtime": 3000
+}
