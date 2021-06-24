@@ -23,33 +23,33 @@ public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
     @Override
     public void init() {
         super.init();
-        this.titleX = (this.xSize - this.font.func_238414_a_(this.title)) / 2;
+        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
     }
 
     @Override
     public void render(@Nonnull MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
         this.renderBackground(p_230430_1_);
         super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-        this.func_230459_a_(p_230430_1_, p_230430_2_, p_230430_3_);
+        this.renderTooltip(p_230430_1_, p_230430_2_, p_230430_3_);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack p_230450_1_, float partialTicks, int x, int y) {
+    protected void renderBg(@Nonnull MatrixStack p_230450_1_, float partialTicks, int x, int y) {
         if (this.minecraft != null) {
-            this.minecraft.getTextureManager().bindTexture(guiTexture);
+            this.minecraft.getTextureManager().bind(guiTexture);
             //draw gui
-            int left = this.guiLeft;
-            int top = this.guiTop;
-            this.blit(p_230450_1_, left, top, 0, 0, this.xSize, this.ySize);
+            int left = this.leftPos;
+            int top = this.topPos;
+            this.blit(p_230450_1_, left, top, 0, 0, this.imageWidth, this.imageHeight);
             //draw flame
-            if (this.container.isBurning()) {
+            if (this.menu.isBurning()) {
                 this.blit(p_230450_1_, left + 56, top + 36, 176, 0, 14, 14);
             }
             //draw progress
-            int progress = this.container.getCookProgressionScaled();
+            int progress = this.menu.getCookProgressionScaled();
             this.blit(p_230450_1_, left + 79, top + 34, 176, 14, progress + 1, 16);
             //draw sun
-            if (this.container.isSunlit()) {
+            if (this.menu.isSunlit()) {
                 this.blit(p_230450_1_, left + 55, top + 52, 176, 31, 18, 18);
             }
         }
@@ -57,6 +57,6 @@ public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
 
     @Override
     protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeftIn, int guiTopIn, int mouseButton) {
-        return mouseX < (double)guiLeftIn || mouseY < (double)guiTopIn || mouseX >= (double)(guiLeftIn + this.xSize) || mouseY >= (double)(guiTopIn + this.ySize);
+        return mouseX < (double)guiLeftIn || mouseY < (double)guiTopIn || mouseX >= (double)(guiLeftIn + this.imageWidth) || mouseY >= (double)(guiTopIn + this.imageHeight);
     }
 }

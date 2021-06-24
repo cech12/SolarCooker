@@ -22,7 +22,7 @@ public final class ModTileEntities {
     }
 
     private static <T extends TileEntity> TileEntityType<T> register(Supplier<T> supplier, String registryName, Block block, RegistryEvent.Register<TileEntityType<?>> registryEvent) {
-        TileEntityType<T> tileEntityType = TileEntityType.Builder.create(supplier, block).build(null);
+        TileEntityType<T> tileEntityType = TileEntityType.Builder.of(supplier, block).build(null);
         tileEntityType.setRegistryName(registryName);
         registryEvent.getRegistry().register(tileEntityType);
         return tileEntityType;

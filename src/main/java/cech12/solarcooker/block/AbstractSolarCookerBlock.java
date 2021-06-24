@@ -35,16 +35,16 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nonnull;
 
 public abstract class AbstractSolarCookerBlock extends ContainerBlock {
-    public static final DirectionProperty FACING = HorizontalBlock.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = HorizontalBlock.FACING;
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
 
-    protected static final VoxelShape SHAPE_OPEN = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
-    protected static final VoxelShape SHAPE_CLOSED = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
+    protected static final VoxelShape SHAPE_OPEN = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
+    protected static final VoxelShape SHAPE_CLOSED = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
     protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
         super(properties);
-        this.setDefaultState(this.stateContainer.getBaseState().with(FACING, Direction.NORTH).with(SUNLIT, false).with(BURNING, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SUNLIT, false).setValue(BURNING, false));
     }
 
     @Override
@@ -54,8 +54,8 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Nonnull
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        if (worldIn.isRemote) {
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
+        if (worldIn.isClientSide) {
             return ActionResultType.SUCCESS;
         } else {
             this.interactWith(worldIn, pos, player);
@@ -70,18 +70,18 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     protected abstract void interactWith(World worldIn, BlockPos pos, PlayerEntity player);
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     /**
      * Called by ItemBlocks after a block is set in the world
      */
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
-        if (stack.hasDisplayName()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+    public void setPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
+        if (stack.hasCustomHoverName()) {
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
-                ((AbstractSolarCookerTileEntity)tileentity).setCustomName(stack.getDisplayName());
+                ((AbstractSolarCookerTileEntity)tileentity).setCustomName(stack.getHoverName());
             }
         }
 
@@ -89,29 +89,29 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Deprecated
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.isIn(newState.getBlock())) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
             if (tileentity instanceof AbstractSolarCookerTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, (AbstractSolarCookerTileEntity)tileentity);
-                ((AbstractSolarCookerTileEntity)tileentity).func_235640_a_(worldIn, Vector3d.copy(pos));
-                worldIn.updateComparatorOutputLevel(pos, this);
+                InventoryHelper.dropContents(worldIn, pos, (AbstractSolarCookerTileEntity)tileentity);
+                ((AbstractSolarCookerTileEntity)tileentity).getRecipesToAwardAndPopExperience(worldIn, Vector3d.atLowerCornerOf(pos));
+                worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Override
     @Deprecated
-    public boolean hasComparatorInputOverride(@Nonnull BlockState state) {
+    public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
         return true;
     }
 
     @Override
     @Deprecated
-    public int getComparatorInputOverride(@Nonnull BlockState blockState, World worldIn, @Nonnull BlockPos pos) {
-        return Container.calcRedstone(worldIn.getTileEntity(pos));
+    public int getAnalogOutputSignal(@Nonnull BlockState blockState, World worldIn, @Nonnull BlockPos pos) {
+        return Container.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
     }
 
     /**
@@ -119,14 +119,14 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      */
     @Override
     @Nonnull
-    public BlockRenderType getRenderType(@Nonnull BlockState state) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     @Nonnull
     public VoxelShape getShape(@Nonnull BlockState state, IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        TileEntity tile = worldIn.getTileEntity(pos);
+        TileEntity tile = worldIn.getBlockEntity(pos);
         if (tile instanceof AbstractSolarCookerTileEntity && ((AbstractSolarCookerTileEntity) tile).shouldLidBeOpen()) {
             return SHAPE_OPEN;
         }
@@ -140,7 +140,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     @Deprecated
     @Nonnull
     public BlockState rotate(BlockState state, Rotation rot) {
-        return state.with(FACING, rot.rotate(state.get(FACING)));
+        return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     /**
@@ -150,10 +150,10 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
     @Deprecated
     @Nonnull
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
-        return state.rotate(mirrorIn.toRotation(state.get(FACING)));
+        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING, SUNLIT, BURNING);
     }
 }

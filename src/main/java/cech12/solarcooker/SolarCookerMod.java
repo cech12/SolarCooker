@@ -58,7 +58,7 @@ public class SolarCookerMod {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onClientRegister(FMLClientSetupEvent event) {
-        ScreenManager.registerFactory((ContainerType<SolarCookerContainer>) SOLAR_COOKER, SolarCookerScreen::new);
+        ScreenManager.register((ContainerType<SolarCookerContainer>) SOLAR_COOKER, SolarCookerScreen::new);
         ClientRegistry.bindTileEntityRenderer((TileEntityType<SolarCookerTileEntity>) SolarCookerTileEntities.SOLAR_COOKER, SolarCookerTileEntityRenderer::new);
     }
 

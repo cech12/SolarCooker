@@ -83,16 +83,16 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     protected ItemStack failedMatch = ItemStack.EMPTY;
 
     private boolean hasShiningBlockAbove() {
-        if (this.world != null && !this.world.isRemote) {
-            BlockPos checkPos = this.pos.up();
-            if (this.world.getBlockState(checkPos).propagatesSkylightDown(this.world, checkPos)) {
+        if (this.level != null && !this.level.isClientSide) {
+            BlockPos checkPos = this.worldPosition.above();
+            if (this.level.getBlockState(checkPos).propagatesSkylightDown(this.level, checkPos)) {
                 for (int i = 0; i < 5; i++) {
-                    checkPos = checkPos.up();
-                    BlockState state = this.world.getBlockState(checkPos);
-                    if (state.isIn(ModTags.Blocks.SOLAR_COOKER_SHINING)) {
+                    checkPos = checkPos.above();
+                    BlockState state = this.level.getBlockState(checkPos);
+                    if (state.is(ModTags.Blocks.SOLAR_COOKER_SHINING)) {
                         return true;
                     }
-                    if (!state.propagatesSkylightDown(this.world, checkPos)) {
+                    if (!state.propagatesSkylightDown(this.level, checkPos)) {
                         return false;
                     }
                 }
@@ -102,16 +102,16 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     public boolean isSunlit() {
-        if (this.world != null) {
-            if (!this.world.isRemote) {
+        if (this.level != null) {
+            if (!this.level.isClientSide) {
                 return this.hasShiningBlockAbove() || (
-                        this.world.func_230315_m_().hasSkyLight()
-                        && this.world.isDaytime()
-                        && !this.world.isRaining()
-                        && this.world.canSeeSky(this.pos.up()));
+                        this.level.dimensionType().hasSkyLight()
+                        && this.level.isDay()
+                        && !this.level.isRaining()
+                        && this.level.canSeeSky(this.worldPosition.above()));
             } else {
                 //world.isDaytime() returns always true on client side
-                return AbstractSolarCookerTileEntity.this.getBlockState().get(SolarCookerBlock.SUNLIT);
+                return AbstractSolarCookerTileEntity.this.getBlockState().getValue(SolarCookerBlock.SUNLIT);
             }
         }
         return false;
@@ -126,9 +126,9 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void read(@Nonnull BlockState stateIn, @Nonnull CompoundNBT nbtIn) {
-        super.read(stateIn, nbtIn);
-        this.items = NonNullList.withSize(this.getSizeInventory(), ItemStack.EMPTY);
+    public void load(@Nonnull BlockState stateIn, @Nonnull CompoundNBT nbtIn) {
+        super.load(stateIn, nbtIn);
+        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ItemStackHelper.loadAllItems(nbtIn, this.items);
         this.cookTime = nbtIn.getInt("CookTime");
         this.cookTimeTotal = nbtIn.getInt("CookTimeTotal");
@@ -136,8 +136,8 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     @Override
     @Nonnull
-    public CompoundNBT write(@Nonnull CompoundNBT compound) {
-        super.write(compound);
+    public CompoundNBT save(@Nonnull CompoundNBT compound) {
+        super.save(compound);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
         ItemStackHelper.saveAllItems(compound, this.items);
@@ -147,23 +147,23 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     @Override
     @Nonnull
     public CompoundNBT getUpdateTag() {
-        return this.write(new CompoundNBT());
+        return this.save(new CompoundNBT());
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, 0, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.getUpdateTag());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.read(this.getBlockState(), pkt.getNbtCompound());
+        this.load(this.getBlockState(), pkt.getTag());
     }
 
     @Override
     public void tick() {
-        if (this.world != null) {
+        if (this.level != null) {
             boolean dirty = false;
             this.calculateLidAngle();
             boolean isSunlit = this.isSunlit();
@@ -174,7 +174,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                     if (this.cookTime == this.cookTimeTotal) {
                         this.cookTime = 0;
                         this.cookTimeTotal = this.getRecipeCookTime();
-                        if (!this.world.isRemote) {
+                        if (!this.level.isClientSide) {
                             this.smeltItem(recipe);
                             dirty = true;
                         }
@@ -187,16 +187,16 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             }
 
             boolean isBurning = this.cookTime > 0;
-            if (!this.world.isRemote &&
-                    (this.getBlockState().get(SolarCookerBlock.BURNING) != isBurning
-                            || this.getBlockState().get(SolarCookerBlock.SUNLIT) != isSunlit)) {
+            if (!this.level.isClientSide &&
+                    (this.getBlockState().getValue(SolarCookerBlock.BURNING) != isBurning
+                            || this.getBlockState().getValue(SolarCookerBlock.SUNLIT) != isSunlit)) {
                 dirty = true;
-                this.world.setBlockState(this.pos, this.world.getBlockState(this.pos)
-                        .with(SolarCookerBlock.SUNLIT, isSunlit)
-                        .with(SolarCookerBlock.BURNING, isBurning), 3);
+                this.level.setBlock(this.worldPosition, this.level.getBlockState(this.worldPosition)
+                        .setValue(SolarCookerBlock.SUNLIT, isSunlit)
+                        .setValue(SolarCookerBlock.BURNING, isBurning), 3);
             }
             if (dirty) {
-                this.markDirty();
+                this.setChanged();
             }
         }
     }
@@ -206,14 +206,14 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     private void calculateLidAngle() {
-        if (this.world != null) {
+        if (this.level != null) {
             this.prevLidAngle = this.lidAngle;
 
             boolean shouldLidBeOpen = shouldLidBeOpen();
             if (shouldLidBeOpen && this.lidAngle == 0.0F) {
-                this.playSound(SoundEvents.BLOCK_CHEST_OPEN);
-                if (!this.world.isRemote) {
-                    this.markDirty();
+                this.playSound(SoundEvents.CHEST_OPEN);
+                if (!this.level.isClientSide) {
+                    this.setChanged();
                 }
             }
             if (!shouldLidBeOpen && this.lidAngle > 0.0F || shouldLidBeOpen && this.lidAngle < 1.0F) {
@@ -227,7 +227,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                     this.lidAngle = 1.0F;
                 }
                 if (this.lidAngle < 0.5F && f1 >= 0.5F) {
-                    this.playSound(SoundEvents.BLOCK_CHEST_CLOSE);
+                    this.playSound(SoundEvents.CHEST_CLOSE);
                 }
                 if (this.lidAngle < 0.0F) {
                     this.lidAngle = 0.0F;
@@ -240,17 +240,17 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * This must return true serverside before it is called clientside.
      */
     @Override
-    public boolean receiveClientEvent(int id, int type) {
+    public boolean triggerEvent(int id, int type) {
         if (id == 1) {
             this.numPlayersUsing = type;
             return true;
         } else {
-            return super.receiveClientEvent(id, type);
+            return super.triggerEvent(id, type);
         }
     }
 
     @Override
-    public void openInventory(PlayerEntity player) {
+    public void startOpen(PlayerEntity player) {
         if (!player.isSpectator()) {
             if (this.numPlayersUsing < 0) {
                 this.numPlayersUsing = 0;
@@ -261,7 +261,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void closeInventory(PlayerEntity player) {
+    public void stopOpen(PlayerEntity player) {
         if (!player.isSpectator()) {
             --this.numPlayersUsing;
             this.onOpenOrClose();
@@ -270,28 +270,28 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     protected void onOpenOrClose() {
         Block block = this.getBlockState().getBlock();
-        if (this.world != null && block instanceof SolarCookerBlock) {
-            this.world.addBlockEvent(this.pos, block, 1, this.numPlayersUsing);
+        if (this.level != null && block instanceof SolarCookerBlock) {
+            this.level.blockEvent(this.worldPosition, block, 1, this.numPlayersUsing);
             //this.world.notifyNeighborsOfStateChange(this.pos, block);
         }
     }
 
     private void playSound(SoundEvent soundIn) {
-        if (this.world != null && !this.world.isRemote) {
-            double x = (double)this.pos.getX() + 0.5D;
-            double y = (double)this.pos.getY() + 0.5D;
-            double z = (double)this.pos.getZ() + 0.5D;
-            this.world.playSound(null, x, y, z, soundIn, SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
+        if (this.level != null && !this.level.isClientSide) {
+            double x = (double)this.worldPosition.getX() + 0.5D;
+            double y = (double)this.worldPosition.getY() + 0.5D;
+            double z = (double)this.worldPosition.getZ() + 0.5D;
+            this.level.playSound(null, x, y, z, soundIn, SoundCategory.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 
     protected boolean canSmelt(@Nullable IRecipe<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = recipe.getRecipeOutput();
+            ItemStack recipeOutput = recipe.getResultItem();
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
-                else if (!output.isItemEqual(recipeOutput)) return false;
+                else if (!output.sameItem(recipeOutput)) return false;
                 else return output.getCount() + recipeOutput.getCount() <= output.getMaxStackSize();
             }
         }
@@ -301,7 +301,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     private void smeltItem(@Nullable IRecipe<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = recipe.getRecipeOutput();
+            ItemStack itemstack1 = recipe.getResultItem();
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
@@ -309,7 +309,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                 itemstack2.grow(itemstack1.getCount());
             }
 
-            if (this.world != null && !this.world.isRemote) {
+            if (this.level != null && !this.level.isClientSide) {
                 this.setRecipeUsed(recipe);
             }
 
@@ -325,25 +325,25 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         this.checkForReflectors();
         double reflectorFactor = (this.reflectorCount > 0) ? 1 - ((1 - ServerConfig.MAX_REFLECTOR_TIME_FACTOR.get()) / 4.0D) * this.reflectorCount : 1;
         if (this.specificRecipeType.getClass().isInstance(rec.getType())) {
-            return (int) (rec.getCookTime() * reflectorFactor);
+            return (int) (rec.getCookingTime() * reflectorFactor);
         }
-        return (int) (rec.getCookTime() * (ServerConfig.COOK_TIME_FACTOR.get() * reflectorFactor));
+        return (int) (rec.getCookingTime() * (ServerConfig.COOK_TIME_FACTOR.get() * reflectorFactor));
     }
 
     @SuppressWarnings("unchecked")
     protected AbstractCookingRecipe getRecipe() {
-        ItemStack input = this.getStackInSlot(INPUT);
+        ItemStack input = this.getItem(INPUT);
         if (input.isEmpty() || input == failedMatch) {
             return null;
         }
-        if (this.world != null && curRecipe != null && curRecipe.matches(this, world)) {
+        if (this.level != null && curRecipe != null && curRecipe.matches(this, level)) {
             return curRecipe;
         } else {
             AbstractCookingRecipe rec = null;
-            if (this.world != null) {
-                rec = this.world.getRecipeManager().getRecipe((IRecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.world).orElse(null);
+            if (this.level != null) {
+                rec = this.level.getRecipeManager().getRecipeFor((IRecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.level).orElse(null);
                 if (rec == null && ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
-                    rec = this.world.getRecipeManager().getRecipes((IRecipeType<AbstractCookingRecipe>) ServerConfig.getRecipeType(), this, this.world)
+                    rec = this.level.getRecipeManager().getRecipesFor((IRecipeType<AbstractCookingRecipe>) ServerConfig.getRecipeType(), this, this.level)
                             .stream().filter(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId())).findFirst().orElse(null);
                 }
             }
@@ -358,24 +358,24 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     private void checkForReflectors() {
         this.reflectorCount = 0;
-        if (this.world != null) {
-            BlockState state = this.world.getBlockState(this.pos);
+        if (this.level != null) {
+            BlockState state = this.level.getBlockState(this.worldPosition);
             if (state.getBlock() instanceof AbstractSolarCookerBlock) {
-                Direction facing = state.get(AbstractSolarCookerBlock.FACING);
-                this.reflectorCount += countReflectorsOnSide(facing.rotateY());
-                this.reflectorCount += countReflectorsOnSide(facing.rotateYCCW());
+                Direction facing = state.getValue(AbstractSolarCookerBlock.FACING);
+                this.reflectorCount += countReflectorsOnSide(facing.getClockWise());
+                this.reflectorCount += countReflectorsOnSide(facing.getCounterClockWise());
             }
         }
     }
 
     private int countReflectorsOnSide(Direction direction) {
         int count = 0;
-        if (this.world != null) {
-            BlockPos blockPos = this.pos.offset(direction);
-            for (BlockPos position : new BlockPos[] {blockPos, blockPos.up()}) {
-                BlockState state = this.world.getBlockState(position);
+        if (this.level != null) {
+            BlockPos blockPos = this.worldPosition.relative(direction);
+            for (BlockPos position : new BlockPos[] {blockPos, blockPos.above()}) {
+                BlockState state = this.level.getBlockState(position);
                 if (state.getBlock() instanceof ReflectorBlock
-                        && state.get(ReflectorBlock.HORIZONTAL_FACING) == direction.getOpposite()) {
+                        && state.getValue(ReflectorBlock.FACING) == direction.getOpposite()) {
                     count++;
                 }
             }
@@ -396,15 +396,15 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * Returns true if automation can insert the given item in the given slot from the given side.
      */
     @Override
-    public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nullable Direction direction) {
-        return this.isItemValidForSlot(index, itemStackIn);
+    public boolean canPlaceItemThroughFace(int index, @Nonnull ItemStack itemStackIn, @Nullable Direction direction) {
+        return this.canPlaceItem(index, itemStackIn);
     }
 
     /**
      * Returns true if automation can extract the given item in the given slot from the given side.
      */
     @Override
-    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nullable Direction direction) {
+    public boolean canTakeItemThroughFace(int index, @Nonnull ItemStack stack, @Nullable Direction direction) {
         return direction != Direction.UP && index == OUTPUT;
     }
 
@@ -412,7 +412,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * Returns the number of slots in the inventory.
      */
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return this.items.size();
     }
 
@@ -431,7 +431,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      */
     @Override
     @Nonnull
-    public ItemStack getStackInSlot(int index) {
+    public ItemStack getItem(int index) {
         return this.items.get(index);
     }
 
@@ -440,8 +440,8 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      */
     @Override
     @Nonnull
-    public ItemStack decrStackSize(int index, int count) {
-        return ItemStackHelper.getAndSplit(this.items, index, count);
+    public ItemStack removeItem(int index, int count) {
+        return ItemStackHelper.removeItem(this.items, index, count);
     }
 
     /**
@@ -449,25 +449,25 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      */
     @Override
     @Nonnull
-    public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove(this.items, index);
+    public ItemStack removeItemNoUpdate(int index) {
+        return ItemStackHelper.takeItem(this.items, index);
     }
 
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
      */
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
+    public void setItem(int index, ItemStack stack) {
         ItemStack itemstack = this.items.get(index);
-        boolean flag = !stack.isEmpty() && stack.isItemEqual(itemstack) && ItemStack.areItemStackTagsEqual(stack, itemstack);
+        boolean flag = !stack.isEmpty() && stack.sameItem(itemstack) && ItemStack.tagMatches(stack, itemstack);
         this.items.set(index, stack);
-        if (stack.getCount() > this.getInventoryStackLimit()) {
-            stack.setCount(this.getInventoryStackLimit());
+        if (stack.getCount() > this.getMaxStackSize()) {
+            stack.setCount(this.getMaxStackSize());
         }
         if (index == 0 && !flag) {
             this.cookTimeTotal = this.getRecipeCookTime();
             this.cookTime = 0;
-            this.markDirty();
+            this.setChanged();
         }
     }
 
@@ -475,11 +475,11 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * Don't rename this method to canInteractWith due to conflicts with Container
      */
     @Override
-    public boolean isUsableByPlayer(@Nonnull PlayerEntity player) {
-        if (this.world != null && this.world.getTileEntity(this.pos) != this) {
+    public boolean stillValid(@Nonnull PlayerEntity player) {
+        if (this.level != null && this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
-            return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
+            return player.distanceToSqr((double)this.worldPosition.getX() + 0.5D, (double)this.worldPosition.getY() + 0.5D, (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
         }
     }
 
@@ -488,12 +488,12 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * guis use Slot.isItemValid
      */
     @Override
-    public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
+    public boolean canPlaceItem(int index, @Nonnull ItemStack stack) {
         return index == INPUT;
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         this.items.clear();
     }
 
@@ -510,26 +510,26 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         return null;
     }
 
-    public void func_235645_d_(PlayerEntity p_235645_1_) {
-        List<IRecipe<?>> list = this.func_235640_a_(p_235645_1_.world, p_235645_1_.getPositionVec());
-        p_235645_1_.unlockRecipes(list);
+    public void awardUsedRecipesAndPopExperience(PlayerEntity p_235645_1_) {
+        List<IRecipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level, p_235645_1_.position());
+        p_235645_1_.awardRecipes(list);
         this.usedRecipes.clear();
     }
 
-    public List<IRecipe<?>> func_235640_a_(World p_235640_1_, Vector3d p_235640_2_) {
+    public List<IRecipe<?>> getRecipesToAwardAndPopExperience(World p_235640_1_, Vector3d p_235640_2_) {
         List<IRecipe<?>> list = Lists.newArrayList();
 
         for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
-            p_235640_1_.getRecipeManager().getRecipe(entry.getKey()).ifPresent((p_235642_4_) -> {
+            p_235640_1_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_235642_4_) -> {
                 list.add(p_235642_4_);
-                func_235641_a_(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).getExperience());
+                createExperience(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).getExperience());
             });
         }
 
         return list;
     }
 
-    private static void func_235641_a_(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
+    private static void createExperience(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
         int i = MathHelper.floor((float)p_235641_2_ * p_235641_3_);
         float f = MathHelper.frac((float)p_235641_2_ * p_235641_3_);
         if (f != 0.0F && Math.random() < (double)f) {
@@ -537,9 +537,9 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         }
 
         while(i > 0) {
-            int j = ExperienceOrbEntity.getXPSplit(i);
+            int j = ExperienceOrbEntity.getExperienceValue(i);
             i -= j;
-            p_235641_0_.addEntity(new ExperienceOrbEntity(p_235641_0_, p_235641_1_.x, p_235641_1_.y, p_235641_1_.z, j));
+            p_235641_0_.addFreshEntity(new ExperienceOrbEntity(p_235641_0_, p_235641_1_.x, p_235641_1_.y, p_235641_1_.z, j));
         }
 
     }
@@ -554,7 +554,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-        if (!this.removed && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (!this.remove && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == Direction.UP)
                 return handlers[0].cast();
             else
@@ -567,14 +567,14 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * invalidates a tile entity
      */
     @Override
-    public void remove() {
-        super.remove();
+    public void setRemoved() {
+        super.setRemoved();
         for (LazyOptional<? extends IItemHandler> handler : handlers) handler.invalidate();
     }
 
     @OnlyIn(Dist.CLIENT)
     public float getLidAngle(float partialTicks) {
-        if (this.world != null) {
+        if (this.level != null) {
             return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
         }
         return 0;

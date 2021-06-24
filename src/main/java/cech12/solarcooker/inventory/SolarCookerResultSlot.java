@@ -17,10 +17,10 @@ public class SolarCookerResultSlot extends FurnaceResultSlot {
     }
 
     @Override
-    protected void onCrafting(@Nonnull ItemStack stack) {
-        super.onCrafting(stack);
-        if (!this.player.world.isRemote && this.inventory instanceof AbstractSolarCookerTileEntity) {
-            ((AbstractSolarCookerTileEntity)this.inventory).func_235645_d_(this.player);
+    protected void checkTakeAchievements(@Nonnull ItemStack stack) {
+        super.checkTakeAchievements(stack);
+        if (!this.player.level.isClientSide && this.container instanceof AbstractSolarCookerTileEntity) {
+            ((AbstractSolarCookerTileEntity)this.container).awardUsedRecipesAndPopExperience(this.player);
         }
     }
 }

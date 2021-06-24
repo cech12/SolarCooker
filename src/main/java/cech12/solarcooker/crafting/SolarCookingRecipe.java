@@ -24,12 +24,12 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
     }
 
     public static SolarCookingRecipe convert(@Nonnull AbstractCookingRecipe recipe) {
-        return new SolarCookingRecipe(recipe.getId(), recipe.getGroup(), recipe.getIngredients().get(0), recipe.getRecipeOutput(), recipe.getExperience(), (int) (recipe.getCookTime() * ServerConfig.COOK_TIME_FACTOR.get()));
+        return new SolarCookingRecipe(recipe.getId(), recipe.getGroup(), recipe.getIngredients().get(0), recipe.getResultItem(), recipe.getExperience(), (int) (recipe.getCookingTime() * ServerConfig.COOK_TIME_FACTOR.get()));
     }
 
     @Override
     @Nonnull
-    public ItemStack getIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(SolarCookerBlocks.SOLAR_COOKER);
     }
 

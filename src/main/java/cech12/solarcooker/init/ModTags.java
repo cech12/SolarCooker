@@ -14,7 +14,7 @@ public class ModTags {
         public static final ITag.INamedTag<Block> SOLAR_COOKER_SHINING = tag("solar_cooker_shining");
 
         private static ITag.INamedTag<Block> tag(@Nonnull String name) {
-            return BlockTags.makeWrapperTag(SolarCookerMod.MOD_ID + ":" + name);
+            return BlockTags.bind(SolarCookerMod.MOD_ID + ":" + name);
         }
     }
 }

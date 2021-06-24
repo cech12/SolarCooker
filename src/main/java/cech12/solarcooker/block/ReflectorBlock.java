@@ -21,12 +21,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class ReflectorBlock extends HorizontalBlock {
 
-    protected static final VoxelShape SHAPE_NORTH = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 5.0D);
-    protected static final VoxelShape SHAPE_EAST = Block.makeCuboidShape(11.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    protected static final VoxelShape SHAPE_SOUTH = Block.makeCuboidShape(0.0D, 0.0D, 11.0D, 16.0D, 16.0D, 16.0D);
-    protected static final VoxelShape SHAPE_WEST = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 5.0D, 16.0D, 16.0D);
+    protected static final VoxelShape SHAPE_NORTH = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 5.0D);
+    protected static final VoxelShape SHAPE_EAST = Block.box(11.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    protected static final VoxelShape SHAPE_SOUTH = Block.box(0.0D, 0.0D, 11.0D, 16.0D, 16.0D, 16.0D);
+    protected static final VoxelShape SHAPE_WEST = Block.box(0.0D, 0.0D, 0.0D, 5.0D, 16.0D, 16.0D);
 
     public ReflectorBlock(Properties properties) {
         super(properties);
@@ -38,15 +40,15 @@ public class ReflectorBlock extends HorizontalBlock {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("item.solarcooker.reflector.description").mergeStyle(TextFormatting.BLUE));
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
+        tooltip.add(new TranslationTextComponent("item.solarcooker.reflector.description").withStyle(TextFormatting.BLUE));
     }
 
     @Override
     @Nonnull
     public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        switch(state.get(HORIZONTAL_FACING)) {
+        switch(state.getValue(FACING)) {
             case EAST:
                 return SHAPE_EAST;
             case SOUTH:
@@ -60,14 +62,14 @@ public class ReflectorBlock extends HorizontalBlock {
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        Direction direction = context.getPlacementHorizontalFacing().getOpposite();
-        return this.getDefaultState().with(HORIZONTAL_FACING, direction);
+        Direction direction = context.getHorizontalDirection().getOpposite();
+        return this.defaultBlockState().setValue(FACING, direction);
     }
 
 }

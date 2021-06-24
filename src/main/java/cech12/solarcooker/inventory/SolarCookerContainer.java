@@ -28,10 +28,10 @@ public class SolarCookerContainer extends Container {
                                 PlayerInventory playerInventoryIn, AbstractSolarCookerTileEntity cooker) {
         super(SOLAR_COOKER, id);
         this.specificRecipeType = specificRecipeTypeIn;
-        assertInventorySize(cooker, 2);
+        checkContainerSize(cooker, 2);
         this.cooker = cooker;
-        cooker.openInventory(playerInventoryIn.player);
-        this.world = playerInventoryIn.player.world;
+        cooker.startOpen(playerInventoryIn.player);
+        this.world = playerInventoryIn.player.level;
 
         //add cooker inventory slots
         this.addSlot(new Slot(cooker, 0, 56, 17));
@@ -50,12 +50,12 @@ public class SolarCookerContainer extends Container {
 
     public SolarCookerContainer(IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
                                 PlayerInventory playerInventoryIn, BlockPos pos) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerTileEntity) playerInventoryIn.player.world.getTileEntity(pos));
+        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerTileEntity) playerInventoryIn.player.level.getBlockEntity(pos));
     }
 
     @Override
-    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-        return this.cooker.isUsableByPlayer(playerIn);
+    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+        return this.cooker.stillValid(playerIn);
     }
 
     /**
@@ -64,37 +64,37 @@ public class SolarCookerContainer extends Container {
      */
     @Override
     @Nonnull
-    public ItemStack transferStackInSlot(@Nonnull PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasItem()) {
+            ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index == 1) {
-                if (!this.mergeItemStack(itemstack1, 2, 38, true)) {
+                if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onSlotChange(itemstack1, itemstack);
+                slot.onQuickCraft(itemstack1, itemstack);
             } else if (index != 0) {
                 if (this.hasRecipe(itemstack1)) {
-                    if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
+                    if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else if (index >= 2 && index < 29) {
-                    if (!this.mergeItemStack(itemstack1, 29, 38, false)) {
+                    if (!this.moveItemStackTo(itemstack1, 29, 38, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index >= 29 && index < 38 && !this.mergeItemStack(itemstack1, 2, 29, false)) {
+                } else if (index >= 29 && index < 38 && !this.moveItemStackTo(itemstack1, 2, 29, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 2, 38, false)) {
+            } else if (!this.moveItemStackTo(itemstack1, 2, 38, false)) {
                 return ItemStack.EMPTY;
             }
 
             if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (itemstack1.getCount() == itemstack.getCount()) {
@@ -108,17 +108,17 @@ public class SolarCookerContainer extends Container {
     }
 
     @Override
-    public void putStackInSlot(int slotID, @Nonnull ItemStack stack) {
-        super.putStackInSlot(slotID, stack);
+    public void setItem(int slotID, @Nonnull ItemStack stack) {
+        super.setItem(slotID, stack);
     }
 
     protected boolean hasRecipe(ItemStack stack) {
         if (this.world != null) {
-            if (this.world.getRecipeManager().getRecipe(this.specificRecipeType, new Inventory(stack), this.world).isPresent()) {
+            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, new Inventory(stack), this.world).isPresent()) {
                 return true;
             }
             if (ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
-                return this.world.getRecipeManager().getRecipes(ServerConfig.getRecipeType(), new Inventory(stack), this.world)
+                return this.world.getRecipeManager().getRecipesFor(ServerConfig.getRecipeType(), new Inventory(stack), this.world)
                         .stream().anyMatch(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId()));
             }
         }
@@ -129,9 +129,9 @@ public class SolarCookerContainer extends Container {
      * Called when the container is closed.
      */
     @Override
-    public void onContainerClosed(@Nonnull PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        this.cooker.closeInventory(playerIn);
+    public void removed(@Nonnull PlayerEntity playerIn) {
+        super.removed(playerIn);
+        this.cooker.stopOpen(playerIn);
     }
 
     @OnlyIn(Dist.CLIENT)

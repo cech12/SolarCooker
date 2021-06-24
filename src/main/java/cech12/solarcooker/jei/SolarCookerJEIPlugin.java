@@ -34,10 +34,10 @@ public class SolarCookerJEIPlugin implements IModPlugin {
         ClientPlayerEntity player = Minecraft.getInstance().player;
         if (player != null) {
             RecipeManager manager = player.connection.getRecipeManager();
-            registration.addRecipes(manager.func_241447_a_(RecipeTypes.SOLAR_COOKING), RecipeTypes.SOLAR_COOKING_ID);
+            registration.addRecipes(manager.getAllRecipesFor(RecipeTypes.SOLAR_COOKING), RecipeTypes.SOLAR_COOKING_ID);
 
             if (ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
-                registration.addRecipes(manager.func_241447_a_(ServerConfig.getRecipeType()).stream()
+                registration.addRecipes(manager.getAllRecipesFor(ServerConfig.getRecipeType()).stream()
                         .filter(recipe -> ServerConfig.isRecipeNotBlacklisted(recipe.getId()))
                         .map(SolarCookingRecipe::convert)
                         .collect(Collectors.toList()), RecipeTypes.SOLAR_COOKING_ID);

@@ -26,14 +26,16 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+import net.minecraft.block.AbstractBlock;
+
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
-    public SolarCookerBlock(Block.Properties builder) {
+    public SolarCookerBlock(AbstractBlock.Properties builder) {
         super(builder);
     }
 
     @Override
-    public TileEntity createNewTileEntity(@Nonnull IBlockReader worldIn) {
+    public TileEntity newBlockEntity(@Nonnull IBlockReader worldIn) {
         return new SolarCookerTileEntity();
     }
 
@@ -43,7 +45,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      */
     @Override
     protected void interactWith(World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
         if (tileentity instanceof SolarCookerTileEntity && player instanceof ServerPlayerEntity) {
             //player.openContainer((SolarCookerTileEntity) tileentity);
             NetworkHooks.openGui((ServerPlayerEntity) player, (SolarCookerTileEntity) tileentity, pos);
@@ -55,12 +57,12 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      */
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
-        if (stateIn.get(BURNING)) {
+        if (stateIn.getValue(BURNING)) {
             double d0 = (double)pos.getX() + 0.5D;
             double d1 = pos.getY();
             double d2 = (double)pos.getZ() + 0.5D;
             if (rand.nextDouble() < 0.1D) {
-                worldIn.playSound(d0, d1, d2, SoundEvents.BLOCK_SMOKER_SMOKE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+                worldIn.playLocalSound(d0, d1, d2, SoundEvents.SMOKER_SMOKE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
 
             worldIn.addParticle(ParticleTypes.SMOKE, d0, d1 + 0.6D, d2, 0.0D, 0.0D, 0.0D);
@@ -74,7 +76,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
             @Override
             //render
-            public void func_239207_a_(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
+            public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
                 if (tile == null) {
                     tile = new SolarCookerTileEntity();
                 }
