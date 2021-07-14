@@ -179,8 +179,19 @@ public class ReflectorBlock extends Block {
 
     @Override
     public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
-        //TODO
-        return super.rotate(state, world, pos, direction);
+        int bits;
+        if (direction == Rotation.CLOCKWISE_90) {
+            bits = 1;
+        } else if (direction == Rotation.CLOCKWISE_180) {
+            bits = 2;
+        } else if (direction == Rotation.COUNTERCLOCKWISE_90) {
+            bits = 3;
+        } else {
+            return state;
+        }
+        int type = state.getValue(TYPE);
+        int rotated = ((type >> bits) | type << (4 - bits)) & 0xF;
+        return state.setValue(TYPE, rotated);
     }
 
     @Override
