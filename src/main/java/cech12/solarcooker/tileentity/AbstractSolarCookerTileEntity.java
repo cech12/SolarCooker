@@ -375,7 +375,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             for (BlockPos position : new BlockPos[] {blockPos, blockPos.above()}) {
                 BlockState state = this.level.getBlockState(position);
                 if (state.getBlock() instanceof ReflectorBlock
-                        && state.getValue(ReflectorBlock.FACING) == direction.getOpposite()) {
+                        && ReflectorBlock.isFacingTo(state, direction.getOpposite())) {
                     count++;
                 }
             }

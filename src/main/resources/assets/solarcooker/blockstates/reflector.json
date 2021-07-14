@@ -1,19 +1,68 @@
 {
     "variants": {
-        "facing=north": {
+        "type=0": {
+            "_comment": "type=0 will be removed in 1.17",
             "model": "solarcooker:block/reflector"
         },
-        "facing=south": {
+
+        "type=8": {
+            "model": "solarcooker:block/reflector"
+        },
+        "type=2": {
             "model": "solarcooker:block/reflector",
             "y": 180
         },
-        "facing=west": {
+        "type=1": {
             "model": "solarcooker:block/reflector",
             "y": 270
         },
-        "facing=east": {
+        "type=4": {
             "model": "solarcooker:block/reflector",
             "y": 90
+        },
+
+        "type=5": {
+            "model": "solarcooker:block/reflector_2",
+            "y": 90
+        },
+        "type=10": {
+            "model": "solarcooker:block/reflector_2"
+        },
+
+        "type=3": {
+            "model": "solarcooker:block/reflector_l",
+            "y": 180
+        },
+        "type=6": {
+            "model": "solarcooker:block/reflector_l",
+            "y": 90
+        },
+        "type=9": {
+            "model": "solarcooker:block/reflector_l",
+            "y": 270
+        },
+        "type=12": {
+            "model": "solarcooker:block/reflector_l"
+        },
+
+        "type=7": {
+            "model": "solarcooker:block/reflector_u",
+            "y": 90
+        },
+        "type=11": {
+            "model": "solarcooker:block/reflector_u",
+            "y": 180
+        },
+        "type=13": {
+            "model": "solarcooker:block/reflector_u",
+            "y": 270
+        },
+        "type=14": {
+            "model": "solarcooker:block/reflector_u"
+        },
+
+        "type=15": {
+            "model": "solarcooker:block/reflector_o"
         }
     }
 }
