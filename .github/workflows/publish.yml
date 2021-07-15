@@ -4,8 +4,6 @@ name: Publish
 
 on:
   push:
-    branches:
-        - "1.16"
     tags:
         - "*"
 
