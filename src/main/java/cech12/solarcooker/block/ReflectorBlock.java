@@ -7,10 +7,8 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
-import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +20,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -35,9 +32,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 public class ReflectorBlock extends Block {
-    public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 15); //TODO remove 0 value in 1.17
-    @Deprecated //TODO will be removed in 1.17
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final IntegerProperty TYPE = IntegerProperty.create("type", 1, 15);
 
     protected static final List<Integer> TYPES_WITH_ONE_REFLECTOR = Arrays.asList(1, 2, 4, 8);
     protected static final List<Integer> TYPES_WITH_TWO_REFLECTORS = Arrays.asList(3, 5, 6, 9, 10, 12);
@@ -121,7 +116,7 @@ public class ReflectorBlock extends Block {
 
     public ReflectorBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(TYPE, 0).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.defaultBlockState().setValue(TYPE, getType(Direction.NORTH)));
     }
 
     @Override
@@ -158,7 +153,7 @@ public class ReflectorBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, FACING);
+        builder.add(TYPE);
     }
 
     @Override
@@ -192,14 +187,6 @@ public class ReflectorBlock extends Block {
         int type = state.getValue(TYPE);
         int rotated = ((type >> bits) | type << (4 - bits)) & 0xF;
         return state.setValue(TYPE, rotated);
-    }
-
-    @Override
-    public void onPlace(BlockState newState, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean p_220082_5_) {
-        //conversion of old facing property to new type property
-        if (newState.getValue(TYPE) == 0) {
-            world.setBlock(pos, newState.setValue(TYPE, getType(newState.getValue(FACING))), 2); //2 - no block update for neighbors
-        }
     }
 
 }
