@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Multiple Reflectors can now be placed into one block to face in multiple directions.
 - Attention: All Reflector blocks are facing to north after updating from an older mod version (sorry for that :/)
 - Update mod to Forge 1.16.5-36.1.0
+- Use assemble method instead of getResultItem in tile entity (see Forge 1.16.5-36.1.51)
 - changed versioning to fit [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/)
 - add some automated tests
 

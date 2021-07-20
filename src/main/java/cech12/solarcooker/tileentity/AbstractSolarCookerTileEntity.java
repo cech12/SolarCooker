@@ -287,7 +287,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     protected boolean canSmelt(@Nullable IRecipe<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = recipe.getResultItem();
+            ItemStack recipeOutput = ((IRecipe<ISidedInventory>) recipe).assemble(this);
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -301,7 +301,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     private void smeltItem(@Nullable IRecipe<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = recipe.getResultItem();
+            ItemStack itemstack1 = ((IRecipe<ISidedInventory>) recipe).assemble(this);
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
