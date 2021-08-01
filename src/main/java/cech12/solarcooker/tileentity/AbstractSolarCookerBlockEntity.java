@@ -8,37 +8,35 @@ import cech12.solarcooker.init.ModTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IRecipeHelperPopulator;
-import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeItemHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.LockableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.StackedContentsCompatible;
+import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -49,7 +47,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity {
+public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, LidBlockEntity {
 
     private static final int[] SLOTS = new int[]{0, 1};
     private static final int[] SLOTS_UP = new int[]{};
@@ -70,12 +68,12 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     /** The number of reflectors next to the cooker */
     protected int reflectorCount = 0;
 
-    protected final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
+    protected final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
 
-    public AbstractSolarCookerTileEntity(TileEntityType<?> tileTypeIn,
-                                         IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
-        super(tileTypeIn);
+    public AbstractSolarCookerBlockEntity(BlockEntityType<?> tileTypeIn, BlockPos pos, BlockState state,
+                                          RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
+        super(tileTypeIn, pos, state);
         this.specificRecipeType = specificRecipeTypeIn;
     }
 
@@ -111,7 +109,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
                         && this.level.canSeeSky(this.worldPosition.above()));
             } else {
                 //world.isDaytime() returns always true on client side
-                return AbstractSolarCookerTileEntity.this.getBlockState().getValue(SolarCookerBlock.SUNLIT);
+                return AbstractSolarCookerBlockEntity.this.getBlockState().getValue(SolarCookerBlock.SUNLIT);
             }
         }
         return false;
@@ -126,77 +124,76 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void load(@Nonnull BlockState stateIn, @Nonnull CompoundNBT nbtIn) {
-        super.load(stateIn, nbtIn);
+    public void load(@Nonnull CompoundTag nbtIn) {
+        super.load(nbtIn);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(nbtIn, this.items);
+        ContainerHelper.loadAllItems(nbtIn, this.items);
         this.cookTime = nbtIn.getInt("CookTime");
         this.cookTimeTotal = nbtIn.getInt("CookTimeTotal");
     }
 
     @Override
     @Nonnull
-    public CompoundNBT save(@Nonnull CompoundNBT compound) {
+    public CompoundTag save(@Nonnull CompoundTag compound) {
         super.save(compound);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
-        ItemStackHelper.saveAllItems(compound, this.items);
+        ContainerHelper.saveAllItems(compound, this.items);
         return compound;
     }
 
     @Override
     @Nonnull
-    public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return this.save(new CompoundTag());
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, 0, this.getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.getUpdateTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.load(this.getBlockState(), pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        this.load(pkt.getTag());
     }
 
-    @Override
-    public void tick() {
-        if (this.level != null) {
+    public static void tick(Level level, BlockPos pos, BlockState state, AbstractSolarCookerBlockEntity entity) {
+        if (level != null) {
             boolean dirty = false;
-            this.calculateLidAngle();
-            boolean isSunlit = this.isSunlit();
-            if (isSunlit && !this.items.get(INPUT).isEmpty()) {
-                AbstractCookingRecipe recipe = getRecipe();
-                if (this.canSmelt(recipe)) {
-                    this.cookTime++;
-                    if (this.cookTime == this.cookTimeTotal) {
-                        this.cookTime = 0;
-                        this.cookTimeTotal = this.getRecipeCookTime();
-                        if (!this.level.isClientSide) {
-                            this.smeltItem(recipe);
+            entity.calculateLidAngle();
+            boolean isSunlit = entity.isSunlit();
+            if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
+                AbstractCookingRecipe recipe = entity.getRecipe();
+                if (entity.canSmelt(recipe)) {
+                    entity.cookTime++;
+                    if (entity.cookTime == entity.cookTimeTotal) {
+                        entity.cookTime = 0;
+                        entity.cookTimeTotal = entity.getRecipeCookTime();
+                        if (!level.isClientSide) {
+                            entity.smeltItem(recipe);
                             dirty = true;
                         }
                     }
                 } else {
-                    this.cookTime = 0;
+                    entity.cookTime = 0;
                 }
-            } else if (!isSunlit && this.cookTime > 0) {
-                this.cookTime = MathHelper.clamp(this.cookTime - 2, 0, this.cookTimeTotal);
+            } else if (!isSunlit && entity.cookTime > 0) {
+                entity.cookTime = Mth.clamp(entity.cookTime - 2, 0, entity.cookTimeTotal);
             }
 
-            boolean isBurning = this.cookTime > 0;
-            if (!this.level.isClientSide &&
-                    (this.getBlockState().getValue(SolarCookerBlock.BURNING) != isBurning
-                            || this.getBlockState().getValue(SolarCookerBlock.SUNLIT) != isSunlit)) {
+            boolean isBurning = entity.cookTime > 0;
+            if (!level.isClientSide &&
+                    (entity.getBlockState().getValue(SolarCookerBlock.BURNING) != isBurning
+                            || entity.getBlockState().getValue(SolarCookerBlock.SUNLIT) != isSunlit)) {
                 dirty = true;
-                this.level.setBlock(this.worldPosition, this.level.getBlockState(this.worldPosition)
+                entity.level.setBlock(entity.worldPosition, entity.level.getBlockState(entity.worldPosition)
                         .setValue(SolarCookerBlock.SUNLIT, isSunlit)
                         .setValue(SolarCookerBlock.BURNING, isBurning), 3);
             }
             if (dirty) {
-                this.setChanged();
+                entity.setChanged();
             }
         }
     }
@@ -250,7 +247,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void startOpen(PlayerEntity player) {
+    public void startOpen(Player player) {
         if (!player.isSpectator()) {
             if (this.numPlayersUsing < 0) {
                 this.numPlayersUsing = 0;
@@ -261,7 +258,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void stopOpen(PlayerEntity player) {
+    public void stopOpen(Player player) {
         if (!player.isSpectator()) {
             --this.numPlayersUsing;
             this.onOpenOrClose();
@@ -281,13 +278,13 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
             double x = (double)this.worldPosition.getX() + 0.5D;
             double y = (double)this.worldPosition.getY() + 0.5D;
             double z = (double)this.worldPosition.getZ() + 0.5D;
-            this.level.playSound(null, x, y, z, soundIn, SoundCategory.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+            this.level.playSound(null, x, y, z, soundIn, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 
-    protected boolean canSmelt(@Nullable IRecipe<?> recipe) {
+    protected boolean canSmelt(@Nullable Recipe<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = ((IRecipe<ISidedInventory>) recipe).assemble(this);
+            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe).assemble(this);
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -298,10 +295,10 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         return false;
     }
 
-    private void smeltItem(@Nullable IRecipe<?> recipe) {
+    private void smeltItem(@Nullable Recipe<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = ((IRecipe<ISidedInventory>) recipe).assemble(this);
+            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this);
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
@@ -341,9 +338,9 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         } else {
             AbstractCookingRecipe rec = null;
             if (this.level != null) {
-                rec = this.level.getRecipeManager().getRecipeFor((IRecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.level).orElse(null);
+                rec = this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.level).orElse(null);
                 if (rec == null && ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
-                    rec = this.level.getRecipeManager().getRecipesFor((IRecipeType<AbstractCookingRecipe>) ServerConfig.getRecipeType(), this, this.level)
+                    rec = this.level.getRecipeManager().getRecipesFor((RecipeType<AbstractCookingRecipe>) ServerConfig.getRecipeType(), this, this.level)
                             .stream().filter(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId())).findFirst().orElse(null);
                 }
             }
@@ -441,7 +438,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     @Override
     @Nonnull
     public ItemStack removeItem(int index, int count) {
-        return ItemStackHelper.removeItem(this.items, index, count);
+        return ContainerHelper.removeItem(this.items, index, count);
     }
 
     /**
@@ -450,7 +447,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     @Override
     @Nonnull
     public ItemStack removeItemNoUpdate(int index) {
-        return ItemStackHelper.takeItem(this.items, index);
+        return ContainerHelper.takeItem(this.items, index);
     }
 
     /**
@@ -475,7 +472,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
      * Don't rename this method to canInteractWith due to conflicts with Container
      */
     @Override
-    public boolean stillValid(@Nonnull PlayerEntity player) {
+    public boolean stillValid(@Nonnull Player player) {
         if (this.level != null && this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
@@ -498,7 +495,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     }
 
     @Override
-    public void setRecipeUsed(@Nullable IRecipe<?> recipe) {
+    public void setRecipeUsed(@Nullable Recipe<?> recipe) {
         if (recipe != null) {
             this.usedRecipes.addTo(recipe.getId(), 1);
         }
@@ -506,18 +503,18 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
 
     @Override
     @Nullable
-    public IRecipe<?> getRecipeUsed() {
+    public Recipe<?> getRecipeUsed() {
         return null;
     }
 
-    public void awardUsedRecipesAndPopExperience(PlayerEntity p_235645_1_) {
-        List<IRecipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level, p_235645_1_.position());
+    public void awardUsedRecipesAndPopExperience(Player p_235645_1_) {
+        List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level, p_235645_1_.position());
         p_235645_1_.awardRecipes(list);
         this.usedRecipes.clear();
     }
 
-    public List<IRecipe<?>> getRecipesToAwardAndPopExperience(World p_235640_1_, Vector3d p_235640_2_) {
-        List<IRecipe<?>> list = Lists.newArrayList();
+    public List<Recipe<?>> getRecipesToAwardAndPopExperience(Level p_235640_1_, Vec3 p_235640_2_) {
+        List<Recipe<?>> list = Lists.newArrayList();
 
         for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
             p_235640_1_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_235642_4_) -> {
@@ -529,22 +526,22 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         return list;
     }
 
-    private static void createExperience(World p_235641_0_, Vector3d p_235641_1_, int p_235641_2_, float p_235641_3_) {
-        int i = MathHelper.floor((float)p_235641_2_ * p_235641_3_);
-        float f = MathHelper.frac((float)p_235641_2_ * p_235641_3_);
+    private static void createExperience(Level p_235641_0_, Vec3 p_235641_1_, int p_235641_2_, float p_235641_3_) {
+        int i = Mth.floor((float)p_235641_2_ * p_235641_3_);
+        float f = Mth.frac((float)p_235641_2_ * p_235641_3_);
         if (f != 0.0F && Math.random() < (double)f) {
             ++i;
         }
 
         while(i > 0) {
-            int j = ExperienceOrbEntity.getExperienceValue(i);
+            int j = ExperienceOrb.getExperienceValue(i);
             i -= j;
-            p_235641_0_.addFreshEntity(new ExperienceOrbEntity(p_235641_0_, p_235641_1_.x, p_235641_1_.y, p_235641_1_.z, j));
+            p_235641_0_.addFreshEntity(new ExperienceOrb(p_235641_0_, p_235641_1_.x, p_235641_1_.y, p_235641_1_.z, j));
         }
 
     }
 
-    public void fillStackedContents(@Nonnull RecipeItemHelper helper) {
+    public void fillStackedContents(@Nonnull StackedContents helper) {
         for(ItemStack itemstack : this.items) {
             helper.accountStack(itemstack);
         }
@@ -553,6 +550,7 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
     LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this, Direction.UP, Direction.NORTH);
 
     @Override
+    @Nonnull
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
         if (!this.remove && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == Direction.UP)
@@ -563,19 +561,16 @@ public abstract class AbstractSolarCookerTileEntity extends LockableTileEntity i
         return super.getCapability(capability, facing);
     }
 
-    /**
-     * invalidates a tile entity
-     */
     @Override
-    public void setRemoved() {
-        super.setRemoved();
+    protected void invalidateCaps() {
+        super.invalidateCaps();
         for (LazyOptional<? extends IItemHandler> handler : handlers) handler.invalidate();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public float getLidAngle(float partialTicks) {
+    @Override
+    public float getOpenNess(float partialTicks) {
         if (this.level != null) {
-            return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
+            return Mth.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
         }
         return 0;
     }

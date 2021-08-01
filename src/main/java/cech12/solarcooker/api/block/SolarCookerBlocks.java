@@ -1,6 +1,6 @@
 package cech12.solarcooker.api.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class SolarCookerBlocks {
 

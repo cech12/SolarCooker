@@ -2,21 +2,23 @@ package cech12.solarcooker.client;
 
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.inventory.SolarCookerContainer;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
+public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContainer> {
     private static final ResourceLocation guiTexture = new ResourceLocation(SolarCookerMod.MOD_ID, "textures/gui/container/solar_cooker.png");
 
-    public SolarCookerScreen(SolarCookerContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public SolarCookerScreen(SolarCookerContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
@@ -27,16 +29,18 @@ public class SolarCookerScreen extends ContainerScreen<SolarCookerContainer> {
     }
 
     @Override
-    public void render(@Nonnull MatrixStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
+    public void render(@Nonnull PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
         this.renderBackground(p_230430_1_);
         super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
         this.renderTooltip(p_230430_1_, p_230430_2_, p_230430_3_);
     }
 
     @Override
-    protected void renderBg(@Nonnull MatrixStack p_230450_1_, float partialTicks, int x, int y) {
+    protected void renderBg(@Nonnull PoseStack p_230450_1_, float partialTicks, int x, int y) {
         if (this.minecraft != null) {
-            this.minecraft.getTextureManager().bind(guiTexture);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, guiTexture);
             //draw gui
             int left = this.leftPos;
             int top = this.topPos;

@@ -1,5 +1,6 @@
 package cech12.solarcooker.jei;
 
+/*
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
@@ -12,14 +13,13 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
-
 @JeiPlugin
 public class SolarCookerJEIPlugin implements IModPlugin {
 
@@ -31,7 +31,7 @@ public class SolarCookerJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
             RecipeManager manager = player.connection.getRecipeManager();
             registration.addRecipes(manager.getAllRecipesFor(RecipeTypes.SOLAR_COOKING), RecipeTypes.SOLAR_COOKING_ID);
@@ -58,3 +58,4 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     }
 
 }
+ */

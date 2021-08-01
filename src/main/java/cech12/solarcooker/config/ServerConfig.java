@@ -2,9 +2,9 @@ package cech12.solarcooker.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.nio.file.Path;
@@ -48,18 +48,18 @@ public class ServerConfig {
         spec.setConfig(configData);
     }
 
-    public static IRecipeType<? extends AbstractCookingRecipe> getRecipeType() {
+    public static RecipeType<? extends AbstractCookingRecipe> getRecipeType() {
         switch (VANILLA_RECIPE_TYPE.get()) {
             case "smoking":
-                return IRecipeType.SMOKING;
+                return RecipeType.SMOKING;
             case "smelting":
-                return IRecipeType.SMELTING;
+                return RecipeType.SMELTING;
             case "campfire_cooking":
-                return IRecipeType.CAMPFIRE_COOKING;
+                return RecipeType.CAMPFIRE_COOKING;
             case "blasting":
-                return IRecipeType.BLASTING;
+                return RecipeType.BLASTING;
         }
-        return IRecipeType.SMOKING;
+        return RecipeType.SMOKING;
     }
 
     public static boolean isRecipeNotBlacklisted(final ResourceLocation id) {

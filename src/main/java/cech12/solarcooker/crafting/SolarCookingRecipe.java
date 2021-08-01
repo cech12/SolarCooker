@@ -3,18 +3,18 @@ package cech12.solarcooker.crafting;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.config.ServerConfig;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.CookingRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
 public class SolarCookingRecipe extends AbstractCookingRecipe {
 
-    public static final CookingRecipeSerializer<SolarCookingRecipe> SERIALIZER = new CookingRecipeSerializer<>(SolarCookingRecipe::new, 200);
+    public static final SimpleCookingSerializer<SolarCookingRecipe> SERIALIZER = new SimpleCookingSerializer<>(SolarCookingRecipe::new, 200);
     static {
         SERIALIZER.setRegistryName(RecipeTypes.SOLAR_COOKING_ID);
     }
@@ -35,7 +35,7 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
 
     @Override
     @Nonnull
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return SERIALIZER;
     }
 

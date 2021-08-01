@@ -1,12 +1,13 @@
 package cech12.solarcooker.jei;
 
+/*
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.crafting.SolarCookingRecipe;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.plugins.vanilla.cooking.AbstractCookingCategory;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
@@ -28,3 +29,4 @@ public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRe
         return SolarCookingRecipe.class;
     }
 }
+ */

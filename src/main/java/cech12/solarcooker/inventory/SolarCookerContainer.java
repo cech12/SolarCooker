@@ -1,17 +1,17 @@
 package cech12.solarcooker.inventory;
 
 import cech12.solarcooker.config.ServerConfig;
-import cech12.solarcooker.tileentity.AbstractSolarCookerTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,13 +19,13 @@ import javax.annotation.Nonnull;
 
 import static cech12.solarcooker.api.inventory.ContainerTypes.SOLAR_COOKER;
 
-public class SolarCookerContainer extends Container {
-    private final IRecipeType<? extends AbstractCookingRecipe> specificRecipeType;
-    private final AbstractSolarCookerTileEntity cooker;
-    protected final World world;
+public class SolarCookerContainer extends AbstractContainerMenu {
+    private final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
+    private final AbstractSolarCookerBlockEntity cooker;
+    protected final Level world;
 
-    public SolarCookerContainer(IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
-                                PlayerInventory playerInventoryIn, AbstractSolarCookerTileEntity cooker) {
+    public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
+                                Inventory playerInventoryIn, AbstractSolarCookerBlockEntity cooker) {
         super(SOLAR_COOKER, id);
         this.specificRecipeType = specificRecipeTypeIn;
         checkContainerSize(cooker, 2);
@@ -48,13 +48,13 @@ public class SolarCookerContainer extends Container {
         }
     }
 
-    public SolarCookerContainer(IRecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
-                                PlayerInventory playerInventoryIn, BlockPos pos) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerTileEntity) playerInventoryIn.player.level.getBlockEntity(pos));
+    public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
+                                Inventory playerInventoryIn, BlockPos pos) {
+        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerBlockEntity) playerInventoryIn.player.level.getBlockEntity(pos));
     }
 
     @Override
-    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+    public boolean stillValid(@Nonnull Player playerIn) {
         return this.cooker.stillValid(playerIn);
     }
 
@@ -64,7 +64,7 @@ public class SolarCookerContainer extends Container {
      */
     @Override
     @Nonnull
-    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(@Nonnull Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
@@ -108,17 +108,17 @@ public class SolarCookerContainer extends Container {
     }
 
     @Override
-    public void setItem(int slotID, @Nonnull ItemStack stack) {
-        super.setItem(slotID, stack);
+    public void setItem(int slotID, int stateId, @Nonnull ItemStack stack) {
+        super.setItem(slotID, stateId, stack);
     }
 
     protected boolean hasRecipe(ItemStack stack) {
         if (this.world != null) {
-            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, new Inventory(stack), this.world).isPresent()) {
+            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, new SimpleContainer(stack), this.world).isPresent()) {
                 return true;
             }
             if (ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
-                return this.world.getRecipeManager().getRecipesFor(ServerConfig.getRecipeType(), new Inventory(stack), this.world)
+                return this.world.getRecipeManager().getRecipesFor(ServerConfig.getRecipeType(), new SimpleContainer(stack), this.world)
                         .stream().anyMatch(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId()));
             }
         }
@@ -129,7 +129,7 @@ public class SolarCookerContainer extends Container {
      * Called when the container is closed.
      */
     @Override
-    public void removed(@Nonnull PlayerEntity playerIn) {
+    public void removed(@Nonnull Player playerIn) {
         super.removed(playerIn);
         this.cooker.stopOpen(playerIn);
     }

@@ -1,42 +1,44 @@
 package cech12.solarcooker.block;
 
-import cech12.solarcooker.tileentity.SolarCookerTileEntity;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import cech12.solarcooker.api.blockentity.SolarCookerBlockEntities;
+import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
+import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Random;
 
-import net.minecraft.block.AbstractBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
-    public SolarCookerBlock(AbstractBlock.Properties builder) {
+    public SolarCookerBlock(BlockBehaviour.Properties builder) {
         super(builder);
     }
 
+    @Nullable
     @Override
-    public TileEntity newBlockEntity(@Nonnull IBlockReader worldIn) {
-        return new SolarCookerTileEntity();
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+        return new SolarCookerBlockEntity(pos, state);
+    }
+
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
+        return createTickerHelper(entityType, (BlockEntityType<AbstractSolarCookerBlockEntity>) SolarCookerBlockEntities.SOLAR_COOKER, AbstractSolarCookerBlockEntity::tick);
     }
 
     /**
@@ -44,11 +46,11 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      * inside AbstractSolarCookerBlock.
      */
     @Override
-    protected void interactWith(World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player) {
-        TileEntity tileentity = worldIn.getBlockEntity(pos);
-        if (tileentity instanceof SolarCookerTileEntity && player instanceof ServerPlayerEntity) {
+    protected void interactWith(Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player) {
+        BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+        if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
             //player.openContainer((SolarCookerTileEntity) tileentity);
-            NetworkHooks.openGui((ServerPlayerEntity) player, (SolarCookerTileEntity) tileentity, pos);
+            NetworkHooks.openGui((ServerPlayer) player, (SolarCookerBlockEntity) blockEntity, pos);
         }
     }
 
@@ -56,32 +58,16 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      * Called periodically clientside on blocks near the player to show effects (like furnace fire particles).
      */
     @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void animateTick(BlockState stateIn, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
         if (stateIn.getValue(BURNING)) {
             double d0 = (double)pos.getX() + 0.5D;
             double d1 = pos.getY();
             double d2 = (double)pos.getZ() + 0.5D;
             if (rand.nextDouble() < 0.1D) {
-                worldIn.playLocalSound(d0, d1, d2, SoundEvents.SMOKER_SMOKE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+                worldIn.playLocalSound(d0, d1, d2, SoundEvents.SMOKER_SMOKE, SoundSource.BLOCKS, 1.0F, 1.0F, false);
             }
 
             worldIn.addParticle(ParticleTypes.SMOKE, d0, d1 + 0.6D, d2, 0.0D, 0.0D, 0.0D);
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void setISTER(Item.Properties props) {
-        props.setISTER(() -> () -> new ItemStackTileEntityRenderer() {
-            private SolarCookerTileEntity tile;
-
-            @Override
-            //render
-            public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int x, int y) {
-                if (tile == null) {
-                    tile = new SolarCookerTileEntity();
-                }
-                TileEntityRendererDispatcher.instance.renderItem(tile, matrix, buffer, x, y);
-            }
-        });
     }
 }

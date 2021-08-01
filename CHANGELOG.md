@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.17.1-1.0.0.1] - 2021-??-??
+### Changed
+- port to 1.17.1
+- jei compatibility deactivated
+- automatic tests deactivated
+
 ## [1.16.5-1.0.0.1] - 2021-07-20
 ### Changed
 - Multiple Reflectors can now be placed into one block to face in multiple directions.

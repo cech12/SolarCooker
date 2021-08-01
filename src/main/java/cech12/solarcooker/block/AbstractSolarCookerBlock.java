@@ -1,48 +1,48 @@
 package cech12.solarcooker.block;
 
-import cech12.solarcooker.tileentity.AbstractSolarCookerTileEntity;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Containers;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractSolarCookerBlock extends ContainerBlock {
-    public static final DirectionProperty FACING = HorizontalBlock.FACING;
+public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
 
     protected static final VoxelShape SHAPE_OPEN = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
     protected static final VoxelShape SHAPE_CLOSED = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
-    protected AbstractSolarCookerBlock(AbstractBlock.Properties properties) {
+    protected AbstractSolarCookerBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SUNLIT, false).setValue(BURNING, false));
     }
@@ -54,12 +54,12 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Nonnull
-    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player, @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
+    public InteractionResult use(@Nonnull BlockState state, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull InteractionHand handIn, @Nonnull BlockHitResult hit) {
         if (worldIn.isClientSide) {
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
             this.interactWith(worldIn, pos, player);
-            return ActionResultType.CONSUME;
+            return InteractionResult.CONSUME;
         }
     }
 
@@ -67,9 +67,9 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      * Interface for handling interaction with blocks that impliment AbstractFurnaceBlock. Called in onBlockActivated
      * inside AbstractFurnaceBlock.
      */
-    protected abstract void interactWith(World worldIn, BlockPos pos, PlayerEntity player);
+    protected abstract void interactWith(Level worldIn, BlockPos pos, Player player);
 
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
@@ -77,11 +77,11 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      * Called by ItemBlocks after a block is set in the world
      */
     @Override
-    public void setPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
         if (stack.hasCustomHoverName()) {
-            TileEntity tileentity = worldIn.getBlockEntity(pos);
-            if (tileentity instanceof AbstractSolarCookerTileEntity) {
-                ((AbstractSolarCookerTileEntity)tileentity).setCustomName(stack.getHoverName());
+            BlockEntity tileentity = worldIn.getBlockEntity(pos);
+            if (tileentity instanceof AbstractSolarCookerBlockEntity) {
+                ((AbstractSolarCookerBlockEntity)tileentity).setCustomName(stack.getHoverName());
             }
         }
 
@@ -89,12 +89,12 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Deprecated
-    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            TileEntity tileentity = worldIn.getBlockEntity(pos);
-            if (tileentity instanceof AbstractSolarCookerTileEntity) {
-                InventoryHelper.dropContents(worldIn, pos, (AbstractSolarCookerTileEntity)tileentity);
-                ((AbstractSolarCookerTileEntity)tileentity).getRecipesToAwardAndPopExperience(worldIn, Vector3d.atLowerCornerOf(pos));
+            BlockEntity tileentity = worldIn.getBlockEntity(pos);
+            if (tileentity instanceof AbstractSolarCookerBlockEntity) {
+                Containers.dropContents(worldIn, pos, (AbstractSolarCookerBlockEntity)tileentity);
+                ((AbstractSolarCookerBlockEntity)tileentity).getRecipesToAwardAndPopExperience(worldIn, Vec3.atLowerCornerOf(pos));
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 
@@ -110,8 +110,8 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
 
     @Override
     @Deprecated
-    public int getAnalogOutputSignal(@Nonnull BlockState blockState, World worldIn, @Nonnull BlockPos pos) {
-        return Container.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
+    public int getAnalogOutputSignal(@Nonnull BlockState blockState, Level worldIn, @Nonnull BlockPos pos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
     }
 
     /**
@@ -119,15 +119,15 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
      */
     @Override
     @Nonnull
-    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(@Nonnull BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
     @Nonnull
-    public VoxelShape getShape(@Nonnull BlockState state, IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        TileEntity tile = worldIn.getBlockEntity(pos);
-        if (tile instanceof AbstractSolarCookerTileEntity && ((AbstractSolarCookerTileEntity) tile).shouldLidBeOpen()) {
+    public VoxelShape getShape(@Nonnull BlockState state, BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+        BlockEntity tile = worldIn.getBlockEntity(pos);
+        if (tile instanceof AbstractSolarCookerBlockEntity && ((AbstractSolarCookerBlockEntity) tile).shouldLidBeOpen()) {
             return SHAPE_OPEN;
         }
         return SHAPE_CLOSED;
@@ -153,7 +153,7 @@ public abstract class AbstractSolarCookerBlock extends ContainerBlock {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, SUNLIT, BURNING);
     }
 }

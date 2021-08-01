@@ -1,25 +1,25 @@
 package cech12.solarcooker.block;
 
 import cech12.solarcooker.api.block.SolarCookerBlocks;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
@@ -74,7 +74,7 @@ public class ReflectorBlock extends Block {
             }
             VoxelShape voxelshape = Block.box(0, 0, 0, 0, 0, 0);
             for (VoxelShape shape : shapes) {
-                voxelshape = VoxelShapes.or(voxelshape, shape);
+                voxelshape = Shapes.or(voxelshape, shape);
             }
             return voxelshape;
         }).toArray(VoxelShape[]::new);
@@ -140,24 +140,24 @@ public class ReflectorBlock extends Block {
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("item.solarcooker.reflector.description").withStyle(TextFormatting.BLUE));
+        tooltip.add(new TranslatableComponent("item.solarcooker.reflector.description").withStyle(ChatFormatting.BLUE));
     }
 
     @Override
     @Nonnull
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
         return SHAPES[state.getValue(TYPE)];
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(TYPE);
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
         Direction direction = context.getHorizontalDirection().getOpposite();
         if (blockstate.is(this)) {
@@ -168,12 +168,12 @@ public class ReflectorBlock extends Block {
     }
 
     @Override
-    public boolean canBeReplaced(@Nonnull BlockState state, BlockItemUseContext context) {
+    public boolean canBeReplaced(@Nonnull BlockState state, BlockPlaceContext context) {
         return context.getItemInHand().getItem() == this.asItem() && !isFacingTo(state, context.getHorizontalDirection().getOpposite()) || super.canBeReplaced(state, context);
     }
 
     @Override
-    public BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction) {
+    public BlockState rotate(BlockState state, LevelAccessor world, BlockPos pos, Rotation direction) {
         int bits;
         if (direction == Rotation.CLOCKWISE_90) {
             bits = 1;
