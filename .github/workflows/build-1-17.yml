@@ -1,6 +1,6 @@
 # This workflow builds the project on each push and pull request
 
-name: Build
+name: Build-1.17
 
 on:
   push:
