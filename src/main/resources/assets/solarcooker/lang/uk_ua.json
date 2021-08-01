@@ -1,0 +1,8 @@
+{
+  "block.solarcooker.solar_cooker": "Сонячна плита",
+  "block.solarcooker.reflector": "Світловідбивач",
+  "block.solarcooker.shining_diamond_block": "Сяючий алмазний блок",
+
+  "item.solarcooker.reflector.description": "Заради збільшення падіння світла та скорочення часу приготування, по лівому та правому боках сонячної плити можна встановити до чотирьох світловідбивачів.",
+  "item.solarcooker.shining_diamond_block.description": "Блищить яскраво! Може бути встановлений над сонячною плитою заради її використання незалежно від сонця."
+}
