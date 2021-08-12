@@ -30,7 +30,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 
@@ -45,11 +44,6 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     protected AbstractSolarCookerBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SUNLIT, false).setValue(BURNING, false));
-    }
-
-    @Override
-    public boolean isToolEffective(BlockState state, ToolType tool) {
-        return tool == ToolType.AXE;
     }
 
     @Override

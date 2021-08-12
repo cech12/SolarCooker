@@ -562,7 +562,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     }
 
     @Override
-    protected void invalidateCaps() {
+    public void invalidateCaps() {
         super.invalidateCaps();
         for (LazyOptional<? extends IItemHandler> handler : handlers) handler.invalidate();
     }

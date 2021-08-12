@@ -20,7 +20,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -132,11 +131,6 @@ public class ReflectorBlock extends Block {
             }
         }
         return drops;
-    }
-
-    @Override
-    public boolean isToolEffective(BlockState state, ToolType tool) {
-        return tool == ToolType.AXE;
     }
 
     @Override

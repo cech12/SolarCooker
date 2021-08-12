@@ -36,6 +36,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
         return new SolarCookerBlockEntity(pos, state);
     }
 
+    @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
         return createTickerHelper(entityType, (BlockEntityType<AbstractSolarCookerBlockEntity>) SolarCookerBlockEntities.SOLAR_COOKER, AbstractSolarCookerBlockEntity::tick);

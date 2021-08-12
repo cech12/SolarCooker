@@ -22,7 +22,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.client.IItemRenderProperties;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,7 +37,7 @@ public final class ModBlocks {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         SolarCookerBlocks.SOLAR_COOKER = registerBlock("solar_cooker", CreativeModeTab.TAB_DECORATIONS, new SolarCookerBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 3.5F).sound(SoundType.WOOD)));
         SolarCookerBlocks.REFLECTOR = registerBlock("reflector", CreativeModeTab.TAB_DECORATIONS, new ReflectorBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.0F).sound(SoundType.WOOD)));
-        SolarCookerBlocks.SHINING_DIAMOND_BLOCK = registerBlock("shining_diamond_block", CreativeModeTab.TAB_BUILDING_BLOCKS, new ShiningDiamondBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.DIAMOND).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).lightLevel(state -> 15)));
+        SolarCookerBlocks.SHINING_DIAMOND_BLOCK = registerBlock("shining_diamond_block", CreativeModeTab.TAB_BUILDING_BLOCKS, new ShiningDiamondBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.DIAMOND).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).lightLevel(state -> 15)));
     }
 
     public static Block registerBlock(String name, CreativeModeTab itemGroup, Block block) {
