@@ -1,6 +1,5 @@
 package cech12.solarcooker.jei;
 
-/*
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
@@ -14,12 +13,13 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
+
 @JeiPlugin
 public class SolarCookerJEIPlugin implements IModPlugin {
 
@@ -58,4 +58,3 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     }
 
 }
- */
