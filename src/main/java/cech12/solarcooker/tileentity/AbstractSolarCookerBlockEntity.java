@@ -133,25 +133,23 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     }
 
     @Override
-    @Nonnull
-    public CompoundTag save(@Nonnull CompoundTag compound) {
-        super.save(compound);
+    protected void saveAdditional(@Nonnull CompoundTag compound) {
+        super.saveAdditional(compound);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
         ContainerHelper.saveAllItems(compound, this.items);
-        return compound;
     }
 
     @Override
     @Nonnull
     public CompoundTag getUpdateTag() {
-        return this.save(new CompoundTag());
+        return this.saveWithoutMetadata();
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

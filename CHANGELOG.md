@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.18-1.0.1.1] - 2021-12-04
+### Changed
+- port to Forge 1.18-38.0.6
+- jei compatibility temporary deactivated
+
 ## [1.17.1-1.0.1.1] - 2021-08-24
 ### Added
 - jei compatibility readded

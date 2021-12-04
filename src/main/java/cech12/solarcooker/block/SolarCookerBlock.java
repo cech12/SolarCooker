@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
