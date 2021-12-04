@@ -1,6 +1,6 @@
 # This workflow runs automated tests on each push and pull request
 
-name: Publish-1.17
+name: Publish
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
         - "1.17*"
 
 jobs:
-  publish-1-17:
+  publish:
 
     runs-on: ubuntu-latest
 
