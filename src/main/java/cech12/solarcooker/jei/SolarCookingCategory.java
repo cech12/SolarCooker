@@ -1,5 +1,5 @@
 package cech12.solarcooker.jei;
-/*
+
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.config.ServerConfig;
@@ -28,4 +28,3 @@ public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRe
         return SolarCookingRecipe.class;
     }
 }
- */

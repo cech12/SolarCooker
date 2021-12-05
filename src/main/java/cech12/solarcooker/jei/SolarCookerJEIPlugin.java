@@ -1,5 +1,5 @@
 package cech12.solarcooker.jei;
-/*
+
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.api.crafting.RecipeTypes;
@@ -58,4 +58,3 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     }
 
 }
- */
