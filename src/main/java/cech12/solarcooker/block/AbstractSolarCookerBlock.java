@@ -38,8 +38,7 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
 
-    protected static final VoxelShape SHAPE_OPEN = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
-    protected static final VoxelShape SHAPE_CLOSED = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
+    protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
     protected AbstractSolarCookerBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -120,11 +119,7 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     @Override
     @Nonnull
     public VoxelShape getShape(@Nonnull BlockState state, BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
-        BlockEntity tile = worldIn.getBlockEntity(pos);
-        if (tile instanceof AbstractSolarCookerBlockEntity && ((AbstractSolarCookerBlockEntity) tile).shouldLidBeOpen()) {
-            return SHAPE_OPEN;
-        }
-        return SHAPE_CLOSED;
+        return SHAPE;
     }
 
     /**
