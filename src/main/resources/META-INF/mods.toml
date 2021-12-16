@@ -27,6 +27,6 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
    modId="jei"
    mandatory=false
-   versionRange="[9.0.0.41,)"
+   versionRange="[9.1.0.41,)"
    ordering="NONE"
    side="BOTH"
