@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[39,)"
 issueTrackerURL="https://github.com/cech12/BrickShears/issues"
 license="The MIT License (MIT)"
 [[mods]]
@@ -15,18 +15,18 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
     modId="forge"
     mandatory=true
-    versionRange="[38.0.17,)"
+    versionRange="[39.0.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,)"
+    versionRange="[1.18.1,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
    modId="jei"
    mandatory=false
-   versionRange="[9.0.0.40,)"
+   versionRange="[9.0.0.41,)"
    ordering="NONE"
    side="BOTH"
