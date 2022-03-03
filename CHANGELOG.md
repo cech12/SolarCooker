@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
-## [1.18.1-1.1.0.0] - ????-??-??
+## [1.18.2-1.1.0.0] - 2022-03-03
 ### Changed
-- Update mod to Forge 1.18.1-39.0.0
+- Update mod to Forge 1.18.2-40.0.2 (fix Log4J security issue)
 
 ## [1.18-1.0.2.0] - 2021-12-10
 ### Changed

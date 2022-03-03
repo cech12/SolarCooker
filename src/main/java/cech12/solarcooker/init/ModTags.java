@@ -1,6 +1,9 @@
 package cech12.solarcooker.init;
 
 import cech12.solarcooker.SolarCookerMod;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
@@ -11,10 +14,10 @@ public class ModTags {
 
     public static class Blocks {
 
-        public static final Tag.Named<Block> SOLAR_COOKER_SHINING = tag("solar_cooker_shining");
+        public static final TagKey<Block> SOLAR_COOKER_SHINING = tag("solar_cooker_shining");
 
-        private static Tag.Named<Block> tag(@Nonnull String name) {
-            return BlockTags.bind(SolarCookerMod.MOD_ID + ":" + name);
+        private static TagKey<Block> tag(@Nonnull String name) {
+            return TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(SolarCookerMod.MOD_ID, name));
         }
     }
 }
