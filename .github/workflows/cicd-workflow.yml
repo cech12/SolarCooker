@@ -15,6 +15,12 @@ jobs:
     uses: cech12/MinecraftModActions/.github/workflows/build.yml@main
     with:
       java-version: 17
+  gametest:
+    needs: build
+    name: Game Test
+    uses: cech12/MinecraftModActions/.github/workflows/gametest.yml@main
+    with:
+      java-version: 17
   codeql:
     needs: build
     name: CodeQL
@@ -22,7 +28,7 @@ jobs:
     with:
       java-version: 17
   publish-github:
-    needs: codeql
+    needs: [ gametest, codeql ]
     if: startsWith(github.ref, 'refs/tags/')
     name: Publish Github
     uses: cech12/MinecraftModActions/.github/workflows/publish-github.yml@main
