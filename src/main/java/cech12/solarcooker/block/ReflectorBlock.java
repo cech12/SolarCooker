@@ -80,13 +80,12 @@ public class ReflectorBlock extends Block {
     }
 
     public static int getType(Direction direction) {
-        switch (direction) {
-            case NORTH: return 8;
-            case EAST: return 4;
-            case SOUTH: return 2;
-            case WEST: return 1;
-        }
-        return 8;
+        return switch (direction) {
+            case EAST -> 4;
+            case SOUTH -> 2;
+            case WEST -> 1;
+            default -> 8; //NORTH
+        };
     }
 
     public static boolean isFacingTo(BlockState blockstate, Direction direction) {

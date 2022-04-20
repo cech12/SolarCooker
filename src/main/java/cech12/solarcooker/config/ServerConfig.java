@@ -49,17 +49,12 @@ public class ServerConfig {
     }
 
     public static RecipeType<? extends AbstractCookingRecipe> getRecipeType() {
-        switch (VANILLA_RECIPE_TYPE.get()) {
-            case "smoking":
-                return RecipeType.SMOKING;
-            case "smelting":
-                return RecipeType.SMELTING;
-            case "campfire_cooking":
-                return RecipeType.CAMPFIRE_COOKING;
-            case "blasting":
-                return RecipeType.BLASTING;
-        }
-        return RecipeType.SMOKING;
+        return switch (VANILLA_RECIPE_TYPE.get()) {
+            case "smelting" -> RecipeType.SMELTING;
+            case "campfire_cooking" -> RecipeType.CAMPFIRE_COOKING;
+            case "blasting" -> RecipeType.BLASTING;
+            default -> RecipeType.SMOKING; // default to smoking
+        };
     }
 
     public static boolean isRecipeNotBlacklisted(final ResourceLocation id) {
