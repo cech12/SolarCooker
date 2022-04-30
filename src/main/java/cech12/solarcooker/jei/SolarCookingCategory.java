@@ -5,6 +5,7 @@ import cech12.solarcooker.api.crafting.RecipeTypes;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.crafting.SolarCookingRecipe;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.plugins.vanilla.cooking.AbstractCookingCategory;
 import net.minecraft.resources.ResourceLocation;
 
@@ -18,12 +19,20 @@ public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRe
 
     @Override
     @Nonnull
+    public RecipeType<SolarCookingRecipe> getRecipeType() {
+        return new RecipeType<>(RecipeTypes.SOLAR_COOKING_ID, SolarCookingRecipe.class);
+    }
+
+    @Override
+    @Nonnull
+    @Deprecated //is deprecated since 9.5.0, getRecipeType() should be used instead
     public ResourceLocation getUid() {
         return RecipeTypes.SOLAR_COOKING_ID;
     }
 
     @Override
     @Nonnull
+    @Deprecated //is deprecated since 9.5.0, getRecipeType() should be used instead
     public Class<? extends SolarCookingRecipe> getRecipeClass() {
         return SolarCookingRecipe.class;
     }

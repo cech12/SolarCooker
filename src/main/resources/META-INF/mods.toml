@@ -15,7 +15,7 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
     modId="forge"
     mandatory=true
-    versionRange="[40.0.2,)"
+    versionRange="[40.0.7,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
@@ -27,6 +27,6 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
    modId="jei"
    mandatory=false
-   versionRange="[9.4.1.113,)"
+   versionRange="[9.7.0.192,)"
    ordering="NONE"
    side="BOTH"
