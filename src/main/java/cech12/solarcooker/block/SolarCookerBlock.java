@@ -1,6 +1,6 @@
 package cech12.solarcooker.block;
 
-import cech12.solarcooker.api.blockentity.SolarCookerBlockEntities;
+import cech12.solarcooker.init.ModBlockEntityTypes;
 import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
 import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -39,7 +39,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
-        return createTickerHelper(entityType, (BlockEntityType<AbstractSolarCookerBlockEntity>) SolarCookerBlockEntities.SOLAR_COOKER, AbstractSolarCookerBlockEntity::tick);
+        return createTickerHelper(entityType, ModBlockEntityTypes.SOLAR_COOKER.get(), AbstractSolarCookerBlockEntity::tick);
     }
 
     /**

@@ -1,6 +1,7 @@
 package cech12.solarcooker.inventory;
 
 import cech12.solarcooker.config.ServerConfig;
+import cech12.solarcooker.init.ModMenuTypes;
 import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,8 +18,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-import static cech12.solarcooker.api.inventory.ContainerTypes.SOLAR_COOKER;
-
 public class SolarCookerContainer extends AbstractContainerMenu {
     private final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final AbstractSolarCookerBlockEntity cooker;
@@ -26,7 +25,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
 
     public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
                                 Inventory playerInventoryIn, AbstractSolarCookerBlockEntity cooker) {
-        super(SOLAR_COOKER, id);
+        super(ModMenuTypes.SOLAR_COOKER.get(), id);
         this.specificRecipeType = specificRecipeTypeIn;
         checkContainerSize(cooker, 2);
         this.cooker = cooker;

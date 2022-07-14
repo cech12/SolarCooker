@@ -1,6 +1,6 @@
 package cech12.solarcooker.block;
 
-import cech12.solarcooker.api.block.SolarCookerBlocks;
+import cech12.solarcooker.init.ModItems;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,7 +17,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 
@@ -125,7 +124,7 @@ public class ReflectorBlock extends Block {
         if (!drops.isEmpty() && count > 1) {
             //set the count of the dropped reflector blocks
             ItemStack stack = drops.get(0);
-            if (stack.getItem().equals(SolarCookerBlocks.REFLECTOR.asItem())) {
+            if (stack.getItem().equals(ModItems.REFLECTOR.get())) {
                 stack.setCount(count);
             }
         }
@@ -135,7 +134,7 @@ public class ReflectorBlock extends Block {
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable BlockGetter worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslatableComponent("item.solarcooker.reflector.description").withStyle(ChatFormatting.BLUE));
+        tooltip.add(Component.translatable("item.solarcooker.reflector.description").withStyle(ChatFormatting.BLUE));
     }
 
     @Override

@@ -1,8 +1,8 @@
 package cech12.solarcooker.client;
 
 import cech12.solarcooker.SolarCookerMod;
-import cech12.solarcooker.api.block.SolarCookerBlocks;
 import cech12.solarcooker.block.AbstractSolarCookerBlock;
+import cech12.solarcooker.init.ModBlocks;
 import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -60,7 +60,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
     public void render(SolarCookerBlockEntity blockEntity, float partialTicks, @Nonnull PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         Level world = blockEntity.getLevel();
         boolean isInWorld = world != null;
-        BlockState blockstate = isInWorld ? blockEntity.getBlockState() : SolarCookerBlocks.SOLAR_COOKER.defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);
+        BlockState blockstate = isInWorld ? blockEntity.getBlockState() : ModBlocks.SOLAR_COOKER.get().defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);
         Block block = blockstate.getBlock();
         if (block instanceof AbstractSolarCookerBlock) {
             //AbstractSolarCookerBlock abstractBlock = (AbstractSolarCookerBlock)block;
