@@ -1,4 +1,4 @@
-package cech12.solarcooker.tileentity;
+package cech12.solarcooker.blockentity;
 
 import cech12.solarcooker.block.AbstractSolarCookerBlock;
 import cech12.solarcooker.block.ReflectorBlock;

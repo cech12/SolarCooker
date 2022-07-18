@@ -1,6 +1,6 @@
 package cech12.solarcooker.inventory;
 
-import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.FurnaceResultSlot;

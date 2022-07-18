@@ -1,8 +1,9 @@
 package cech12.solarcooker.block;
 
 import cech12.solarcooker.init.ModBlockEntityTypes;
-import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
-import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.SolarCookerBlockEntity;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +20,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.network.NetworkHooks;
@@ -50,16 +50,16 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     protected void interactWith(Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player) {
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
-            //player.openContainer((SolarCookerTileEntity) tileentity);
-            NetworkHooks.openGui((ServerPlayer) player, (SolarCookerBlockEntity) blockEntity, pos);
+            NetworkHooks.openScreen((ServerPlayer) player, (SolarCookerBlockEntity) blockEntity, pos);
         }
     }
 
     /**
      * Called periodically clientside on blocks near the player to show effects (like furnace fire particles).
      */
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState stateIn, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
+    public void animateTick(BlockState stateIn, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
         if (stateIn.getValue(BURNING)) {
             double d0 = (double)pos.getX() + 0.5D;
             double d1 = pos.getY();

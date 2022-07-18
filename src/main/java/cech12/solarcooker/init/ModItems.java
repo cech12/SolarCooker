@@ -1,7 +1,7 @@
 package cech12.solarcooker.init;
 
 import cech12.solarcooker.SolarCookerMod;
-import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -13,7 +13,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -36,8 +36,8 @@ public class ModItems {
     private static RegistryObject<Item> solarCookerItem() {
         return ITEMS.register(ModBlocks.SOLAR_COOKER.getId().getPath(), () -> new BlockItem(ModBlocks.SOLAR_COOKER.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)) {
             @Override
-            public void initializeClient(@Nonnull Consumer<IItemRenderProperties> consumer) {
-                consumer.accept(new IItemRenderProperties() {
+            public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
+                consumer.accept(new IClientItemExtensions() {
                     final BlockEntityWithoutLevelRenderer myRenderer = new BlockEntityWithoutLevelRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()) {
                         private SolarCookerBlockEntity blockEntity;
 
@@ -51,7 +51,7 @@ public class ModItems {
                     };
 
                     @Override
-                    public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+                    public BlockEntityWithoutLevelRenderer getCustomRenderer() {
                         return myRenderer;
                     }
                 });

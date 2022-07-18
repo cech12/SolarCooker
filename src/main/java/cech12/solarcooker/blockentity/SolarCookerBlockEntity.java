@@ -1,4 +1,4 @@
-package cech12.solarcooker.tileentity;
+package cech12.solarcooker.blockentity;
 
 import cech12.solarcooker.init.ModBlockEntityTypes;
 import cech12.solarcooker.init.ModRecipeTypes;

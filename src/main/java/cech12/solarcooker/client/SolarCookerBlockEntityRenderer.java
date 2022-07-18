@@ -3,7 +3,7 @@ package cech12.solarcooker.client;
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.block.AbstractSolarCookerBlock;
 import cech12.solarcooker.init.ModBlocks;
-import cech12.solarcooker.tileentity.SolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelLayers;

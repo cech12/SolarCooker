@@ -12,7 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModMenuTypes {
 
-    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, SolarCookerMod.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.MENU_TYPES, SolarCookerMod.MOD_ID);
 
     public static final RegistryObject<MenuType<? extends AbstractContainerMenu>> SOLAR_COOKER = MENU_TYPES.register("solarcooker", () -> IForgeMenuType.create((pWindowID, pInventory, pData) -> {
         BlockPos pos = pData.readBlockPos();

@@ -1,6 +1,6 @@
 package cech12.solarcooker.block;
 
-import cech12.solarcooker.tileentity.AbstractSolarCookerBlockEntity;
+import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
