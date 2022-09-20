@@ -30,3 +30,9 @@ license="The MIT License (MIT)"
    versionRange="[11.0.0.211,)"
    ordering="NONE"
    side="BOTH"
+[[dependencies.solarcooker]]
+   modId="theoneprobe"
+   mandatory=false
+   versionRange="[1.19-6.2.0,)"
+   ordering="NONE"
+   side="BOTH"
