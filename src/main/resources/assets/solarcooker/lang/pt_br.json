@@ -1,0 +1,8 @@
+{
+    "block.solarcooker.solar_cooker": "Fogão Solar",
+    "block.solarcooker.reflector": "Refletor",
+    "block.solarcooker.shining_diamond_block": "Bloco brilhante de diamante",
+  
+    "item.solarcooker.reflector.description": "Até quatro Refletores podem ser colocados à esquerda e à direita de um Fogão Solar para melhorar a incidência de luz e reduzir o tempo de cozimento.",
+    "item.solarcooker.shining_diamond_block.description": "Brilhar! Pode ser colocado por cima de um Fogão Solar para o utilizar independentemente do sol."
+}
