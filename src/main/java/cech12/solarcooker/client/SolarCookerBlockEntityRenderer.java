@@ -6,6 +6,7 @@ import cech12.solarcooker.init.ModBlocks;
 import cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -25,7 +26,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -67,7 +67,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
             matrixStackIn.pushPose();
             float f = blockstate.getValue(AbstractSolarCookerBlock.FACING).toYRot();
             matrixStackIn.translate(0.5D, 0.5D, 0.5D);
-            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-f));
+            matrixStackIn.mulPose(Axis.YP.rotationDegrees(-f));
             matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
             VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityTranslucent(TEXTURE));
             float lidAngle = blockEntity.getOpenNess(partialTicks);

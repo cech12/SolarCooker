@@ -13,8 +13,10 @@ import cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -56,5 +58,14 @@ public class SolarCookerMod {
     public static void onClientRegister(FMLClientSetupEvent event) {
         MenuScreens.register((MenuType<SolarCookerContainer>) ModMenuTypes.SOLAR_COOKER.get(), SolarCookerScreen::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.SOLAR_COOKER.get(), SolarCookerBlockEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void addItemsToTabs(CreativeModeTabEvent.BuildContents event) {
+        if (event.getTab() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModItems.SOLAR_COOKER);
+            event.accept(ModItems.REFLECTOR);
+            event.accept(ModItems.SHINING_DIAMOND_BLOCK);
+        }
     }
 }

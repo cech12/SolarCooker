@@ -130,9 +130,9 @@ dependencies {
 
     // compile against the JEI API but do not include it at runtime
     //compileOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}-forge:${project.jei_version}")
+    //compileOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}-forge:${project.jei_version}")
     // at runtime, use the full JEI jar
-    runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}-forge:${project.jei_version}")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}-forge:${project.jei_version}")
 
     implementation fg.deobf("mcjty.theoneprobe:theoneprobe:$top_version") {transitive = false}
 }

@@ -1,7 +1,8 @@
 {
   "type": "solarcooker:solarcooking",
+  "category": "misc",
   "ingredient": {
-    "item": "minecraft:diamond_block"
+    "tag": "forge:storage_blocks/diamond"
   },
   "result": "solarcooker:shining_diamond_block",
   "experience": 0.3,
