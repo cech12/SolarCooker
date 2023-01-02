@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.19.3-1.3.1.0] - 2023-01-02
+### Added
+- Added pt_br language support (thanks to FITFC) #19
+
 ## [1.19.3-1.3.0.0] - 2022-12-30
 ### Changed
 - Update mod to Forge 1.19.3-44.0.41
