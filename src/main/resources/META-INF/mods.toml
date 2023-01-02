@@ -15,19 +15,19 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
     modId="forge"
     mandatory=true
-    versionRange="[41.0.96,)"
+    versionRange="[43.2.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,1.20)"
+    versionRange="[1.19.2,1.19.3)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
    modId="jei"
    mandatory=false
-   versionRange="[11.0.0.211,)"
+   versionRange="[11.5.0.297,)"
    ordering="NONE"
    side="BOTH"
 [[dependencies.solarcooker]]

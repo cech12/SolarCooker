@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.19.2-1.2.2.0] - 2023-01-19
+### Changed
+- Update mod to Forge 1.19.2-43.2.0
+
+### Added
+- Added pt_br language support (thanks to FITFC) #19
+
+### Fixed
+- fixed JEI support by updating JEI to 11.5.0.297 (thanks to Tenchu98 for the report)
+
 ## [1.19-1.2.1.0] - 2022-09-20
 ### Added
 - The One Probe support - Show cooking time of Solar Cooker
