@@ -282,7 +282,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
 
     protected boolean canSmelt(@Nullable Recipe<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe).assemble(this, this.getLevel().registryAccess());
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -296,7 +296,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     private void smeltItem(@Nullable Recipe<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this);
+            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this, this.getLevel().registryAccess());
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());

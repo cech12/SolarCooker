@@ -3,6 +3,7 @@ package cech12.solarcooker.crafting;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.init.ModBlocks;
 import cech12.solarcooker.init.ModRecipeTypes;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.CookingBookCategory;
@@ -21,8 +22,8 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
         super(ModRecipeTypes.SOLAR_COOKING.get(), p_i50031_1_, p_i50031_2_, category, p_i50031_3_, p_i50031_4_, p_i50031_5_, p_i50031_6_);
     }
 
-    public static SolarCookingRecipe convert(@Nonnull AbstractCookingRecipe recipe) {
-        return new SolarCookingRecipe(recipe.getId(), recipe.getGroup(), recipe.category(), recipe.getIngredients().get(0), recipe.getResultItem(), recipe.getExperience(), (int) (recipe.getCookingTime() * ServerConfig.COOK_TIME_FACTOR.get()));
+    public static SolarCookingRecipe convert(@Nonnull AbstractCookingRecipe recipe, RegistryAccess registryAccess) {
+        return new SolarCookingRecipe(recipe.getId(), recipe.getGroup(), recipe.category(), recipe.getIngredients().get(0), recipe.getResultItem(registryAccess), recipe.getExperience(), (int) (recipe.getCookingTime() * ServerConfig.COOK_TIME_FACTOR.get()));
     }
 
     @Override

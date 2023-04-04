@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[45,)"
 issueTrackerURL="https://github.com/cech12/BrickShears/issues"
 license="The MIT License (MIT)"
 [[mods]]
@@ -15,26 +15,26 @@ license="The MIT License (MIT)"
 [[dependencies.solarcooker]]
     modId="forge"
     mandatory=true
-    versionRange="[44.0.41,)"
+    versionRange="[45.0.40,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,1.20)"
+    versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.solarcooker]]
    modId="jei"
    mandatory=false
-   versionRange="[11.9999,)"
+   versionRange="[13.0.0.1,)"
    referralUrl="https://github.com/mezz/JustEnoughItems"
    ordering="NONE"
    side="BOTH"
 [[dependencies.solarcooker]]
    modId="theoneprobe"
    mandatory=false
-   versionRange="[1.19.3-7.0.0,)"
+   versionRange="[1.19.4-8.0.0,)"
    referralUrl="https://www.curseforge.com/minecraft/mc-mods/the-one-probe"
    ordering="NONE"
    side="BOTH"
