@@ -58,6 +58,7 @@ jobs:
         1.19.2
       release-type: release
     secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
       curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
   publish-modrinth:
     needs: publish-github
