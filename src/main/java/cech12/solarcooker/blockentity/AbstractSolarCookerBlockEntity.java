@@ -286,7 +286,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
-                else if (!output.sameItem(recipeOutput)) return false;
+                else if (!ItemStack.isSameItem(output, recipeOutput)) return false;
                 else return output.getCount() + recipeOutput.getCount() <= output.getMaxStackSize();
             }
         }
@@ -454,7 +454,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     @Override
     public void setItem(int index, ItemStack stack) {
         ItemStack itemstack = this.items.get(index);
-        boolean flag = !stack.isEmpty() && stack.sameItem(itemstack) && ItemStack.tagMatches(stack, itemstack);
+        boolean flag = !stack.isEmpty() && ItemStack.isSameItemSameTags(itemstack, stack);
         this.items.set(index, stack);
         if (stack.getCount() > this.getMaxStackSize()) {
             stack.setCount(this.getMaxStackSize());
@@ -506,7 +506,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     }
 
     public void awardUsedRecipesAndPopExperience(Player p_235645_1_) {
-        List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level, p_235645_1_.position());
+        List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level(), p_235645_1_.position());
         p_235645_1_.awardRecipes(list);
         this.usedRecipes.clear();
     }

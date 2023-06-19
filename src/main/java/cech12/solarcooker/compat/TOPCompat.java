@@ -50,7 +50,7 @@ public class TOPCompat {
                     final int cookTimeTotal = nbt.getInt("CookTimeTotal");
                     if (cookTime > 0) {
                         iProbeInfo.progress(cookTime, cookTimeTotal, new ProgressStyle()
-                                .suffix(Component.empty().append(" / " + cookTimeTotal))
+                                .suffix(Component.literal(" / " + cookTimeTotal))
                                 .alignment(ElementAlignment.ALIGN_CENTER)
                         );
                     }

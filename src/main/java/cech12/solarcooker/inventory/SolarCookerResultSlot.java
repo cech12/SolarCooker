@@ -19,7 +19,7 @@ public class SolarCookerResultSlot extends FurnaceResultSlot {
     @Override
     protected void checkTakeAchievements(@Nonnull ItemStack stack) {
         super.checkTakeAchievements(stack);
-        if (!this.player.level.isClientSide && this.container instanceof AbstractSolarCookerBlockEntity) {
+        if (!this.player.level().isClientSide && this.container instanceof AbstractSolarCookerBlockEntity) {
             ((AbstractSolarCookerBlockEntity)this.container).awardUsedRecipesAndPopExperience(this.player);
         }
     }

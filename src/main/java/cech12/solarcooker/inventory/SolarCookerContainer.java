@@ -30,7 +30,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
         checkContainerSize(cooker, 2);
         this.cooker = cooker;
         cooker.startOpen(playerInventoryIn.player);
-        this.world = playerInventoryIn.player.level;
+        this.world = playerInventoryIn.player.level();
 
         //add cooker inventory slots
         this.addSlot(new Slot(cooker, 0, 56, 17));
@@ -49,7 +49,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
 
     public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
                                 Inventory playerInventoryIn, BlockPos pos) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerBlockEntity) playerInventoryIn.player.level.getBlockEntity(pos));
+        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerBlockEntity) playerInventoryIn.player.level().getBlockEntity(pos));
     }
 
     @Override
