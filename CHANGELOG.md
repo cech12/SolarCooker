@@ -3,12 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.20.1-2.1.0.0] - 2023-08-09
+### Changed
+- Changed Forge to NeoForge 1.20.1-47.1.54 (compatible with Forge 47.1.0)
+- Updated compat with JEI to 1.20.1-15.2.0.23
+- Updated compat with The One Probe to 1.20.1-10.0.1
+
 ## [1.20.1-2.0.0.0] - 2023-06-19
+### Changed
 - Update mod to Forge 1.20.1-47.0.1 #21
 - Update compat with JEI to 1.20.1-15.0.0.17 #21
 - Update compat with The One Probe to 1.20.0-9.0.0 #21
 
 ## [1.19.4-1.4.0.0] - 2023-04-04
+### Changed
 - Update mod to Forge 1.19.4-45.0.40
 - Update compat with The One Probe to 1.19.4-8.0.0
 - Update compat with JEI to 1.19.4-13.0.0.1
@@ -18,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - fix startup issue with mod "REI Plugin Compatibilities (REIPC)" version 10.0.45 (thanks to subsonicer for the report)
 
 ## [1.19.3-1.3.2.0] - 2023-01-17
+### Added
 - re-add JEI support
 
 ## [1.19.3-1.3.1.0] - 2023-01-02
