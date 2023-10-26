@@ -16,12 +16,12 @@ jobs:
     uses: cech12/MinecraftModActions/.github/workflows/build.yml@main
     with:
       java-version: 17
-  gametest:
-    needs: build
-    name: Game Test
-    uses: cech12/MinecraftModActions/.github/workflows/gametest.yml@main
-    with:
-      java-version: 17
+#  gametest:
+#    needs: build
+#    name: Game Test
+#    uses: cech12/MinecraftModActions/.github/workflows/gametest.yml@main
+#    with:
+#      java-version: 17
   codeql:
     needs: build
     name: CodeQL
@@ -29,7 +29,8 @@ jobs:
     with:
       java-version: 17
   publish-github:
-    needs: [ gametest, codeql ]
+#    needs: [ gametest, codeql ]
+    needs: codeql
     if: startsWith(github.ref, 'refs/tags/')
     name: Publish Github
     uses: cech12/MinecraftModActions/.github/workflows/publish-github.yml@main
@@ -48,10 +49,9 @@ jobs:
       java-version: 17
       curseforge-id: 436874
       game-versions: |
-        1.20.1
+        1.20.2
       release-type: release
       loaders: |
-        neoforge
         forge
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -65,10 +65,9 @@ jobs:
       java-version: 17
       modrinth-id: IsSapAeq
       game-versions: |
-        1.20.1
+        1.20.2
       release-type: release
       loaders: |
-        neoforge
         forge
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}

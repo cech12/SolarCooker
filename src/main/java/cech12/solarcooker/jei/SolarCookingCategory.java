@@ -7,6 +7,7 @@ import cech12.solarcooker.init.ModRecipeTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.library.plugins.vanilla.cooking.AbstractCookingCategory;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import javax.annotation.Nonnull;
 
@@ -18,8 +19,9 @@ public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRe
 
     @Override
     @Nonnull
-    public RecipeType<SolarCookingRecipe> getRecipeType() {
-        return new RecipeType<>(ModRecipeTypes.SOLAR_COOKING.getId(), SolarCookingRecipe.class);
+    public RecipeType<RecipeHolder<SolarCookingRecipe>> getRecipeType() {
+        Class<? extends RecipeHolder<SolarCookingRecipe>> holderClass = (Class<? extends RecipeHolder<SolarCookingRecipe>>) (Object) RecipeHolder.class;
+        return new RecipeType<>(ModRecipeTypes.SOLAR_COOKING.getId(), holderClass);
     }
 
 }

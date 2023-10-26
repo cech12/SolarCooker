@@ -27,10 +27,10 @@ public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContai
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
-        this.renderBackground(guiGraphics);
-        super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
-        this.renderTooltip(guiGraphics, p_230430_2_, p_230430_3_);
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override

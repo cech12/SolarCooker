@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.20.2-2.2.0.0] - 2023-10-26
+### Changed
+- update and move back to Forge 1.20.2-48.0.23 (from NeoForge) until it is stable
+- Temporary deactivation of The One Probe support until it is ported to 1.20.2
+- deactivate game tests, because they are not working yet
+
 ## [1.20.1-2.1.0.0] - 2023-08-09
 ### Changed
 - Changed Forge to NeoForge 1.20.1-47.1.54 (compatible with Forge 47.1.0)

@@ -2,7 +2,7 @@ package cech12.solarcooker;
 
 import cech12.solarcooker.client.SolarCookerBlockEntityRenderer;
 import cech12.solarcooker.client.SolarCookerScreen;
-import cech12.solarcooker.compat.TOPCompat;
+//import cech12.solarcooker.compat.TOPCompat;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.init.ModBlockEntityTypes;
 import cech12.solarcooker.init.ModBlocks;
@@ -49,7 +49,7 @@ public class SolarCookerMod {
         ServerConfig.loadConfig(ServerConfig.SERVER_CONFIG, FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()).resolve(MOD_ID + "-server.toml"));
         //The One Probe registration.
         if (ModList.get().isLoaded("theoneprobe")) {
-            TOPCompat.register();
+            //TOPCompat.register();
         }
     }
 

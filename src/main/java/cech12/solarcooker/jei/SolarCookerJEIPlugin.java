@@ -14,6 +14,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.resources.ResourceLocation;
 
@@ -47,8 +48,8 @@ public class SolarCookerJEIPlugin implements IModPlugin {
 
             if (ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
                 registration.addRecipes(solarCookingCategory.getRecipeType(), manager.getAllRecipesFor(ServerConfig.getRecipeType()).stream()
-                        .filter(recipe -> ServerConfig.isRecipeNotBlacklisted(recipe.getId()))
-                        .map(recipe -> SolarCookingRecipe.convert(recipe, player.level().registryAccess()))
+                        .filter(recipe -> ServerConfig.isRecipeNotBlacklisted(recipe.id()))
+                        .map(recipe -> new RecipeHolder<>(recipe.id(), SolarCookingRecipe.convert(recipe.value(), player.level().registryAccess())))
                         .collect(Collectors.toList()));
             }
         }

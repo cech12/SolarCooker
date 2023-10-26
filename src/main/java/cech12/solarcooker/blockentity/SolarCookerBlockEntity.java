@@ -26,7 +26,7 @@ public class SolarCookerBlockEntity extends AbstractSolarCookerBlockEntity {
     @Override
     @Nonnull
     protected AbstractContainerMenu createMenu(int id, @Nonnull Inventory player) {
-        return new SolarCookerContainer(ModRecipeTypes.SOLAR_COOKING.get(), id, player, this);
+        return new SolarCookerContainer(ModRecipeTypes.SOLAR_COOKING.get(), id, player, this, this.dataAccess);
     }
 
 }

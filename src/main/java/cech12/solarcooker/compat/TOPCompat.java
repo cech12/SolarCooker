@@ -1,5 +1,5 @@
 package cech12.solarcooker.compat;
-
+/*
 import cech12.solarcooker.SolarCookerMod;
 import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
 import mcjty.theoneprobe.api.ElementAlignment;
@@ -60,3 +60,4 @@ public class TOPCompat {
         }
     }
 }
+ */

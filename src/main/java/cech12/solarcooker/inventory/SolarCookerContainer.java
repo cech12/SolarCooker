@@ -1,17 +1,16 @@
 package cech12.solarcooker.inventory;
 
+import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
 import cech12.solarcooker.config.ServerConfig;
 import cech12.solarcooker.init.ModMenuTypes;
-import cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,15 +19,17 @@ import javax.annotation.Nonnull;
 
 public class SolarCookerContainer extends AbstractContainerMenu {
     private final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
-    private final AbstractSolarCookerBlockEntity cooker;
+    private final Container cooker;
+    private final ContainerData data;
     protected final Level world;
 
     public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
-                                Inventory playerInventoryIn, AbstractSolarCookerBlockEntity cooker) {
+                                Inventory playerInventoryIn, Container cooker, ContainerData data) {
         super(ModMenuTypes.SOLAR_COOKER.get(), id);
         this.specificRecipeType = specificRecipeTypeIn;
         checkContainerSize(cooker, 2);
         this.cooker = cooker;
+        this.data = data;
         cooker.startOpen(playerInventoryIn.player);
         this.world = playerInventoryIn.player.level();
 
@@ -45,11 +46,12 @@ public class SolarCookerContainer extends AbstractContainerMenu {
         for(int playerHotbarSlot = 0; playerHotbarSlot < 9; ++playerHotbarSlot) {
             this.addSlot(new Slot(playerInventoryIn, playerHotbarSlot, 8 + playerHotbarSlot * 18, 142));
         }
+
+        this.addDataSlots(this.data);
     }
 
-    public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
-                                Inventory playerInventoryIn, BlockPos pos) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, (AbstractSolarCookerBlockEntity) playerInventoryIn.player.level().getBlockEntity(pos));
+    public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id, Inventory playerInventoryIn) {
+        this(specificRecipeTypeIn, id, playerInventoryIn, new SimpleContainer(2), new SimpleContainerData(3));
     }
 
     @Override
@@ -118,7 +120,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
             }
             if (ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
                 return this.world.getRecipeManager().getRecipesFor(ServerConfig.getRecipeType(), new SimpleContainer(stack), this.world)
-                        .stream().anyMatch(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId()));
+                        .stream().anyMatch(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.id()));
             }
         }
         return false;
@@ -135,18 +137,18 @@ public class SolarCookerContainer extends AbstractContainerMenu {
 
     @OnlyIn(Dist.CLIENT)
     public int getCookProgressionScaled() {
-        int i = this.cooker.getCookTime();
-        int j = this.cooker.getCookTimeTotal();
+        int i = this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME);
+        int j = this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME_TOTAL);
         return j != 0 && i != 0 ? i * 24 / j : 0;
     }
 
     @OnlyIn(Dist.CLIENT)
     public boolean isBurning() {
-        return this.cooker.getCookTime() > 0;
+        return this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME) > 0;
     }
 
     @OnlyIn(Dist.CLIENT)
     public boolean isSunlit() {
-        return this.cooker.isSunlit();
+        return this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_IS_SUNLIT) > 0;
     }
 }

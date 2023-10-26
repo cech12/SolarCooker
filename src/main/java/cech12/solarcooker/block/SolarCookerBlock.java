@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.network.NetworkHooks;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
@@ -50,7 +49,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     protected void interactWith(Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player) {
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
-            NetworkHooks.openScreen((ServerPlayer) player, (SolarCookerBlockEntity) blockEntity, pos);
+            player.openMenu((SolarCookerBlockEntity) blockEntity);
         }
     }
 

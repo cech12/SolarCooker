@@ -8,13 +8,15 @@ import cech12.solarcooker.init.ModTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.StackedContentsCompatible;
-import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +49,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, LidBlockEntity {
+public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, LidBlockEntity {
+
+    public static final int CONTAINER_IS_SUNLIT = 0;
+    public static final int CONTAINER_COOK_TIME = 1;
+    public static final int CONTAINER_COOK_TIME_TOTAL = 2;
 
     private static final int[] SLOTS = new int[]{0, 1};
     private static final int[] SLOTS_UP = new int[]{};
@@ -77,8 +83,34 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
         this.specificRecipeType = specificRecipeTypeIn;
     }
 
-    protected AbstractCookingRecipe curRecipe;
+    protected RecipeHolder<? extends AbstractCookingRecipe> curRecipe;
     protected ItemStack failedMatch = ItemStack.EMPTY;
+
+    protected final ContainerData dataAccess = new ContainerData() {
+        public int get(int index) {
+            return switch (index) {
+                case CONTAINER_IS_SUNLIT -> AbstractSolarCookerBlockEntity.this.isSunlit() ? 1 : 0;
+                case CONTAINER_COOK_TIME -> AbstractSolarCookerBlockEntity.this.cookTime;
+                case CONTAINER_COOK_TIME_TOTAL -> AbstractSolarCookerBlockEntity.this.cookTimeTotal;
+                default -> 0;
+            };
+        }
+
+        public void set(int index, int value) {
+            switch (index) {
+                //case CONTAINER_IS_SUNLIT: break; //do nothing
+                case CONTAINER_COOK_TIME:
+                    AbstractSolarCookerBlockEntity.this.cookTime = value;
+                    break;
+                case CONTAINER_COOK_TIME_TOTAL:
+                    AbstractSolarCookerBlockEntity.this.cookTimeTotal = value;
+            }
+        }
+
+        public int getCount() {
+            return 3;
+        }
+    };
 
     private boolean hasShiningBlockAbove() {
         if (this.level != null && !this.level.isClientSide) {
@@ -163,7 +195,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
             entity.calculateLidAngle();
             boolean isSunlit = entity.isSunlit();
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
-                AbstractCookingRecipe recipe = entity.getRecipe();
+                RecipeHolder<? extends AbstractCookingRecipe> recipe = entity.getRecipe();
                 if (entity.canSmelt(recipe)) {
                     entity.cookTime++;
                     if (entity.cookTime == entity.cookTimeTotal) {
@@ -280,9 +312,9 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
         }
     }
 
-    protected boolean canSmelt(@Nullable Recipe<?> recipe) {
+    protected boolean canSmelt(@Nullable RecipeHolder<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe).assemble(this, this.getLevel().registryAccess());
+            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe.value()).assemble(this, this.getLevel().registryAccess());
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -293,10 +325,10 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
         return false;
     }
 
-    private void smeltItem(@Nullable Recipe<?> recipe) {
+    private void smeltItem(@Nullable RecipeHolder<?> recipe) {
         if (recipe != null && this.canSmelt(recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe).assemble(this, this.getLevel().registryAccess());
+            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe.value()).assemble(this, this.getLevel().registryAccess());
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
@@ -313,33 +345,33 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     }
 
     protected int getRecipeCookTime() {
-        AbstractCookingRecipe rec = getRecipe();
+        RecipeHolder<? extends AbstractCookingRecipe> rec = getRecipe();
         if (rec == null) {
             return 200;
         }
         this.checkForReflectors();
         double reflectorFactor = (this.reflectorCount > 0) ? 1 - ((1 - ServerConfig.MAX_REFLECTOR_TIME_FACTOR.get()) / 4.0D) * this.reflectorCount : 1;
-        if (this.specificRecipeType.getClass().isInstance(rec.getType())) {
-            return (int) (rec.getCookingTime() * reflectorFactor);
+        if (this.specificRecipeType.getClass().isInstance(rec.value().getType())) {
+            return (int) (rec.value().getCookingTime() * reflectorFactor);
         }
-        return (int) (rec.getCookingTime() * (ServerConfig.COOK_TIME_FACTOR.get() * reflectorFactor));
+        return (int) (rec.value().getCookingTime() * (ServerConfig.COOK_TIME_FACTOR.get() * reflectorFactor));
     }
 
     @SuppressWarnings("unchecked")
-    protected AbstractCookingRecipe getRecipe() {
+    protected RecipeHolder<? extends AbstractCookingRecipe> getRecipe() {
         ItemStack input = this.getItem(INPUT);
         if (input.isEmpty() || input == failedMatch) {
             return null;
         }
-        if (this.level != null && curRecipe != null && curRecipe.matches(this, level)) {
+        if (this.level != null && curRecipe != null && curRecipe.value().matches(this, level)) {
             return curRecipe;
         } else {
-            AbstractCookingRecipe rec = null;
+            RecipeHolder<? extends AbstractCookingRecipe> rec = null;
             if (this.level != null) {
                 rec = this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.level).orElse(null);
                 if (rec == null && ServerConfig.VANILLA_RECIPES_ENABLED.get()) {
                     rec = this.level.getRecipeManager().getRecipesFor((RecipeType<AbstractCookingRecipe>) ServerConfig.getRecipeType(), this, this.level)
-                            .stream().filter(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.getId())).findFirst().orElse(null);
+                            .stream().filter(abstractCookingRecipe -> ServerConfig.isRecipeNotBlacklisted(abstractCookingRecipe.id())).findFirst().orElse(null);
                 }
             }
             if (rec == null) {
@@ -493,31 +525,31 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     }
 
     @Override
-    public void setRecipeUsed(@Nullable Recipe<?> recipe) {
+    public void setRecipeUsed(@Nullable RecipeHolder<?> recipe) {
         if (recipe != null) {
-            this.usedRecipes.addTo(recipe.getId(), 1);
+            this.usedRecipes.addTo(recipe.id(), 1);
         }
     }
 
     @Override
     @Nullable
-    public Recipe<?> getRecipeUsed() {
+    public RecipeHolder<?> getRecipeUsed() {
         return null;
     }
 
     public void awardUsedRecipesAndPopExperience(Player p_235645_1_) {
-        List<Recipe<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level(), p_235645_1_.position());
+        List<RecipeHolder<?>> list = this.getRecipesToAwardAndPopExperience(p_235645_1_.level(), p_235645_1_.position());
         p_235645_1_.awardRecipes(list);
         this.usedRecipes.clear();
     }
 
-    public List<Recipe<?>> getRecipesToAwardAndPopExperience(Level p_235640_1_, Vec3 p_235640_2_) {
-        List<Recipe<?>> list = Lists.newArrayList();
+    public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(Level p_235640_1_, Vec3 p_235640_2_) {
+        List<RecipeHolder<?>> list = Lists.newArrayList();
 
         for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
-            p_235640_1_.getRecipeManager().byKey(entry.getKey()).ifPresent((p_235642_4_) -> {
-                list.add(p_235642_4_);
-                createExperience(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)p_235642_4_).getExperience());
+            p_235640_1_.getRecipeManager().byKey(entry.getKey()).ifPresent((recipeHolder) -> {
+                list.add(recipeHolder);
+                createExperience(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)recipeHolder.value()).getExperience());
             });
         }
 
