@@ -1,0 +1,8 @@
+{
+    "block.solarcooker.solar_cooker": " 太阳灶",
+    "block.solarcooker.reflector": "反光板",
+    "block.solarcooker.shining_diamond_block": "闪耀的钻石块",
+  
+    "item.solarcooker.reflector.description": "在太阳灶的左右两侧最多可以放置四个反射板来改善光线的入射以及减少烹饪时间。",
+    "item.solarcooker.shining_diamond_block.description": "闪闪放光芒！可以放置在一个太阳灶上方，独立于太阳使用。"
+}

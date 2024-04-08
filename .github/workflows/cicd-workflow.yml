@@ -33,42 +33,82 @@ jobs:
     needs: codeql
     if: startsWith(github.ref, 'refs/tags/')
     name: Publish Github
-    uses: cech12/MinecraftModActions/.github/workflows/publish-github.yml@main
+    uses: cech12/MinecraftModActions/.github/workflows/multi-publish-github.yml@main
     with:
       java-version: 17
       mod-name: Solar Cooker
       mod-id: solarcooker
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-  publish-curseforge:
+  publish-forge-on-curseforge:
     needs: publish-github
     if: startsWith(github.ref, 'refs/tags/')
-    name: Publish Curseforge
+    name: Publish Forge on Curseforge
     uses: cech12/MinecraftModActions/.github/workflows/publish-curseforge.yml@main
     with:
       java-version: 17
+      subproject: forge
+      title-prefix: forge-
       curseforge-id: 436874
       game-versions: |
-        1.20.2
+        1.20.4
       release-type: release
       loaders: |
         forge
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
-  publish-modrinth:
+  publish-forge-on-modrinth:
     needs: publish-github
     if: startsWith(github.ref, 'refs/tags/')
-    name: Publish Modrinth
+    name: Publish Forge on Modrinth
     uses: cech12/MinecraftModActions/.github/workflows/publish-modrinth.yml@main
     with:
       java-version: 17
+      subproject: forge
+      title-prefix: forge-
       modrinth-id: IsSapAeq
       game-versions: |
-        1.20.2
+        1.20.4
       release-type: release
       loaders: |
         forge
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      modrinth-token: ${{ secrets.MODRINTH_API_KEY }}
+  publish-neoforge-on-curseforge:
+    needs: publish-github
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Publish Neoforge on Curseforge
+    uses: cech12/MinecraftModActions/.github/workflows/publish-curseforge.yml@main
+    with:
+      java-version: 17
+      subproject: neoforge
+      title-prefix: neoforge-
+      curseforge-id: 436874
+      game-versions: |
+        1.20.4
+      release-type: release
+      loaders: |
+        neoforge
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      curseforge-token: ${{ secrets.CURSEFORGE_API_KEY }}
+  publish-neoforge-on-modrinth:
+    needs: publish-github
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Publish Neoforge on Modrinth
+    uses: cech12/MinecraftModActions/.github/workflows/publish-modrinth.yml@main
+    with:
+      java-version: 17
+      subproject: neoforge
+      title-prefix: neoforge-
+      modrinth-id: IsSapAeq
+      game-versions: |
+        1.20.4
+      release-type: release
+      loaders: |
+        neoforge
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       modrinth-token: ${{ secrets.MODRINTH_API_KEY }}

@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.20.4-3.0.0.0] - 2024-04-08
+### Changed
+- updated to Minecraft 1.20.4 (Forge 49.0.38, Neoforge 20.4.225)
+- updated JEI support to 1.20.4-17.3.0.49 (Forge & Neoforge)
+- updated The One Probe support to 1.20.4_neo-11.0.2-3 (Neoforge)
+- rename config option "recipeBlacklist" to "recipeBlockedList"
+
 ## [1.20.2-2.2.0.0] - 2023-10-26
 ### Changed
 - update and move back to Forge 1.20.2-48.0.23 (from NeoForge) until it is stable
