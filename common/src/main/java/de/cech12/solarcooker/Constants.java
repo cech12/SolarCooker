@@ -1,8 +1,8 @@
 package de.cech12.solarcooker;
 
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
-import net.minecraft.world.inventory.AbstractContainerMenu;
+import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -37,7 +37,7 @@ public class Constants {
     public static Supplier<Block> REFLECTOR_BLOCK;
     public static Supplier<Block> SHINING_DIAMOND_BLOCK_BLOCK;
 
-    public static Supplier<BlockEntityType<? extends AbstractSolarCookerBlockEntity>> SOLAR_COOKER_ENTITY_TYPE;
+    public static Supplier<BlockEntityType<? extends SolarCookerBlockEntity>> SOLAR_COOKER_ENTITY_TYPE;
 
     public static Supplier<Item> SOLAR_COOKER_ITEM;
     public static Supplier<Item> REFLECTOR_ITEM;
@@ -45,7 +45,7 @@ public class Constants {
 
     public static Supplier<RecipeType<SolarCookingRecipe>> SOLAR_COOKING_RECIPE_TYPE;
 
-    public static Supplier<MenuType<? extends AbstractContainerMenu>> SOLAR_COOKER_MENU_TYPE;
+    public static Supplier<MenuType<SolarCookerContainer>> SOLAR_COOKER_MENU_TYPE;
 
     private Constants() {}
 

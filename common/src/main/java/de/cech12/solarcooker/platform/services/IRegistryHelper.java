@@ -1,6 +1,6 @@
 package de.cech12.solarcooker.platform.services;
 
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -11,6 +11,6 @@ import javax.annotation.Nonnull;
  */
 public interface IRegistryHelper {
 
-    AbstractSolarCookerBlockEntity getNewBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state);
+    SolarCookerBlockEntity getNewBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state);
 
 }

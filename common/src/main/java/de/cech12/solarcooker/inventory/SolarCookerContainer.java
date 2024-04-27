@@ -1,7 +1,7 @@
 package de.cech12.solarcooker.inventory;
 
 import de.cech12.solarcooker.Constants;
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -134,16 +134,16 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     }
 
     public int getCookProgressionScaled() {
-        int i = this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME);
-        int j = this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME_TOTAL);
+        int i = this.data.get(SolarCookerBlockEntity.CONTAINER_COOK_TIME);
+        int j = this.data.get(SolarCookerBlockEntity.CONTAINER_COOK_TIME_TOTAL);
         return j != 0 && i != 0 ? i * 24 / j : 0;
     }
 
     public boolean isBurning() {
-        return this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_COOK_TIME) > 0;
+        return this.data.get(SolarCookerBlockEntity.CONTAINER_COOK_TIME) > 0;
     }
 
     public boolean isSunlit() {
-        return this.data.get(AbstractSolarCookerBlockEntity.CONTAINER_IS_SUNLIT) > 0;
+        return this.data.get(SolarCookerBlockEntity.CONTAINER_IS_SUNLIT) > 0;
     }
 }

@@ -12,7 +12,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ForgeSolarCookerBlockEntity extends AbstractSolarCookerBlockEntity {
+public class ForgeSolarCookerBlockEntity extends SolarCookerBlockEntity {
 
     public ForgeSolarCookerBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);

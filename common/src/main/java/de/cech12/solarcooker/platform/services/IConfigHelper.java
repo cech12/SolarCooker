@@ -40,7 +40,7 @@ public interface IConfigHelper {
     /** Default value of the recipe blocked list option */
     String RECIPE_BLOCKED_LIST_DEFAULT = "";
     /** Config description of the recipe blocked list option */
-    String RECIPE_BLOCKED_LIST_DESCRIPTION = "A comma separated list of all vanilla recipes that should not be used by the brick furnaces. Example: \"baked_potato,baked_potato_from_smoking,othermod:other_baked_food\"";
+    String RECIPE_BLOCKED_LIST_DESCRIPTION = "A comma separated list of all vanilla recipes that should not be used by the solar cooker. Example: \"baked_potato,baked_potato_from_smoking,othermod:other_baked_food\"";
 
     /**
      * Initialization method for the Service implementations.

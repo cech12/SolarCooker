@@ -4,5 +4,40 @@
     "block.solarcooker.shining_diamond_block": "Bloco brilhante de diamante",
   
     "item.solarcooker.reflector.description": "Até quatro Refletores podem ser colocados à esquerda e à direita de um Fogão Solar para melhorar a incidência de luz e reduzir o tempo de cozimento.",
-    "item.solarcooker.shining_diamond_block.description": "Brilhar! Pode ser colocado por cima de um Fogão Solar para o utilizar independentemente do sol."
+    "item.solarcooker.shining_diamond_block.description": "Brilhar! Pode ser colocado por cima de um Fogão Solar para o utilizar independentemente do sol.",
+
+    "text.autoconfig.solarcooker.title": "Solar Cooker Settings",
+
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPES_ENABLED": "Vanilla Recipes enabled",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPES_ENABLED.@Tooltip[0]": "§6§lVanilla Recipes enabled",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPES_ENABLED.@Tooltip[1]": "If enabled, the vanilla blasting, smelting, or",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPES_ENABLED.@Tooltip[2]": "smoking recipes are used by the solar cooker.",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPES_ENABLED.@Tooltip[3]": "§7§oDefault: true",
+
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPE_TYPE": "Vanilla Recipe Type",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPE_TYPE.@Tooltip[0]": "§6§lVanilla Recipe Type",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPE_TYPE.@Tooltip[1]": "Defines which vanilla recipes the solar cooker can use.",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPE_TYPE.@Tooltip[2]": "§7§oPossible values: smoking, smelting, blasting, campfire_cooking",
+    "text.autoconfig.solarcooker.option.VANILLA_RECIPE_TYPE.@Tooltip[3]": "§7§oDefault: smoking",
+
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR": "Cook time factor",
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[0]": "§6§lCook time factor",
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[1]": "Cook time factor of the solar cooker in relation",
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[2]": "to corresponding vanilla furnace. (percent)",
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[3]": "§7§o50 - half the time, 100 same time, 200 twice the time",
+    "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[4]": "§7§oDefault: 400",
+
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR": "Max Reflector time factor",
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[0]": "§6§lMax Reflector time factor",
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[1]": "Speed factor when all 4 reflectors are placed",
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[2]": "next to the solar cooker. (percent)",
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[3]": "§7§o50 - half the time, 100 same time",
+    "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[4]": "§7§oDefault: 25",
+
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST": "Recipe blocked list",
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[0]": "§6§lRecipe blocked list",
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[1]": "A comma separated list of all vanilla recipes that",
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[2]": "should not be used by the solar cooker.",
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[3]": "§7§oExample: baked_potato,baked_potato_from_smoking,othermod:other_baked_food",
+    "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[4]": "§7§oDefault: <empty>"
 }

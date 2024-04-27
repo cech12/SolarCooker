@@ -1,7 +1,7 @@
 package de.cech12.solarcooker.compat;
 
 import de.cech12.solarcooker.Constants;
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
@@ -39,7 +39,7 @@ public class TOPCompat {
                 @Override
                 public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player player, Level level, BlockState blockState, IProbeHitData iProbeHitData) {
                     BlockEntity blockEntity = level.getBlockEntity(iProbeHitData.getPos());
-                    if (!(blockEntity instanceof AbstractSolarCookerBlockEntity)) {
+                    if (!(blockEntity instanceof SolarCookerBlockEntity)) {
                         return;
                     }
                     CompoundTag nbt = blockEntity.getUpdateTag();

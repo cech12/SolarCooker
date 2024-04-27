@@ -49,7 +49,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, LidBlockEntity {
+public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, LidBlockEntity {
 
     public static final int CONTAINER_IS_SUNLIT = 0;
     public static final int CONTAINER_COOK_TIME = 1;
@@ -77,13 +77,13 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     protected final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
 
-    public AbstractSolarCookerBlockEntity(BlockEntityType<?> tileTypeIn, BlockPos pos, BlockState state,
-                                          RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
+    public SolarCookerBlockEntity(BlockEntityType<?> tileTypeIn, BlockPos pos, BlockState state,
+                                  RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
         super(tileTypeIn, pos, state);
         this.specificRecipeType = specificRecipeTypeIn;
     }
 
-    public AbstractSolarCookerBlockEntity(BlockPos pos, BlockState state) {
+    public SolarCookerBlockEntity(BlockPos pos, BlockState state) {
         this(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), pos, state, Constants.SOLAR_COOKING_RECIPE_TYPE.get());
     }
 
@@ -93,9 +93,9 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
     protected final ContainerData dataAccess = new ContainerData() {
         public int get(int index) {
             return switch (index) {
-                case CONTAINER_IS_SUNLIT -> AbstractSolarCookerBlockEntity.this.isSunlit() ? 1 : 0;
-                case CONTAINER_COOK_TIME -> AbstractSolarCookerBlockEntity.this.cookTime;
-                case CONTAINER_COOK_TIME_TOTAL -> AbstractSolarCookerBlockEntity.this.cookTimeTotal;
+                case CONTAINER_IS_SUNLIT -> SolarCookerBlockEntity.this.isSunlit() ? 1 : 0;
+                case CONTAINER_COOK_TIME -> SolarCookerBlockEntity.this.cookTime;
+                case CONTAINER_COOK_TIME_TOTAL -> SolarCookerBlockEntity.this.cookTimeTotal;
                 default -> 0;
             };
         }
@@ -104,10 +104,10 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
             switch (index) {
                 //case CONTAINER_IS_SUNLIT: break; //do nothing
                 case CONTAINER_COOK_TIME:
-                    AbstractSolarCookerBlockEntity.this.cookTime = value;
+                    SolarCookerBlockEntity.this.cookTime = value;
                     break;
                 case CONTAINER_COOK_TIME_TOTAL:
-                    AbstractSolarCookerBlockEntity.this.cookTimeTotal = value;
+                    SolarCookerBlockEntity.this.cookTimeTotal = value;
             }
         }
 
@@ -157,7 +157,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
                         && this.level.canSeeSky(this.worldPosition.above()));
             } else {
                 //world.isDaytime() returns always true on client side
-                return AbstractSolarCookerBlockEntity.this.getBlockState().getValue(SolarCookerBlock.SUNLIT);
+                return SolarCookerBlockEntity.this.getBlockState().getValue(SolarCookerBlock.SUNLIT);
             }
         }
         return false;
@@ -205,7 +205,7 @@ public abstract class AbstractSolarCookerBlockEntity extends BaseContainerBlockE
         this.load(pkt.getTag());
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, AbstractSolarCookerBlockEntity entity) {
+    public static void tick(Level level, BlockPos pos, BlockState state, SolarCookerBlockEntity entity) {
         if (level != null) {
             boolean dirty = false;
             entity.calculateLidAngle();

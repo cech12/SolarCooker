@@ -1,6 +1,6 @@
 package de.cech12.solarcooker.block;
 
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -73,8 +73,8 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     public void setPlacedBy(@Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, LivingEntity placer, ItemStack stack) {
         if (stack.hasCustomHoverName()) {
             BlockEntity tileentity = worldIn.getBlockEntity(pos);
-            if (tileentity instanceof AbstractSolarCookerBlockEntity) {
-                ((AbstractSolarCookerBlockEntity)tileentity).setCustomName(stack.getHoverName());
+            if (tileentity instanceof SolarCookerBlockEntity) {
+                ((SolarCookerBlockEntity)tileentity).setCustomName(stack.getHoverName());
             }
         }
 
@@ -85,9 +85,9 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     public void onRemove(BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
             BlockEntity tileentity = worldIn.getBlockEntity(pos);
-            if (tileentity instanceof AbstractSolarCookerBlockEntity) {
-                Containers.dropContents(worldIn, pos, (AbstractSolarCookerBlockEntity)tileentity);
-                ((AbstractSolarCookerBlockEntity)tileentity).getRecipesToAwardAndPopExperience(worldIn, Vec3.atLowerCornerOf(pos));
+            if (tileentity instanceof SolarCookerBlockEntity) {
+                Containers.dropContents(worldIn, pos, (SolarCookerBlockEntity)tileentity);
+                ((SolarCookerBlockEntity)tileentity).getRecipesToAwardAndPopExperience(worldIn, Vec3.atLowerCornerOf(pos));
                 worldIn.updateNeighbourForOutputSignal(pos, this);
             }
 

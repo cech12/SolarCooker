@@ -2,7 +2,7 @@ package de.cech12.solarcooker.block;
 
 import com.mojang.serialization.MapCodec;
 import de.cech12.solarcooker.Constants;
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -46,7 +46,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
-        return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), AbstractSolarCookerBlockEntity::tick);
+        return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::tick);
     }
 
     /**
@@ -56,8 +56,8 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     @Override
     protected void interactWith(Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player) {
         BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-        if (blockEntity instanceof AbstractSolarCookerBlockEntity && player instanceof ServerPlayer) {
-            player.openMenu((AbstractSolarCookerBlockEntity) blockEntity);
+        if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
+            player.openMenu((SolarCookerBlockEntity) blockEntity);
         }
     }
 

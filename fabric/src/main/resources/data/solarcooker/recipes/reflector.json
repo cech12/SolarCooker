@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GIS",
+    "GIS",
+    "GIS"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "I": {
+      "tag": "c:iron_ingots"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "result": {
+    "item": "solarcooker:reflector"
+  }
+}

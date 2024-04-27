@@ -2,12 +2,11 @@ package de.cech12.solarcooker.init;
 
 import de.cech12.solarcooker.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.cech12.solarcooker.blockentity.NeoForgeSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -41,12 +40,12 @@ public class ModItems {
             public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
                 consumer.accept(new IClientItemExtensions() {
                     final BlockEntityWithoutLevelRenderer myRenderer = new BlockEntityWithoutLevelRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()) {
-                        private NeoForgeSolarCookerBlockEntity blockEntity;
+                        private SolarCookerBlockEntity blockEntity;
 
                         @Override
                         public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext displayContext, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource buffer, int x, int y) {
                             if (blockEntity == null) {
-                                blockEntity = new NeoForgeSolarCookerBlockEntity(BlockPos.ZERO, Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState());
+                                blockEntity = new SolarCookerBlockEntity(BlockPos.ZERO, Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState());
                             }
                             Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(blockEntity, matrix, buffer, x, y);
                         }

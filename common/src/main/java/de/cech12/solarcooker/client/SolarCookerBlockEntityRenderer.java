@@ -2,7 +2,7 @@ package de.cech12.solarcooker.client;
 
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.block.AbstractSolarCookerBlock;
-import de.cech12.solarcooker.blockentity.AbstractSolarCookerBlockEntity;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
-public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<AbstractSolarCookerBlockEntity> {
+public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<SolarCookerBlockEntity> {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/solar_cooker.png");
 
@@ -56,7 +56,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Abstr
     }
 
     @Override
-    public void render(AbstractSolarCookerBlockEntity blockEntity, float partialTicks, @Nonnull PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(SolarCookerBlockEntity blockEntity, float partialTicks, @Nonnull PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
         Level world = blockEntity.getLevel();
         boolean isInWorld = world != null;
         BlockState blockstate = isInWorld ? blockEntity.getBlockState() : Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);

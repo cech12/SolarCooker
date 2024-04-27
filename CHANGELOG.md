@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.20.4-3.1.0.0] - 2024-04-27
+### Added
+- add Fabric (>=0.96.11+1.20.4) support (Fabric, Quilt)
+
 ## [1.20.4-3.0.0.0] - 2024-04-08
 ### Changed
 - updated to Minecraft 1.20.4 (Forge 49.0.38, Neoforge 20.4.225)
