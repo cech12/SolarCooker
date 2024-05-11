@@ -18,7 +18,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 @Mod(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid= Constants.MOD_ID, bus= Mod.EventBusSubscriber.Bus.MOD)
@@ -43,6 +46,11 @@ public class NeoForgeSolarCookerMod {
     public static void onClientRegister(FMLClientSetupEvent event) {
         MenuScreens.register((MenuType<SolarCookerContainer>) Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
         BlockEntityRenderers.register(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SidedInvWrapper::new);
     }
 
     @SubscribeEvent
