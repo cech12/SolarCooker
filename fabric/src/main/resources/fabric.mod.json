@@ -41,6 +41,7 @@
   },
   "recommends": {
     "modmenu": ">=${mod_menu_version}",
-    "jei": ">=${jei_version}"
+    "jei": ">=${jei_version}",
+    "roughlyenoughitems": ">=${rei_version}"
   }
 }

@@ -31,7 +31,7 @@ dependencies {
 
     modCompileOnlyApi("me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version")
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-    modImplementation "dev.architectury:architectury-forge:$architectury_version"
+    modImplementation "dev.architectury:architectury-fabric:$architectury_version"
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     compileOnly project(":common")

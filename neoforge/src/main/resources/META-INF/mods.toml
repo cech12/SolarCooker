@@ -30,6 +30,13 @@ referralUrl="https://github.com/mezz/JustEnoughItems"
 ordering="NONE"
 side="BOTH"
 [[dependencies.${mod_id}]]
+modId="roughlyenoughitems"
+type="optional"
+versionRange="${rei_version_range}"
+referralUrl="https://github.com/shedaniel/RoughlyEnoughItems"
+ordering="NONE"
+side="BOTH"
+[[dependencies.${mod_id}]]
 modId="theoneprobe"
 type="optional"
 versionRange="${top_version_range}"
