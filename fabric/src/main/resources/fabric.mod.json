@@ -17,16 +17,19 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "${group}.FabricSolarCookerMod"
+      "de.cech12.solarcooker.FabricSolarCookerMod"
     ],
     "client": [
-      "${group}.client.FabricSolarCookerClientMod"
+      "de.cech12.solarcooker.client.FabricSolarCookerClientMod"
     ],
     "modmenu": [
-      "${group}.compat.ModMenuCompat"
+      "de.cech12.solarcooker.compat.ModMenuCompat"
     ],
     "jei_mod_plugin": [
-      "${group}.jei.SolarCookerJEIPlugin"
+      "de.cech12.solarcooker.jei.SolarCookerJEIPlugin"
+    ],
+    "rei_client": [
+      "de.cech12.solarcooker.rei.SolarCookerReiClientPlugin"
     ]
   },
   "depends": {

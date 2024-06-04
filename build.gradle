@@ -44,6 +44,9 @@ subprojects {
             name = 'BlameJared Maven (JEI / CraftTweaker / Bookshelf)'
             url = 'https://maven.blamejared.com'
         }
+        //REI
+        maven { url "https://maven.shedaniel.me/" }
+        maven { url "https://maven.architectury.dev/" }
     }
 
     tasks.withType(JavaCompile).configureEach {
@@ -76,6 +79,8 @@ subprojects {
                 "mod_description": project.description,
                 "jei_version": jei_version,
                 "jei_version_range": jei_version_range,
+                "rei_version": rei_version,
+                "rei_version_range": rei_version_range,
                 "top_version": top_version,
                 "top_version_range": top_version_range
         ]
