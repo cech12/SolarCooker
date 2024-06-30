@@ -1,37 +1,37 @@
 package de.cech12.solarcooker.client;
 
-import de.cech12.solarcooker.Constants;
-import de.cech12.solarcooker.block.AbstractSolarCookerBlock;
-import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import de.cech12.solarcooker.Constants;
+import de.cech12.solarcooker.block.AbstractSolarCookerBlock;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 
 public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<SolarCookerBlockEntity> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/solar_cooker.png");
+    public static final ResourceLocation TEXTURE = Constants.id("textures/entity/solar_cooker.png");
 
     private static final LayerDefinition innerCube = createInnerLayerDefinition();
 

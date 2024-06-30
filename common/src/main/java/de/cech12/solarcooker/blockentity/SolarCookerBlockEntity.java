@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -35,9 +36,9 @@ import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -213,13 +214,13 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             boolean isSunlit = entity.isSunlit();
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
                 RecipeHolder<? extends AbstractCookingRecipe> recipe = entity.getRecipe();
-                if (entity.canSmelt(recipe)) {
+                if (entity.canSmelt(level.registryAccess(), recipe)) {
                     entity.cookTime++;
                     if (entity.cookTime == entity.cookTimeTotal) {
                         entity.cookTime = 0;
                         entity.cookTimeTotal = entity.getRecipeCookTime();
                         if (!level.isClientSide) {
-                            entity.smeltItem(recipe);
+                            entity.smeltItem(level.registryAccess(), recipe);
                             dirty = true;
                         }
                     }
@@ -246,7 +247,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     public boolean shouldLidBeOpen() {
-        return this.numPlayersUsing > 0 || (this.canSmelt(getRecipe()) && this.isSunlit());
+        return this.numPlayersUsing > 0 || (this.canSmelt(this.getLevel().registryAccess(), getRecipe()) && this.isSunlit());
     }
 
     private void calculateLidAngle() {
@@ -329,9 +330,9 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         }
     }
 
-    protected boolean canSmelt(@Nullable RecipeHolder<?> recipe) {
+    protected boolean canSmelt(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = ((Recipe<WorldlyContainer>) recipe.value()).assemble(this, this.getLevel().registryAccess());
+            ItemStack recipeOutput = recipe.value().getResultItem(registryAccess);
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -342,10 +343,10 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         return false;
     }
 
-    private void smeltItem(@Nullable RecipeHolder<?> recipe) {
-        if (recipe != null && this.canSmelt(recipe)) {
+    private void smeltItem(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
+        if (recipe != null && this.canSmelt(registryAccess, recipe)) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = ((Recipe<WorldlyContainer>) recipe.value()).assemble(this, this.getLevel().registryAccess());
+            ItemStack itemstack1 = recipe.value().getResultItem(registryAccess);
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
@@ -380,14 +381,15 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         if (input.isEmpty() || input == failedMatch) {
             return null;
         }
-        if (this.level != null && curRecipe != null && curRecipe.value().matches(this, level)) {
+        SingleRecipeInput recipeInput = new SingleRecipeInput(input);
+        if (this.level != null && curRecipe != null && curRecipe.value().matches(recipeInput, level)) {
             return curRecipe;
         } else {
             RecipeHolder<? extends AbstractCookingRecipe> rec = null;
             if (this.level != null) {
-                rec = this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, this, this.level).orElse(null);
+                rec = this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, recipeInput, this.level).orElse(null);
                 if (rec == null && Services.CONFIG.areVanillaRecipesEnabled()) {
-                    rec = this.level.getRecipeManager().getRecipesFor((RecipeType<AbstractCookingRecipe>) Services.CONFIG.getRecipeType(), this, this.level)
+                    rec = this.level.getRecipeManager().getRecipesFor((RecipeType<AbstractCookingRecipe>) Services.CONFIG.getRecipeType(), recipeInput, this.level)
                             .stream().filter(abstractCookingRecipe -> Services.CONFIG.isRecipeAllowed(abstractCookingRecipe.id())).findFirst().orElse(null);
                 }
             }

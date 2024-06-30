@@ -32,7 +32,7 @@ public class TOPCompat {
             probe.registerProvider(new IProbeInfoProvider() {
                 @Override
                 public ResourceLocation getID() {
-                    return new ResourceLocation(Constants.MOD_ID, "solarcookerinfo");
+                    return Constants.id("solarcookerinfo");
                 }
 
                 @Override

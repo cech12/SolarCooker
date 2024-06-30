@@ -4,13 +4,17 @@ import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -113,11 +117,12 @@ public class SolarCookerContainer extends AbstractContainerMenu {
 
     protected boolean hasRecipe(ItemStack stack) {
         if (this.world != null) {
-            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, new SimpleContainer(stack), this.world).isPresent()) {
+            SingleRecipeInput recipeInput = new SingleRecipeInput(stack);
+            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, recipeInput, this.world).isPresent()) {
                 return true;
             }
             if (Services.CONFIG.areVanillaRecipesEnabled()) {
-                return this.world.getRecipeManager().getRecipesFor(Services.CONFIG.getRecipeType(), new SimpleContainer(stack), this.world)
+                return this.world.getRecipeManager().getRecipesFor(Services.CONFIG.getRecipeType(), recipeInput, this.world)
                         .stream().anyMatch(abstractCookingRecipe -> Services.CONFIG.isRecipeAllowed(abstractCookingRecipe.id()));
             }
         }

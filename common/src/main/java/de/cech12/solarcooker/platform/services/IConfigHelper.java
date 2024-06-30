@@ -92,10 +92,10 @@ public interface IConfigHelper {
         if (!configValue.isEmpty()) {
             String[] ids = configValue.split(",");
             if (ids.length < 1) {
-                return !(new ResourceLocation(configValue).equals(id));
+                return !(ResourceLocation.parse(configValue).equals(id));
             } else {
                 for (String recipeId : ids) {
-                    if (new ResourceLocation(recipeId.trim()).equals(id)) {
+                    if (ResourceLocation.parse(recipeId.trim()).equals(id)) {
                         return false;
                     }
                 }

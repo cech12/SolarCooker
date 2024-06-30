@@ -4,14 +4,14 @@ import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
 
 public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContainer> {
-    private static final ResourceLocation guiTexture = new ResourceLocation(Constants.MOD_ID, "textures/gui/container/solar_cooker.png");
+    private static final ResourceLocation guiTexture = Constants.id("textures/gui/container/solar_cooker.png");
 
     public SolarCookerScreen(SolarCookerContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);

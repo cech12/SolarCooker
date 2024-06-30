@@ -1,7 +1,7 @@
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '[7.0.105, 7.2)'
+    id 'net.neoforged.gradle.userdev' version '7.0.150'
     id 'java-library'
 }
 base {
@@ -83,7 +83,13 @@ tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     from project(":common").sourceSets.main.resources
 }
 
-test.onlyIf { false } //disable tests
+//disable tests
+test.onlyIf { false }
+tasks.configureEach { task ->
+    if (task.name.startsWith("testJunit")) {
+        task.enabled = false
+    }
+}
 
 publishing {
     publications {
