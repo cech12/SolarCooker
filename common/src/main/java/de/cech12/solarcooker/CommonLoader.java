@@ -1,7 +1,6 @@
 package de.cech12.solarcooker;
 
 import de.cech12.solarcooker.platform.Services;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * A static class for all loaders which initializes everything which is used by all loaders.
@@ -13,10 +12,6 @@ public class CommonLoader {
      */
     public static void init() {
         Services.CONFIG.init();
-    }
-
-    public static ResourceLocation id(String name) {
-        return new ResourceLocation(Constants.MOD_ID, name);
     }
 
     private CommonLoader() {}

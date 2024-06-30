@@ -8,16 +8,16 @@
   ],
   "key": {
     "G": {
-      "tag": "forge:glass_panes"
+      "tag": "c:glass_panes"
     },
     "I": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "C": {
-      "tag": "forge:chests/wooden"
+      "tag": "c:chests/wooden"
     }
   },
   "result": {
-    "item": "solarcooker:solar_cooker"
+    "id": "solarcooker:solar_cooker"
   }
 }

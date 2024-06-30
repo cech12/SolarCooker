@@ -3,6 +3,7 @@ package de.cech12.solarcooker;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
 import de.cech12.solarcooker.inventory.SolarCookerContainer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -48,5 +49,9 @@ public class Constants {
     public static Supplier<MenuType<SolarCookerContainer>> SOLAR_COOKER_MENU_TYPE;
 
     private Constants() {}
+
+    public static ResourceLocation id(String name) {
+        return new ResourceLocation(MOD_ID, name);
+    }
 
 }

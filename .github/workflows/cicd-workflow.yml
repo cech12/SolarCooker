@@ -15,19 +15,19 @@ jobs:
     name: Build
     uses: cech12/MinecraftModActions/.github/workflows/build.yml@main
     with:
-      java-version: 17
+      java-version: 21
 #  gametest:
 #    needs: build
 #    name: Game Test
 #    uses: cech12/MinecraftModActions/.github/workflows/gametest.yml@main
 #    with:
-#      java-version: 17
+#      java-version: 21
   codeql:
     needs: build
     name: CodeQL
     uses: cech12/MinecraftModActions/.github/workflows/codeql-analysis.yml@main
     with:
-      java-version: 17
+      java-version: 21
   publish-github:
 #    needs: [ gametest, codeql ]
     needs: codeql
@@ -35,7 +35,7 @@ jobs:
     name: Publish Github
     uses: cech12/MinecraftModActions/.github/workflows/multi-publish-github.yml@main
     with:
-      java-version: 17
+      java-version: 21
       mod-name: Solar Cooker
       mod-id: solarcooker
     secrets:
@@ -46,12 +46,12 @@ jobs:
     name: Publish Forge on Curseforge
     uses: cech12/MinecraftModActions/.github/workflows/publish-curseforge.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: forge
       title-prefix: forge-
       curseforge-id: 436874
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         forge
@@ -64,12 +64,12 @@ jobs:
     name: Publish Forge on Modrinth
     uses: cech12/MinecraftModActions/.github/workflows/publish-modrinth.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: forge
       title-prefix: forge-
       modrinth-id: IsSapAeq
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         forge
@@ -82,12 +82,12 @@ jobs:
     name: Publish Neoforge on Curseforge
     uses: cech12/MinecraftModActions/.github/workflows/publish-curseforge.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: neoforge
       title-prefix: neoforge-
       curseforge-id: 436874
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         neoforge
@@ -100,12 +100,12 @@ jobs:
     name: Publish Neoforge on Modrinth
     uses: cech12/MinecraftModActions/.github/workflows/publish-modrinth.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: neoforge
       title-prefix: neoforge-
       modrinth-id: IsSapAeq
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         neoforge
@@ -118,12 +118,12 @@ jobs:
     name: Publish Fabric on Curseforge
     uses: cech12/MinecraftModActions/.github/workflows/publish-curseforge.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: fabric
       title-prefix: fabric-
       curseforge-id: 436874
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         fabric
@@ -137,12 +137,12 @@ jobs:
     name: Publish Fabric on Modrinth
     uses: cech12/MinecraftModActions/.github/workflows/publish-modrinth.yml@main
     with:
-      java-version: 17
+      java-version: 21
       subproject: fabric
       title-prefix: fabric-
       modrinth-id: IsSapAeq
       game-versions: |
-        1.20.4
+        1.20.6
       release-type: release
       loaders: |
         fabric

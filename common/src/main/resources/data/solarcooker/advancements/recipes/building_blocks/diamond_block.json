@@ -11,9 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "solarcooker:shining_diamond_block"
-            ]
+            "items": "solarcooker:shining_diamond_block"
           }
         ]
       }

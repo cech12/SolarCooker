@@ -11,13 +11,13 @@
       "tag": "c:glass_panes"
     },
     "I": {
-      "tag": "c:iron_ingots"
+      "tag": "c:ingots/iron"
     },
     "S": {
       "tag": "minecraft:wooden_slabs"
     }
   },
   "result": {
-    "item": "solarcooker:reflector"
+    "id": "solarcooker:reflector"
   }
 }

@@ -4,24 +4,23 @@ import com.mojang.serialization.MapCodec;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
@@ -54,8 +53,8 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      * inside AbstractSolarCookerBlock.
      */
     @Override
-    protected void interactWith(Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player) {
-        BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+    protected void interactWith(Level level, @Nonnull BlockPos pos, @Nonnull Player player) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
             player.openMenu((SolarCookerBlockEntity) blockEntity);
         }

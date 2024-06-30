@@ -1,6 +1,5 @@
 package de.cech12.solarcooker.init;
 
-import de.cech12.solarcooker.CommonLoader;
 import de.cech12.solarcooker.Constants;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -25,7 +24,7 @@ public class ModItems {
     public static void init() {}
 
     private static Item register(String name, Supplier<Block> block) {
-        return Registry.register(BuiltInRegistries.ITEM, CommonLoader.id(name), new BlockItem(block.get(), new Item.Properties()));
+        return Registry.register(BuiltInRegistries.ITEM, Constants.id(name), new BlockItem(block.get(), new Item.Properties()));
     }
 
 }

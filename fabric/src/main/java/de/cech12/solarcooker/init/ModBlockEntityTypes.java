@@ -1,6 +1,5 @@
 package de.cech12.solarcooker.init;
 
-import de.cech12.solarcooker.CommonLoader;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import net.minecraft.core.Registry;
@@ -18,7 +17,7 @@ public final class ModBlockEntityTypes {
     public static void init() {}
 
     private static BlockEntityType<? extends SolarCookerBlockEntity> register(String name, BlockEntityType.Builder<? extends SolarCookerBlockEntity> blockEntityTypeBuilder) {
-        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, CommonLoader.id(name), blockEntityTypeBuilder.build(null));
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Constants.id(name), blockEntityTypeBuilder.build(null));
     }
 
 }

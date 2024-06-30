@@ -7,13 +7,9 @@ import de.cech12.solarcooker.init.ModBlocks;
 import de.cech12.solarcooker.init.ModItems;
 import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
-import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,10 +33,9 @@ public class ForgeSolarCookerMod {
         CommonLoader.init();
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onClientRegister(FMLClientSetupEvent event) {
-        MenuScreens.register((MenuType<SolarCookerContainer>) Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
+        MenuScreens.register(Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
         BlockEntityRenderers.register(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntityRenderer::new);
     }
 

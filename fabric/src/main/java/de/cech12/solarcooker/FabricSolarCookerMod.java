@@ -7,9 +7,20 @@ import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.CreativeModeTabs;
 
 public class FabricSolarCookerMod implements ModInitializer {
+
+    public record SolarCookerData(boolean empty) {
+        public static final StreamCodec<RegistryFriendlyByteBuf, SolarCookerData> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL,
+                SolarCookerData::empty,
+                SolarCookerData::new
+        );
+    }
 
     @Override
     public void onInitialize() {

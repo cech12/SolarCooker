@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "c:wooden_chests"
+            "items": "#c:chests/wooden"
           }
         ]
       }

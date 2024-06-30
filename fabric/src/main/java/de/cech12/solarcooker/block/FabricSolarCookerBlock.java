@@ -1,9 +1,9 @@
 package de.cech12.solarcooker.block;
 
+import de.cech12.solarcooker.FabricSolarCookerMod;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -23,13 +23,13 @@ public class FabricSolarCookerBlock extends SolarCookerBlock {
     }
 
     @Override
-    protected void interactWith(Level worldIn, @NotNull BlockPos pos, @NotNull Player player) {
-        BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+    protected void interactWith(Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity container) {
-            player.openMenu(new ExtendedScreenHandlerFactory() {
+            player.openMenu(new ExtendedScreenHandlerFactory<>() {
                 @Override
-                public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf data) {
-                    //do nothing
+                public Object getScreenOpeningData(ServerPlayer player) {
+                    return new FabricSolarCookerMod.SolarCookerData(false);
                 }
 
                 @Nonnull

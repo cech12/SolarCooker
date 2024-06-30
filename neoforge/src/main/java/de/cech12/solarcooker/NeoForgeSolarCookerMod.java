@@ -8,23 +8,22 @@ import de.cech12.solarcooker.init.ModBlocks;
 import de.cech12.solarcooker.init.ModItems;
 import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
-import de.cech12.solarcooker.inventory.SolarCookerContainer;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 @Mod(Constants.MOD_ID)
-@Mod.EventBusSubscriber(modid= Constants.MOD_ID, bus= Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid= Constants.MOD_ID, bus= EventBusSubscriber.Bus.MOD)
 public class NeoForgeSolarCookerMod {
 
     public NeoForgeSolarCookerMod(IEventBus eventBus) {
@@ -44,8 +43,12 @@ public class NeoForgeSolarCookerMod {
 
     @SubscribeEvent
     public static void onClientRegister(FMLClientSetupEvent event) {
-        MenuScreens.register((MenuType<SolarCookerContainer>) Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
         BlockEntityRenderers.register(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void onMenuScreenRegister(RegisterMenuScreensEvent event) {
+        event.register(Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
     }
 
     @SubscribeEvent

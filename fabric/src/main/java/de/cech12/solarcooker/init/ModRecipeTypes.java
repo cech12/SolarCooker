@@ -1,6 +1,5 @@
 package de.cech12.solarcooker.init;
 
-import de.cech12.solarcooker.CommonLoader;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
 import net.minecraft.core.Registry;
@@ -22,10 +21,10 @@ public class ModRecipeTypes {
     public static void init() {}
 
     private static <T extends AbstractCookingRecipe> RecipeType<T> registerRecipe(String name) {
-        return Registry.register(BuiltInRegistries.RECIPE_TYPE, CommonLoader.id(name), new RecipeType<>() {});
+        return Registry.register(BuiltInRegistries.RECIPE_TYPE, Constants.id(name), new RecipeType<>() {});
     }
 
     private static <T extends AbstractCookingRecipe> RecipeSerializer<T> registerSerializer(String name, RecipeSerializer<T> serializer) {
-        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, CommonLoader.id(name), serializer);
+        return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Constants.id(name), serializer);
     }
 }

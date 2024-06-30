@@ -1,15 +1,14 @@
 package de.cech12.solarcooker.init;
 
-import de.cech12.solarcooker.CommonLoader;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.block.FabricSolarCookerBlock;
 import de.cech12.solarcooker.block.ReflectorBlock;
 import de.cech12.solarcooker.block.ShiningDiamondBlock;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 
 public final class ModBlocks {
@@ -27,7 +26,7 @@ public final class ModBlocks {
     public static void init() {}
 
     private static Block register(String name, Block block) {
-        return Registry.register(BuiltInRegistries.BLOCK, CommonLoader.id(name), block);
+        return Registry.register(BuiltInRegistries.BLOCK, Constants.id(name), block);
     }
 
 }

@@ -1,49 +1,50 @@
 package de.cech12.solarcooker.blockentity;
 
+import com.google.common.collect.Lists;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.ModTags;
 import de.cech12.solarcooker.block.AbstractSolarCookerBlock;
 import de.cech12.solarcooker.block.ReflectorBlock;
 import de.cech12.solarcooker.block.SolarCookerBlock;
-import com.google.common.collect.Lists;
 import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import de.cech12.solarcooker.platform.Services;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.LidBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.StackedContentsCompatible;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -172,26 +173,26 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    public void load(@Nonnull CompoundTag nbtIn) {
-        super.load(nbtIn);
+    protected void loadAdditional(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider provider) {
+        super.loadAdditional(compound, provider);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(nbtIn, this.items);
-        this.cookTime = nbtIn.getInt("CookTime");
-        this.cookTimeTotal = nbtIn.getInt("CookTimeTotal");
+        ContainerHelper.loadAllItems(compound, this.items, provider);
+        this.cookTime = compound.getInt("CookTime");
+        this.cookTimeTotal = compound.getInt("CookTimeTotal");
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider provider) {
+        super.saveAdditional(compound, provider);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
-        ContainerHelper.saveAllItems(compound, this.items);
+        ContainerHelper.saveAllItems(compound, this.items, provider);
     }
 
     @Override
     @Nonnull
-    public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Nullable
@@ -201,8 +202,8 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     //@Override //overrides a Forge / Neoforge method ?! TODO
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        this.load(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        this.loadAdditional(pkt.getTag(), lookupProvider);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, SolarCookerBlockEntity entity) {
@@ -469,6 +470,12 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         return true;
     }
 
+    @Override
+    @Nonnull
+    protected NonNullList<ItemStack> getItems() {
+        return this.items;
+    }
+
     /**
      * Returns the stack in the given slot.
      */
@@ -496,13 +503,18 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         return ContainerHelper.takeItem(this.items, index);
     }
 
+    @Override
+    protected void setItems(@Nonnull NonNullList<ItemStack> nonNullList) {
+        this.items = nonNullList;
+    }
+
     /**
      * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
      */
     @Override
     public void setItem(int index, ItemStack stack) {
         ItemStack itemstack = this.items.get(index);
-        boolean flag = !stack.isEmpty() && ItemStack.isSameItemSameTags(itemstack, stack);
+        boolean flag = !stack.isEmpty() && ItemStack.isSameItemSameComponents(itemstack, stack);
         this.items.set(index, stack);
         if (stack.getCount() > this.getMaxStackSize()) {
             stack.setCount(this.getMaxStackSize());

@@ -11,13 +11,13 @@
       "tag": "c:glass_panes"
     },
     "I": {
-      "tag": "c:iron_ingots"
+      "tag": "c:ingots/iron"
     },
     "C": {
-      "tag": "c:wooden_chests"
+      "tag": "c:chests/wooden"
     }
   },
   "result": {
-    "item": "solarcooker:solar_cooker"
+    "id": "solarcooker:solar_cooker"
   }
 }
