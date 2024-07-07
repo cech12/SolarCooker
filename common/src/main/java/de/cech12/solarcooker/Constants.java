@@ -35,7 +35,6 @@ public class Constants {
     public static final String SOLAR_COOKER_MENU_NAME = "solarcooker";
 
     public static Supplier<Block> SOLAR_COOKER_BLOCK;
-    public static Supplier<Block> REFLECTOR_BLOCK;
     public static Supplier<Block> SHINING_DIAMOND_BLOCK_BLOCK;
 
     public static Supplier<BlockEntityType<? extends SolarCookerBlockEntity>> SOLAR_COOKER_ENTITY_TYPE;

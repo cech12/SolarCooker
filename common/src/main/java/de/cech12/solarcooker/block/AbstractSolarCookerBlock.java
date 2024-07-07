@@ -34,12 +34,14 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty SUNLIT = BlockStateProperties.LIT;
     public static final BooleanProperty BURNING = BlockStateProperties.ENABLED;
+    public static final BooleanProperty LEFT_REFLECTOR = BooleanProperty.create("left_reflector");
+    public static final BooleanProperty RIGHT_REFLECTOR = BooleanProperty.create("right_reflector");
 
     protected static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 
     protected AbstractSolarCookerBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SUNLIT, false).setValue(BURNING, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SUNLIT, false).setValue(BURNING, false).setValue(LEFT_REFLECTOR, false).setValue(RIGHT_REFLECTOR, false));
     }
 
     @Override
@@ -126,6 +128,6 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, SUNLIT, BURNING);
+        builder.add(FACING, SUNLIT, BURNING, LEFT_REFLECTOR, RIGHT_REFLECTOR);
     }
 }

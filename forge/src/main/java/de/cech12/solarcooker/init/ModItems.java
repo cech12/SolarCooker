@@ -1,8 +1,9 @@
 package de.cech12.solarcooker.init;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.ForgeSolarCookerBlockEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
+import de.cech12.solarcooker.item.ReflectorItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,16 +28,20 @@ public class ModItems {
 
     static {
         Constants.SOLAR_COOKER_ITEM = solarCookerItem();
-        Constants.REFLECTOR_ITEM = fromBlock(Constants.REFLECTOR_NAME, Constants.REFLECTOR_BLOCK);
+        Constants.REFLECTOR_ITEM = item(Constants.REFLECTOR_NAME, () -> new ReflectorItem(new Item.Properties()));
         Constants.SHINING_DIAMOND_BLOCK_ITEM = fromBlock(Constants.SHINING_DIAMOND_BLOCK_NAME, Constants.SHINING_DIAMOND_BLOCK_BLOCK);
     }
 
+    private static RegistryObject<Item> item(String name, Supplier<Item> itemSupplier) {
+        return ITEMS.register(name, itemSupplier);
+    }
+
     private static RegistryObject<Item> fromBlock(String name, Supplier<Block> block) {
-        return ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        return item(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
     private static RegistryObject<Item> solarCookerItem() {
-        return ITEMS.register(Constants.SOLAR_COOKER_NAME, () -> new BlockItem(Constants.SOLAR_COOKER_BLOCK.get(), new Item.Properties()) {
+        return item(Constants.SOLAR_COOKER_NAME, () -> new BlockItem(Constants.SOLAR_COOKER_BLOCK.get(), new Item.Properties()) {
             @Override
             public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
                 consumer.accept(new IClientItemExtensions() {

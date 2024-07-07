@@ -6,12 +6,12 @@
     ]
   },
   "criteria": {
-    "has_cooker": {
+    "has_chest": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "solarcooker:solar_cooker"
+            "items": "#forge:chests/wooden"
           }
         ]
       }
@@ -25,7 +25,7 @@
   },
   "requirements": [
     [
-      "has_cooker",
+      "has_chest",
       "has_the_recipe"
     ]
   ]

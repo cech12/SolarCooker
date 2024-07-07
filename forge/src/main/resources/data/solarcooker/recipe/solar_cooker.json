@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IGI",
-    "GCG",
-    "IGI"
+    "IRI",
+    "RCR",
+    "RRR"
   ],
   "key": {
-    "G": {
-      "tag": "forge:glass_panes"
+    "R": {
+      "item": "solarcooker:reflector"
     },
     "I": {
       "tag": "forge:ingots/iron"

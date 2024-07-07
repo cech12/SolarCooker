@@ -3,8 +3,6 @@ package de.cech12.solarcooker.blockentity;
 import com.google.common.collect.Lists;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.ModTags;
-import de.cech12.solarcooker.block.AbstractSolarCookerBlock;
-import de.cech12.solarcooker.block.ReflectorBlock;
 import de.cech12.solarcooker.block.SolarCookerBlock;
 import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import de.cech12.solarcooker.platform.Services;
@@ -57,13 +55,16 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     public static final int CONTAINER_COOK_TIME = 1;
     public static final int CONTAINER_COOK_TIME_TOTAL = 2;
 
-    private static final int[] SLOTS = new int[]{0, 1};
+    public static final int INPUT = 0;
+    public static final int OUTPUT = 1;
+    public static final int REFLECTOR_LEFT = 2;
+    public static final int REFLECTOR_RIGHT = 3;
+
+    private static final int[] SLOTS = new int[]{INPUT, OUTPUT};
     private static final int[] SLOTS_UP = new int[]{};
+    private static final int[] SLOTS_REFLECTORS = new int[]{REFLECTOR_LEFT, REFLECTOR_RIGHT};
 
-    protected static final int INPUT = 0;
-    protected static final int OUTPUT = 1;
-
-    protected NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    protected NonNullList<ItemStack> items = NonNullList.withSize(4, ItemStack.EMPTY);
     protected int cookTime;
     protected int cookTimeTotal;
 
@@ -73,8 +74,9 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     protected float prevLidAngle;
     /** The number of players currently using this cooker */
     protected int numPlayersUsing;
-    /** The number of reflectors next to the cooker */
-    protected int reflectorCount = 0;
+
+    protected boolean reflectorLeft;
+    protected boolean reflectorRight;
 
     protected final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
@@ -210,6 +212,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     public static void tick(Level level, BlockPos pos, BlockState state, SolarCookerBlockEntity entity) {
         if (level != null) {
             boolean dirty = false;
+            entity.updateReflectorStates();
             entity.calculateLidAngle();
             boolean isSunlit = entity.isSunlit();
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
@@ -233,12 +236,16 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
 
             boolean isBurning = entity.cookTime > 0;
             if (!level.isClientSide &&
-                    (entity.getBlockState().getValue(SolarCookerBlock.BURNING) != isBurning
-                            || entity.getBlockState().getValue(SolarCookerBlock.SUNLIT) != isSunlit)) {
+                    (state.getValue(SolarCookerBlock.BURNING) != isBurning
+                            || state.getValue(SolarCookerBlock.SUNLIT) != isSunlit
+                            || state.getValue(SolarCookerBlock.LEFT_REFLECTOR) != entity.reflectorLeft
+                            || state.getValue(SolarCookerBlock.RIGHT_REFLECTOR) != entity.reflectorRight)) {
                 dirty = true;
-                entity.level.setBlock(entity.worldPosition, entity.level.getBlockState(entity.worldPosition)
+                level.setBlock(entity.worldPosition, state
                         .setValue(SolarCookerBlock.SUNLIT, isSunlit)
-                        .setValue(SolarCookerBlock.BURNING, isBurning), 3);
+                        .setValue(SolarCookerBlock.BURNING, isBurning)
+                        .setValue(SolarCookerBlock.LEFT_REFLECTOR, entity.reflectorLeft)
+                        .setValue(SolarCookerBlock.RIGHT_REFLECTOR, entity.reflectorRight), 3);
             }
             if (dirty) {
                 entity.setChanged();
@@ -367,8 +374,8 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         if (rec == null) {
             return 200;
         }
-        this.checkForReflectors();
-        double reflectorFactor = (this.reflectorCount > 0) ? 1 - ((1 - Services.CONFIG.getMaxReflectorTimeFactor()) / 4.0D) * this.reflectorCount : 1;
+        int reflectorCount = this.getReflectorCount();
+        double reflectorFactor = (reflectorCount > 0) ? 1D - ((1D - Services.CONFIG.getMaxReflectorTimeFactor()) / (double) SLOTS_REFLECTORS.length) * (double) reflectorCount : 1D;
         if (this.specificRecipeType.getClass().isInstance(rec.value().getType())) {
             return (int) (rec.value().getCookingTime() * reflectorFactor);
         }
@@ -402,31 +409,37 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         }
     }
 
-    private void checkForReflectors() {
-        this.reflectorCount = 0;
-        if (this.level != null) {
-            BlockState state = this.level.getBlockState(this.worldPosition);
-            if (state.getBlock() instanceof AbstractSolarCookerBlock) {
-                Direction facing = state.getValue(AbstractSolarCookerBlock.FACING);
-                this.reflectorCount += countReflectorsOnSide(facing.getClockWise());
-                this.reflectorCount += countReflectorsOnSide(facing.getCounterClockWise());
-            }
-        }
+    private boolean slotContainsReflector(int slot) {
+        return this.getItem(slot).is(ModTags.Items.SOLAR_COOKER_REFLECTOR);
     }
 
-    private int countReflectorsOnSide(Direction direction) {
+    private int getReflectorCount() {
         int count = 0;
-        if (this.level != null) {
-            BlockPos blockPos = this.worldPosition.relative(direction);
-            for (BlockPos position : new BlockPos[] {blockPos, blockPos.above()}) {
-                BlockState state = this.level.getBlockState(position);
-                if (state.getBlock() instanceof ReflectorBlock
-                        && ReflectorBlock.isFacingTo(state, direction.getOpposite())) {
-                    count++;
-                }
+        for (int slot : SLOTS_REFLECTORS) {
+            if (this.slotContainsReflector(slot)) {
+                count++;
             }
         }
         return count;
+    }
+
+    private void updateReflectorStates() {
+        boolean slotValue = slotContainsReflector(REFLECTOR_LEFT);
+        if (this.reflectorLeft != slotValue) {
+            this.reflectorLeft = slotValue;
+        }
+        slotValue = slotContainsReflector(REFLECTOR_RIGHT);
+        if (this.reflectorRight != slotValue) {
+            this.reflectorRight = slotValue;
+        }
+    }
+
+    public boolean hasLeftReflector() {
+        return this.reflectorLeft;
+    }
+
+    public boolean hasRightReflector() {
+        return this.reflectorRight;
     }
 
     @Override

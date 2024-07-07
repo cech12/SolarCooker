@@ -29,7 +29,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
                                 Inventory playerInventoryIn, Container cooker, ContainerData data) {
         super(Constants.SOLAR_COOKER_MENU_TYPE.get(), id);
         this.specificRecipeType = specificRecipeTypeIn;
-        AbstractContainerMenu.checkContainerSize(cooker, 2);
+        AbstractContainerMenu.checkContainerSize(cooker, 4);
         this.cooker = cooker;
         this.data = data;
         cooker.startOpen(playerInventoryIn.player);
@@ -38,6 +38,9 @@ public class SolarCookerContainer extends AbstractContainerMenu {
         //add cooker inventory slots
         this.addSlot(new Slot(cooker, 0, 56, 17));
         this.addSlot(new SolarCookerResultSlot(playerInventoryIn.player, cooker, 1, 116, 35));
+        //add reflector slots
+        this.addSlot(new SolarCookerReflectorSlot(cooker, 2, 153, 7));
+        this.addSlot(new SolarCookerReflectorSlot(cooker, 3, 153, 25));
 
         //add player inventory
         for(int playerInvRow = 0; playerInvRow < 3; ++playerInvRow) {
@@ -53,7 +56,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     }
 
     public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id, Inventory playerInventoryIn) {
-        this(specificRecipeTypeIn, id, playerInventoryIn, new SimpleContainer(2), new SimpleContainerData(3));
+        this(specificRecipeTypeIn, id, playerInventoryIn, new SimpleContainer(4), new SimpleContainerData(3));
     }
 
     @Override

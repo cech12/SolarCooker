@@ -15,9 +15,9 @@ public interface IConfigHelper {
     String VANILLA_RECIPES_ENABLED_DESCRIPTION = "If enabled, the vanilla blasting, smelting, or smoking recipes are used by the solar cooker.";
 
     /** Default value of the vanilla recipe type option */
-    RecipeType<? extends AbstractCookingRecipe> VANILLA_RECIPE_TYPE_DEFAULT = RecipeType.SMOKING;
+    RecipeType<? extends AbstractCookingRecipe> VANILLA_RECIPE_TYPE_DEFAULT = RecipeType.SMELTING;
     /** Config description of the vanilla recipe type option */
-    String VANILLA_RECIPE_TYPE_DESCRIPTION = "Defines which vanilla recipes the solar cooker can use. Possible values: \"smoking\" (default), \"smelting\", \"blasting\", \"campfire_cooking\"";
+    String VANILLA_RECIPE_TYPE_DESCRIPTION = "Defines which vanilla recipes the solar cooker can use. Possible values: \"smelting\" (default),\"smoking\", \"blasting\", \"campfire_cooking\"";
 
     /** Default value of the cook time factor option */
     double COOK_TIME_FACTOR_DEFAULT = 4D;
@@ -29,9 +29,9 @@ public interface IConfigHelper {
     double COOK_TIME_FACTOR_MAX = 100D;
 
     /** Default value of the max reflector time factor option */
-    double MAX_REFLECTOR_TIME_FACTOR_DEFAULT = 0.25D;
+    double MAX_REFLECTOR_TIME_FACTOR_DEFAULT = 0.5D;
     /** Config description of the max reflector time factor option */
-    String MAX_REFLECTOR_TIME_FACTOR_DESCRIPTION = "Speed factor when all 4 reflectors are placed next to the solar cooker. (i. e. 0.5 - half the time, 1.0 same time)";
+    String MAX_REFLECTOR_TIME_FACTOR_DESCRIPTION = "Speed factor when all reflector slots are filled in the solar cooker. (i. e. 0.5 - half the time, 1.0 same time)";
     /** Minimal value of the max reflector time factor option */
     double MAX_REFLECTOR_TIME_FACTOR_MIN = 0D;
     /** Maximal value of the max reflector time factor option */

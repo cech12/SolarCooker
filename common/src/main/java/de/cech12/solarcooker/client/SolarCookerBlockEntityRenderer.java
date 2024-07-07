@@ -32,13 +32,18 @@ import javax.annotation.Nonnull;
 public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<SolarCookerBlockEntity> {
 
     public static final ResourceLocation TEXTURE = Constants.id("textures/entity/solar_cooker.png");
+    public static final ResourceLocation TEXTURE_REFLECTOR = Constants.id("textures/entity/solar_cooker_reflector.png");
 
     private static final LayerDefinition innerCube = createInnerLayerDefinition();
+    private static final LayerDefinition reflectorLeftCube = createReflectorLayerDefinition(true);
+    private static final LayerDefinition reflectorRightCube = createReflectorLayerDefinition(false);
 
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart inner;
     private final ModelPart lock;
+    private final ModelPart reflectorLeft;
+    private final ModelPart reflectorRight;
 
     private static LayerDefinition createInnerLayerDefinition() {
         MeshDefinition meshdefinition = new MeshDefinition();
@@ -47,12 +52,23 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
+    private static LayerDefinition createReflectorLayerDefinition(boolean left) {
+        MeshDefinition meshdefinition = new MeshDefinition();
+        PartDefinition partdefinition = meshdefinition.getRoot();
+        float offset = left ? 0F : 13.998F;
+        float rotation = left ? 0F : (float) Math.PI;
+        partdefinition.addOrReplaceChild("reflector", CubeListBuilder.create().texOffs(0, 0).addBox(0, 0, 0, 6.999F, 1.0F, 13.998F), PartPose.offsetAndRotation(1.001F + offset, 10.001F, 1.001F + offset, 0, rotation, 0));
+        return LayerDefinition.create(meshdefinition, 42, 15);
+    }
+
     public SolarCookerBlockEntityRenderer(BlockEntityRendererProvider.Context rendererProvider) {
         ModelPart modelpart = rendererProvider.bakeLayer(ModelLayers.CHEST);
         this.bottom = modelpart.getChild("bottom");
         this.lid = modelpart.getChild("lid");
         this.lock = modelpart.getChild("lock");
         this.inner = innerCube.bakeRoot().getChild("inner");
+        this.reflectorLeft = reflectorLeftCube.bakeRoot().getChild("reflector");
+        this.reflectorRight = reflectorRightCube.bakeRoot().getChild("reflector");
     }
 
     @Override
@@ -62,24 +78,28 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
         BlockState blockstate = isInWorld ? blockEntity.getBlockState() : Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);
         Block block = blockstate.getBlock();
         if (block instanceof AbstractSolarCookerBlock) {
-            //AbstractSolarCookerBlock abstractBlock = (AbstractSolarCookerBlock)block;
             matrixStackIn.pushPose();
             float f = blockstate.getValue(AbstractSolarCookerBlock.FACING).toYRot();
             matrixStackIn.translate(0.5D, 0.5D, 0.5D);
             matrixStackIn.mulPose(Axis.YP.rotationDegrees(-f));
             matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
-            VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderType.entityTranslucent(TEXTURE));
+            VertexConsumer vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucent(TEXTURE));
             float lidAngle = blockEntity.getOpenNess(partialTicks);
-            this.renderModels(matrixStackIn, ivertexbuilder, this.lid, this.lock, this.bottom, this.inner, lidAngle, combinedLightIn, combinedOverlayIn);
-
-            //render item
-            if (isInWorld) {
-                ItemStack stack = blockEntity.getItem(0);
-                if (!stack.isEmpty()) {
-                    matrixStackIn.pushPose();
-                    matrixStackIn.translate(0.5, 0.4, 0.5);
-                    Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, matrixStackIn, bufferIn, world, 0);
-                    matrixStackIn.popPose();
+            this.renderModels(matrixStackIn, vertexConsumer, lidAngle, combinedLightIn, combinedOverlayIn);
+            if (lidAngle > 0) {
+                if (blockEntity.hasLeftReflector() || blockEntity.hasRightReflector()) {
+                    vertexConsumer = bufferIn.getBuffer(RenderType.entityTranslucent(TEXTURE_REFLECTOR));
+                    this.renderReflectors(matrixStackIn, vertexConsumer, blockEntity.hasLeftReflector(), blockEntity.hasRightReflector(), lidAngle, combinedLightIn, combinedOverlayIn);
+                }
+                //render item
+                if (isInWorld) {
+                    ItemStack stack = blockEntity.getItem(0);
+                    if (!stack.isEmpty()) {
+                        matrixStackIn.pushPose();
+                        matrixStackIn.translate(0.5, 0.4, 0.5);
+                        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, combinedLightIn, combinedOverlayIn, matrixStackIn, bufferIn, world, 0);
+                        matrixStackIn.popPose();
+                    }
                 }
             }
 
@@ -87,12 +107,24 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
         }
     }
 
-    private void renderModels(PoseStack matrixStackIn, VertexConsumer bufferIn, ModelPart chestLid, ModelPart chestLatch, ModelPart chestBottom, ModelPart chestInner, float lidAngle, int combinedLightIn, int combinedOverlayIn) {
-        chestLid.xRot = -(lidAngle * ((float)Math.PI / 2F));
-        chestLatch.xRot = chestLid.xRot;
-        chestLid.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-        chestLatch.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-        chestBottom.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-        chestInner.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+    private void renderModels(PoseStack matrixStackIn, VertexConsumer bufferIn, float lidAngle, int combinedLightIn, int combinedOverlayIn) {
+        this.lid.xRot = -(lidAngle * ((float)Math.PI / 2F));
+        this.lock.xRot = this.lid.xRot;
+        this.lid.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+        this.lock.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+        this.bottom.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+        this.inner.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+    }
+
+    private void renderReflectors(PoseStack matrixStackIn, VertexConsumer bufferIn, boolean hasLeftReflector, boolean hasRightReflector, float lidAngle, int combinedLightIn, int combinedOverlayIn) {
+        float angle = (lidAngle * ((float)Math.PI / 1.8F));
+        if (hasLeftReflector) {
+            this.reflectorLeft.zRot = angle;
+            this.reflectorLeft.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+        }
+        if (hasRightReflector) {
+            this.reflectorRight.zRot = -angle;
+            this.reflectorRight.render(matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+        }
     }
 }
