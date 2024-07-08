@@ -6,9 +6,9 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.CookingBookCategory;
-import net.minecraft.world.item.crafting.SimpleCookingSerializer;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 
 import javax.annotation.Nonnull;
 
@@ -36,4 +36,8 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
         return SERIALIZER;
     }
 
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
 }
