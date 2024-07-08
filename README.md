@@ -20,8 +20,8 @@ The Fabric / Quilt version needs the following mods:
 
 It acts like a furnace but needs sunlight instead of fuel.
 
-In default configuration all smoking recipes are working in the Solar Cooker, and they need 4 times more time than in a vanilla Smoker.
+In default configuration all smelting recipes (before 1.21 all smoking recipes) are working in the Solar Cooker, and they need 4 times more time than in a vanilla Furnace.
 
-The mod is configurable, and you can change the recipes to "smelting" or "blasting". You can configure the cook time factor and blacklist recipes as well as add recipes via datapacks.
+The mod is configurable, and you can change the recipes to "smoking" or "blasting". You can configure the cook time factor and blacklist recipes as well as add recipes via datapacks.
 
 For more information check out the **Wiki**: https://github.com/cech12/SolarCooker/wiki
