@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.21-4.1.0.0] - 2024-07-14
+### Changed
+- updated NeoForge to 21.0.94-beta
+- the `config` directory is used for the default configuration (NeoForge)
+
+### Fixed
+- crashed on startup with NeoForge (caused by a breaking change in 21.0.82-beta) (thanks to unspunreality for the report) #26
+
 ## [1.21-4.0.0.1] - 2024-07-08
 ### Fixed
 - removed unknown recipe warning from log (all loaders) 
