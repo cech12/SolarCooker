@@ -25,14 +25,16 @@
   "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[1]": "Cook time factor of the solar cooker in relation",
   "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[2]": "to corresponding vanilla furnace. (percent)",
   "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[3]": "§7§o50 - half the time, 100 same time, 200 twice the time",
-  "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[4]": "§7§oDefault: 400",
+  "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[4]": "§7§oMin: 0; Max: 10000",
+  "text.autoconfig.solarcooker.option.COOK_TIME_FACTOR.@Tooltip[5]": "§7§oDefault: 400",
 
   "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR": "Max Reflector time factor",
   "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[0]": "§6§lMax Reflector time factor",
   "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[1]": "Speed factor when reflector slots are filled",
   "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[2]": "in the solar cooker. (percent)",
   "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[3]": "§7§o50 - half the time, 100 same time",
-  "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[4]": "§7§oDefault: 50",
+  "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[4]": "§7§oMin: 0; Max: 100",
+  "text.autoconfig.solarcooker.option.MAX_REFLECTOR_TIME_FACTOR.@Tooltip[5]": "§7§oDefault: 50",
 
   "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST": "Recipe blocked list",
   "text.autoconfig.solarcooker.option.RECIPE_BLOCKED_LIST.@Tooltip[0]": "§6§lRecipe blocked list",

@@ -23,13 +23,11 @@ public class FabricConfigHelper implements ConfigData, IConfigHelper {
     @ConfigEntry.Gui.Tooltip(count = 4)
     public String VANILLA_RECIPE_TYPE = BuiltInRegistries.RECIPE_TYPE.getKey(VANILLA_RECIPE_TYPE_DEFAULT).getPath();
 
-    @ConfigEntry.Gui.Tooltip(count = 5)
-    @ConfigEntry.BoundedDiscrete(min = (long) (COOK_TIME_FACTOR_MIN * 100), max = (long) (COOK_TIME_FACTOR_MAX * 100))
-    public long COOK_TIME_FACTOR = (long) (COOK_TIME_FACTOR_DEFAULT * 100);
+    @ConfigEntry.Gui.Tooltip(count = 6)
+    public int COOK_TIME_FACTOR = (int) (COOK_TIME_FACTOR_DEFAULT * 100);
 
-    @ConfigEntry.Gui.Tooltip(count = 5)
-    @ConfigEntry.BoundedDiscrete(min = (long) (MAX_REFLECTOR_TIME_FACTOR_MIN * 100), max = (long) (MAX_REFLECTOR_TIME_FACTOR_MAX * 100))
-    public long MAX_REFLECTOR_TIME_FACTOR = (long) (MAX_REFLECTOR_TIME_FACTOR_DEFAULT * 100);
+    @ConfigEntry.Gui.Tooltip(count = 6)
+    public int MAX_REFLECTOR_TIME_FACTOR = (int) (MAX_REFLECTOR_TIME_FACTOR_DEFAULT * 100);
 
     @ConfigEntry.Gui.Tooltip(count = 5)
     public String RECIPE_BLOCKED_LIST = RECIPE_BLOCKED_LIST_DEFAULT;
@@ -61,12 +59,12 @@ public class FabricConfigHelper implements ConfigData, IConfigHelper {
 
     @Override
     public double getCookTimeFactor() {
-        return getConfig().COOK_TIME_FACTOR / 100D;
+        return Math.clamp(getConfig().COOK_TIME_FACTOR / 100D, COOK_TIME_FACTOR_MIN, COOK_TIME_FACTOR_MAX);
     }
 
     @Override
     public double getMaxReflectorTimeFactor() {
-        return getConfig().MAX_REFLECTOR_TIME_FACTOR / 100D;
+        return Math.clamp(getConfig().MAX_REFLECTOR_TIME_FACTOR / 100D, MAX_REFLECTOR_TIME_FACTOR_MIN, MAX_REFLECTOR_TIME_FACTOR_MAX);
     }
 
     @Override
