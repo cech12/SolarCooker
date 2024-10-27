@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Forge Recommended Versioning](https://mcforge.readthedocs.io/en/latest/conventions/versioning/).
 
+## [1.21.1-4.2.0.0] - 2024-10-27
+### Changed
+- updated to Minecraft 1.21.1 (Fabric 0.105.0+1.21.1, Neoforge 21.1.62, Forge 52.0.21)
+- updated Cloth Config support (15.0.140) (Fabric/Quilt)
+- updated ModMenu support (11.0.2) (Fabric/Quilt)
+- updated JEI support (19.19.0.219) (Forge & NeoForge)
+- updated REI support (16.0.788) (Fabric/Quilt & NeoForge)
+- updated The One Probe support (1.21_neo-12.0.3) (NeoForge)
+
+### Fixed
+- fixed JEI loading errors since 19.19.0.219 (all loaders)
+- fixed recipes and advancements by using the new common tags in Forge
+
 ## [1.21-4.1.1.0] - 2024-08-30
 ### Changed
 - number config options are now text fields instead of sliders (Fabric)

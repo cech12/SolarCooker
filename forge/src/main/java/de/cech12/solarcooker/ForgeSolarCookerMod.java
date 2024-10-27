@@ -21,8 +21,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod.EventBusSubscriber(modid= Constants.MOD_ID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class ForgeSolarCookerMod {
 
-    public ForgeSolarCookerMod() {
-        final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public ForgeSolarCookerMod(FMLJavaModLoadingContext context) {
+        final IEventBus eventBus = context.getModEventBus();
         ModBlocks.BLOCKS.register(eventBus);
         ModBlockEntityTypes.BLOCK_ENTITY_TYPES.register(eventBus);
         ModItems.ITEMS.register(eventBus);

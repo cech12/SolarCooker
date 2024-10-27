@@ -7,20 +7,18 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.library.plugins.vanilla.cooking.AbstractCookingCategory;
 import net.minecraft.world.item.crafting.RecipeHolder;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRecipe> {
 
     public SolarCookingCategory(IGuiHelper guiHelper) {
-        super(guiHelper, Constants.SOLAR_COOKER_BLOCK.get(), "gui.jei.category.smelting", (int) (200 * Services.CONFIG.getCookTimeFactor()));
+        super(guiHelper, new RecipeType<>(Constants.id(Constants.SOLAR_COOKING_NAME), (Class<? extends RecipeHolder<SolarCookingRecipe>>) (Object) RecipeHolder.class),
+                Constants.SOLAR_COOKER_BLOCK.get(), "gui.jei.category.smelting", (int) (200 * Services.CONFIG.getCookTimeFactor()));
     }
 
     @Override
-    @Nonnull
-    public RecipeType<RecipeHolder<SolarCookingRecipe>> getRecipeType() {
-        Class<? extends RecipeHolder<SolarCookingRecipe>> holderClass = (Class<? extends RecipeHolder<SolarCookingRecipe>>) (Object) RecipeHolder.class;
-        return new RecipeType<>(Constants.id(Constants.SOLAR_COOKING_NAME), holderClass);
+    public boolean isHandled(@NotNull RecipeHolder<SolarCookingRecipe> recipeHolder) {
+        return true;
     }
 
 }
