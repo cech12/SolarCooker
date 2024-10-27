@@ -8,18 +8,11 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.library.plugins.vanilla.cooking.AbstractCookingCategory;
 
-import javax.annotation.Nonnull;
-
 public class SolarCookingCategory extends AbstractCookingCategory<SolarCookingRecipe> {
 
     public SolarCookingCategory(IGuiHelper guiHelper) {
-        super(guiHelper, ModBlocks.SOLAR_COOKER.get(), "gui.jei.category.smelting", (int) (200 * ServerConfig.COOK_TIME_FACTOR.get()));
-    }
-
-    @Override
-    @Nonnull
-    public RecipeType<SolarCookingRecipe> getRecipeType() {
-        return new RecipeType<>(ModRecipeTypes.SOLAR_COOKING.getId(), SolarCookingRecipe.class);
+        super(guiHelper, new RecipeType<>(ModRecipeTypes.SOLAR_COOKING.getId(), SolarCookingRecipe.class),
+                ModBlocks.SOLAR_COOKER.get(), "gui.jei.category.smelting", (int) (200 * ServerConfig.COOK_TIME_FACTOR.get()));
     }
 
 }
