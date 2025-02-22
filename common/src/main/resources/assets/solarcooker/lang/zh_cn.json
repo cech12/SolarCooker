@@ -2,6 +2,8 @@
     "block.solarcooker.solar_cooker": " 太阳灶",
     "block.solarcooker.shining_diamond_block": "闪耀的钻石块",
 
+    "item.solarcooker.solar_cooker": " 太阳灶",
     "item.solarcooker.reflector": "反光板",
+    "item.solarcooker.shining_diamond_block": "闪耀的钻石块",
     "item.solarcooker.shining_diamond_block.description": "闪闪放光芒！可以放置在一个太阳灶上方，独立于太阳使用。"
 }

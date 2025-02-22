@@ -2,6 +2,8 @@
   "block.solarcooker.solar_cooker": "Сонячна плита",
   "block.solarcooker.shining_diamond_block": "Сяючий алмазний блок",
 
+  "item.solarcooker.solar_cooker": "Сонячна плита",
   "item.solarcooker.reflector": "Світловідбивач",
+  "item.solarcooker.shining_diamond_block": "Сяючий алмазний блок",
   "item.solarcooker.shining_diamond_block.description": "Блищить яскраво! Може бути встановлений над сонячною плитою заради її використання незалежно від сонця."
 }

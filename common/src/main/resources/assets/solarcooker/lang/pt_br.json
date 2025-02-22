@@ -2,6 +2,8 @@
     "block.solarcooker.solar_cooker": "Fogão Solar",
     "block.solarcooker.shining_diamond_block": "Bloco brilhante de diamante",
 
+    "item.solarcooker.solar_cooker": "Fogão Solar",
     "item.solarcooker.reflector": "Refletor",
+    "item.solarcooker.shining_diamond_block": "Bloco brilhante de diamante",
     "item.solarcooker.shining_diamond_block.description": "Brilhar! Pode ser colocado por cima de um Fogão Solar para o utilizar independentemente do sol."
 }
