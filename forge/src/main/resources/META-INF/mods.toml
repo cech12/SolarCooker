@@ -22,10 +22,3 @@ mandatory=true
 versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
-[[dependencies.${mod_id}]]
-modId="jei"
-mandatory=false
-versionRange="${jei_version_range}"
-referralUrl="https://github.com/mezz/JustEnoughItems"
-ordering="NONE"
-side="BOTH"

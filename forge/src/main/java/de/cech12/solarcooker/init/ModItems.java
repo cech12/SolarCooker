@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -28,8 +30,12 @@ public class ModItems {
 
     static {
         Constants.SOLAR_COOKER_ITEM = solarCookerItem();
-        Constants.REFLECTOR_ITEM = item(Constants.REFLECTOR_NAME, () -> new ReflectorItem(new Item.Properties()));
+        Constants.REFLECTOR_ITEM = item(Constants.REFLECTOR_NAME, () -> new ReflectorItem(new Item.Properties().setId(id(Constants.REFLECTOR_NAME))));
         Constants.SHINING_DIAMOND_BLOCK_ITEM = fromBlock(Constants.SHINING_DIAMOND_BLOCK_NAME, Constants.SHINING_DIAMOND_BLOCK_BLOCK);
+    }
+
+    private static ResourceKey<Item> id(String name) {
+        return ResourceKey.create(BuiltInRegistries.ITEM.key(), Constants.id(name));
     }
 
     private static RegistryObject<Item> item(String name, Supplier<Item> itemSupplier) {
@@ -37,11 +43,11 @@ public class ModItems {
     }
 
     private static RegistryObject<Item> fromBlock(String name, Supplier<Block> block) {
-        return item(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        return item(name, () -> new BlockItem(block.get(), new Item.Properties().setId(id(name))));
     }
 
     private static RegistryObject<Item> solarCookerItem() {
-        return item(Constants.SOLAR_COOKER_NAME, () -> new BlockItem(Constants.SOLAR_COOKER_BLOCK.get(), new Item.Properties()) {
+        return item(Constants.SOLAR_COOKER_NAME, () -> new BlockItem(Constants.SOLAR_COOKER_BLOCK.get(), new Item.Properties().setId(id(Constants.SOLAR_COOKER_NAME))) {
             @Override
             public void initializeClient(@Nonnull Consumer<IClientItemExtensions> consumer) {
                 consumer.accept(new IClientItemExtensions() {

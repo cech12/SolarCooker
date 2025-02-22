@@ -11,7 +11,7 @@ public final class ModBlockEntityTypes {
     public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Constants.MOD_ID);
 
     static {
-        Constants.SOLAR_COOKER_ENTITY_TYPE = BLOCK_ENTITY_TYPES.register(Constants.SOLAR_COOKER_NAME, () -> BlockEntityType.Builder.of(SolarCookerBlockEntity::new, Constants.SOLAR_COOKER_BLOCK.get()).build(null));
+        Constants.SOLAR_COOKER_ENTITY_TYPE = BLOCK_ENTITY_TYPES.register(Constants.SOLAR_COOKER_NAME, () -> new BlockEntityType<>(SolarCookerBlockEntity::new, Constants.SOLAR_COOKER_BLOCK.get()));
     }
 
 }

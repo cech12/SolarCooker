@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "tag": "c:glass_panes"
-    },
-    {
-      "tag": "c:ingots/iron"
-    },
-    {
-      "tag": "minecraft:wooden_slabs"
-    }
+    "#c:glass_panes",
+    "#c:ingots/iron",
+    "#minecraft:wooden_slabs"
   ],
   "result": {
     "id": "solarcooker:reflector"

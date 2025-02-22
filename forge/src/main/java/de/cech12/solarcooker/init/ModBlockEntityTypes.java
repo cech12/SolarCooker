@@ -6,12 +6,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Set;
+
 public final class ModBlockEntityTypes {
 
     public static DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Constants.MOD_ID);
 
     static {
-        Constants.SOLAR_COOKER_ENTITY_TYPE = BLOCK_ENTITY_TYPES.register(Constants.SOLAR_COOKER_NAME, () -> BlockEntityType.Builder.of(ForgeSolarCookerBlockEntity::new, Constants.SOLAR_COOKER_BLOCK.get()).build(null));
+        Constants.SOLAR_COOKER_ENTITY_TYPE = BLOCK_ENTITY_TYPES.register(Constants.SOLAR_COOKER_NAME, () -> new BlockEntityType<>(ForgeSolarCookerBlockEntity::new, Set.of(Constants.SOLAR_COOKER_BLOCK.get())));
     }
 
 }

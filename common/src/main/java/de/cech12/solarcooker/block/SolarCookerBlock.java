@@ -6,6 +6,7 @@ import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -45,7 +46,18 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
+        if (level.isClientSide) {
+            return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::lidAnimateTick);
+        }
         return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::tick);
+    }
+
+    @Override
+    protected void tick(@Nonnull BlockState state, ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+        BlockEntity blockentity = level.getBlockEntity(pos);
+        if (blockentity instanceof SolarCookerBlockEntity solarCookerBlockEntity) {
+            solarCookerBlockEntity.recheckOpen();
+        }
     }
 
     /**

@@ -1,9 +1,7 @@
 {
   "type": "solarcooker:solarcooking",
   "category": "misc",
-  "ingredient": {
-    "tag": "c:storage_blocks/diamond"
-  },
+  "ingredient": "#c:storage_blocks/diamond",
   "result": {
     "id": "solarcooker:shining_diamond_block"
   },

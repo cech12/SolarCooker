@@ -6,7 +6,7 @@ plugins {
 subprojects {
     apply plugin: 'java'
 
-    version "$project.minecraft_version-$project.mod_version"
+    version = "$project.minecraft_version-$project.mod_version"
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
     //java.withSourcesJar()
@@ -45,8 +45,8 @@ subprojects {
             url = 'https://maven.blamejared.com'
         }
         //REI
-        maven { url "https://maven.shedaniel.me/" }
-        maven { url "https://maven.architectury.dev/" }
+        maven { url = "https://maven.shedaniel.me/" }
+        maven { url = "https://maven.architectury.dev/" }
     }
 
     processResources {

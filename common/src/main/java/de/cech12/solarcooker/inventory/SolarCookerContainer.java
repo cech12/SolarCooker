@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -23,7 +24,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     private final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
     private final Container cooker;
     private final ContainerData data;
-    protected final Level world;
+    protected final Level level;
 
     public SolarCookerContainer(RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn, int id,
                                 Inventory playerInventoryIn, Container cooker, ContainerData data) {
@@ -33,7 +34,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
         this.cooker = cooker;
         this.data = data;
         cooker.startOpen(playerInventoryIn.player);
-        this.world = playerInventoryIn.player.level();
+        this.level = playerInventoryIn.player.level();
 
         //add cooker inventory slots
         this.addSlot(new Slot(cooker, 0, 56, 17));
@@ -119,14 +120,18 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     }
 
     protected boolean hasRecipe(ItemStack stack) {
-        if (this.world != null) {
+        if (this.level != null && this.level.getServer() != null) {
             SingleRecipeInput recipeInput = new SingleRecipeInput(stack);
-            if (this.world.getRecipeManager().getRecipeFor(this.specificRecipeType, recipeInput, this.world).isPresent()) {
+            if (this.level.getServer().getRecipeManager().getRecipeFor(this.specificRecipeType, recipeInput, this.level).isPresent()) {
                 return true;
             }
             if (Services.CONFIG.areVanillaRecipesEnabled()) {
-                return this.world.getRecipeManager().getRecipesFor(Services.CONFIG.getRecipeType(), recipeInput, this.world)
-                        .stream().anyMatch(abstractCookingRecipe -> Services.CONFIG.isRecipeAllowed(abstractCookingRecipe.id()));
+                return this.level.getServer().getRecipeManager().getRecipes().stream()
+                        .filter(recipe -> recipe.value().getType() == Services.CONFIG.getRecipeType())
+                        .filter(recipe -> recipe.value() instanceof AbstractCookingRecipe)
+                        .map(recipe -> (RecipeHolder<AbstractCookingRecipe>) recipe)
+                        .filter(recipe -> recipe.value().matches(recipeInput, this.level))
+                        .anyMatch(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().location()));
             }
         }
         return false;
@@ -153,5 +158,9 @@ public class SolarCookerContainer extends AbstractContainerMenu {
 
     public boolean isSunlit() {
         return this.data.get(SolarCookerBlockEntity.CONTAINER_IS_SUNLIT) > 0;
+    }
+
+    public Container getContainer() {
+        return this.cooker;
     }
 }

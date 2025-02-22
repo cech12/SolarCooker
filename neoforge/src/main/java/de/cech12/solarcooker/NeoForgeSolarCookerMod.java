@@ -1,26 +1,36 @@
 package de.cech12.solarcooker;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.client.SolarCookerBlockEntityRenderer;
 import de.cech12.solarcooker.client.SolarCookerScreen;
-import de.cech12.solarcooker.compat.TOPCompat;
 import de.cech12.solarcooker.init.ModBlockEntityTypes;
 import de.cech12.solarcooker.init.ModBlocks;
 import de.cech12.solarcooker.init.ModItems;
 import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+
+import javax.annotation.Nonnull;
 
 @Mod(Constants.MOD_ID)
 @EventBusSubscriber(modid= Constants.MOD_ID, bus= EventBusSubscriber.Bus.MOD)
@@ -36,9 +46,9 @@ public class NeoForgeSolarCookerMod {
         //Config
         CommonLoader.init();
         //The One Probe registration.
-        if (ModList.get().isLoaded("theoneprobe")) {
-            TOPCompat.register();
-        }
+        //if (ModList.get().isLoaded("theoneprobe")) {
+        //    TOPCompat.register();
+        //}
     }
 
     @SubscribeEvent
@@ -54,6 +64,29 @@ public class NeoForgeSolarCookerMod {
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SidedInvWrapper::new);
+    }
+
+    @SubscribeEvent
+    public static void registerClientItemExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new IClientItemExtensions() {
+            final BlockEntityWithoutLevelRenderer myRenderer = new BlockEntityWithoutLevelRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()) {
+                private SolarCookerBlockEntity blockEntity;
+
+                @Override
+                public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemDisplayContext displayContext, @Nonnull PoseStack matrix, @Nonnull MultiBufferSource buffer, int x, int y) {
+                    if (blockEntity == null) {
+                        blockEntity = new SolarCookerBlockEntity(BlockPos.ZERO, Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState());
+                    }
+                    Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(blockEntity, matrix, buffer, x, y);
+                }
+            };
+
+            @Override
+            @Nonnull
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return myRenderer;
+            }
+        }, Constants.SOLAR_COOKER_ITEM.get());
     }
 
     @SubscribeEvent

@@ -4,6 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
+idea.module { downloadJavadoc = downloadSources = true }
 base {
     archivesName = "${mod_id}-forge"
 }
@@ -67,11 +68,11 @@ dependencies {
     //temporary necessary:
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
-    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    testCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-lib:${jei_version}"
-    testCompileOnly "mezz.jei:jei-${minecraft_version}-lib:${jei_version}"
-    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    //compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    //testCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    //compileOnly "mezz.jei:jei-${minecraft_version}-lib:${jei_version}"
+    //testCompileOnly "mezz.jei:jei-${minecraft_version}-lib:${jei_version}"
+    //runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -91,14 +92,14 @@ processResources {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId base.archivesName.get()
+            artifactId = base.archivesName.get()
             from components.java
             fg.component(it)
         }
     }
     repositories {
         maven {
-            url "file://" + System.getenv("local_maven")
+            url = "file://" + System.getenv("local_maven")
         }
     }
 }

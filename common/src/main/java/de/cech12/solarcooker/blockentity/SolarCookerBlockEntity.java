@@ -17,23 +17,26 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.CompoundContainer;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -41,6 +44,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChestLidController;
+import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -68,23 +73,50 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     protected int cookTime;
     protected int cookTimeTotal;
 
-    /** The current angle of the lid (between 0 and 1) */
-    protected float lidAngle;
-    /** The angle of the lid last tick */
-    protected float prevLidAngle;
-    /** The number of players currently using this cooker */
-    protected int numPlayersUsing;
-
     protected boolean reflectorLeft;
     protected boolean reflectorRight;
 
     protected final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
-    private final Object2IntOpenHashMap<ResourceLocation> usedRecipes = new Object2IntOpenHashMap<>();
+    private final ContainerOpenersCounter openersCounter;
+    private final ChestLidController chestLidController;
+    private boolean isLidOpen = false;
+    private final Object2IntOpenHashMap<ResourceKey<Recipe<?>>> usedRecipes = new Object2IntOpenHashMap<>();
 
     public SolarCookerBlockEntity(BlockEntityType<?> tileTypeIn, BlockPos pos, BlockState state,
                                   RecipeType<? extends AbstractCookingRecipe> specificRecipeTypeIn) {
         super(tileTypeIn, pos, state);
         this.specificRecipeType = specificRecipeTypeIn;
+        this.openersCounter = new ContainerOpenersCounter() {
+            @Override
+            protected void onOpen(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+                if (level.getBlockEntity(pos) instanceof SolarCookerBlockEntity blockEntity && !blockEntity.shouldLidBeOpen(0)) {
+                    playSound(level, pos, SoundEvents.CHEST_OPEN);
+                }
+            }
+
+            @Override
+            protected void onClose(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+                if (level.getBlockEntity(pos) instanceof SolarCookerBlockEntity blockEntity && !blockEntity.shouldLidBeOpen(0)) {
+                    playSound(level, pos, SoundEvents.CHEST_CLOSE);
+                }
+            }
+
+            @Override
+            protected void openerCountChanged(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, int unknown, int numPlayerUsing) {
+                signalOpenCount(level, pos, state, numPlayerUsing, false);
+            }
+
+            @Override
+            protected boolean isOwnContainer(@Nonnull Player player) {
+                if (!(player.containerMenu instanceof SolarCookerContainer)) {
+                    return false;
+                } else {
+                    Container container = ((SolarCookerContainer) player.containerMenu).getContainer();
+                    return container == SolarCookerBlockEntity.this || container instanceof CompoundContainer && ((CompoundContainer) container).contains(SolarCookerBlockEntity.this);
+                }
+            }
+        };
+        this.chestLidController = new ChestLidController();
     }
 
     public SolarCookerBlockEntity(BlockPos pos, BlockState state) {
@@ -135,14 +167,14 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     private boolean hasShiningBlockAbove() {
         if (this.level != null && !this.level.isClientSide) {
             BlockPos checkPos = this.worldPosition.above();
-            if (this.level.getBlockState(checkPos).propagatesSkylightDown(this.level, checkPos)) {
+            if (this.level.getBlockState(checkPos).propagatesSkylightDown()) {
                 for (int i = 0; i < 5; i++) {
                     checkPos = checkPos.above();
                     BlockState state = this.level.getBlockState(checkPos);
                     if (state.is(ModTags.Blocks.SOLAR_COOKER_SHINING)) {
                         return true;
                     }
-                    if (!state.propagatesSkylightDown(this.level, checkPos)) {
+                    if (!state.propagatesSkylightDown()) {
                         return false;
                     }
                 }
@@ -182,6 +214,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         ContainerHelper.loadAllItems(compound, this.items, provider);
         this.cookTime = compound.getInt("CookTime");
         this.cookTimeTotal = compound.getInt("CookTimeTotal");
+        updateShouldLidBeOpen(this.openersCounter.getOpenerCount());
     }
 
     @Override
@@ -213,7 +246,6 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         if (level != null) {
             boolean dirty = false;
             entity.updateReflectorStates();
-            entity.calculateLidAngle();
             boolean isSunlit = entity.isSunlit();
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
                 RecipeHolder<? extends AbstractCookingRecipe> recipe = entity.getRecipe();
@@ -249,97 +281,86 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             }
             if (dirty) {
                 entity.setChanged();
+                signalOpenCount(level, pos, state, entity.openersCounter.getOpenerCount(), true);
             }
         }
     }
 
-    public boolean shouldLidBeOpen() {
-        return this.numPlayersUsing > 0 || (this.canSmelt(this.getLevel().registryAccess(), getRecipe()) && this.isSunlit());
+    public boolean shouldLidBeOpen(int numPlayersUsing) {
+        boolean recipeActive = this.cookTime > 0 || (this.canSmelt(this.getLevel().registryAccess(), getRecipe()));
+        return numPlayersUsing > 0 || recipeActive && this.isSunlit();
     }
 
-    private void calculateLidAngle() {
-        if (this.level != null) {
-            this.prevLidAngle = this.lidAngle;
+    public void updateShouldLidBeOpen(int numPlayersUsing) {
+        this.isLidOpen = shouldLidBeOpen(numPlayersUsing);
+        this.chestLidController.shouldBeOpen(this.isLidOpen);
+    }
 
-            boolean shouldLidBeOpen = shouldLidBeOpen();
-            if (shouldLidBeOpen && this.lidAngle == 0.0F) {
-                this.playSound(SoundEvents.CHEST_OPEN);
-                if (!this.level.isClientSide) {
-                    this.setChanged();
-                }
-            }
-            if (!shouldLidBeOpen && this.lidAngle > 0.0F || shouldLidBeOpen && this.lidAngle < 1.0F) {
-                float f1 = this.lidAngle;
-                if (shouldLidBeOpen) {
-                    this.lidAngle += 0.1F;
-                } else {
-                    this.lidAngle -= 0.1F;
-                }
-                if (this.lidAngle > 1.0F) {
-                    this.lidAngle = 1.0F;
-                }
-                if (this.lidAngle < 0.5F && f1 >= 0.5F) {
-                    this.playSound(SoundEvents.CHEST_CLOSE);
-                }
-                if (this.lidAngle < 0.0F) {
-                    this.lidAngle = 0.0F;
-                }
-            }
-        }
+    public static void lidAnimateTick(Level level, BlockPos pos, BlockState state, SolarCookerBlockEntity blockEntity) {
+        blockEntity.chestLidController.tickLid();
+        blockEntity.updateReflectorStates();
     }
 
     /**
      * This must return true serverside before it is called clientside.
      */
     @Override
-    public boolean triggerEvent(int id, int type) {
+    public boolean triggerEvent(int id, int numPlayersUsing) {
         if (id == 1) {
-            this.numPlayersUsing = type;
+            updateShouldLidBeOpen(numPlayersUsing);
             return true;
         } else {
-            return super.triggerEvent(id, type);
+            return super.triggerEvent(id, numPlayersUsing);
         }
     }
 
     @Override
-    public void startOpen(Player player) {
-        if (!player.isSpectator()) {
-            if (this.numPlayersUsing < 0) {
-                this.numPlayersUsing = 0;
+    public void startOpen(@Nonnull Player player) {
+        if (!this.remove && !player.isSpectator() && this.getLevel() != null) {
+            this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    @Override
+    public void stopOpen(@Nonnull Player player) {
+        if (!this.remove && !player.isSpectator() && this.getLevel() != null) {
+            this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    public void recheckOpen() {
+        if (!this.remove && this.getLevel() != null) {
+            this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    public static void signalOpenCount(Level level, BlockPos pos, BlockState state, int numPlayersUsing, boolean playSound) {
+        //play sound if state changed and no player is involved
+        if (playSound && numPlayersUsing < 1 && level.getBlockEntity(pos) instanceof SolarCookerBlockEntity blockEntity) {
+            if (blockEntity.isLidOpen != blockEntity.shouldLidBeOpen(numPlayersUsing)) {
+                if (blockEntity.isLidOpen) {
+                    playSound(blockEntity.level, blockEntity.getBlockPos(), SoundEvents.CHEST_CLOSE);
+                } else {
+                    playSound(blockEntity.level, blockEntity.getBlockPos(), SoundEvents.CHEST_OPEN);
+                }
             }
-            ++this.numPlayersUsing;
-            this.onOpenOrClose();
         }
+        Block block = state.getBlock();
+        level.blockEvent(pos, block, 1, numPlayersUsing);
     }
 
-    @Override
-    public void stopOpen(Player player) {
-        if (!player.isSpectator()) {
-            --this.numPlayersUsing;
-            this.onOpenOrClose();
-        }
-    }
-
-    protected void onOpenOrClose() {
-        Block block = this.getBlockState().getBlock();
-        if (this.level != null && block instanceof SolarCookerBlock) {
-            this.level.blockEvent(this.worldPosition, block, 1, this.numPlayersUsing);
-            //this.world.notifyNeighborsOfStateChange(this.pos, block);
-        }
-    }
-
-    private void playSound(SoundEvent soundIn) {
-        if (this.level != null && !this.level.isClientSide) {
-            double x = (double)this.worldPosition.getX() + 0.5D;
-            double y = (double)this.worldPosition.getY() + 0.5D;
-            double z = (double)this.worldPosition.getZ() + 0.5D;
-            this.level.playSound(null, x, y, z, soundIn, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+    public static void playSound(Level level, BlockPos pos, SoundEvent soundEvent) {
+        if (level != null && !level.isClientSide) {
+            double x = (double)pos.getX() + 0.5D;
+            double y = (double)pos.getY() + 0.5D;
+            double z = (double)pos.getZ() + 0.5D;
+            level.playSound(null, x, y, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
         }
     }
 
     protected boolean canSmelt(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
-        if (!this.items.get(INPUT).isEmpty() && recipe != null) {
-            ItemStack recipeOutput = recipe.value().getResultItem(registryAccess);
+        if (!this.items.get(INPUT).isEmpty() && recipe != null && recipe.value() instanceof AbstractCookingRecipe cookingRecipe) {
+            ItemStack recipeOutput = cookingRecipe.assemble(new SingleRecipeInput(this.items.get(INPUT)), registryAccess);
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -351,9 +372,9 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     private void smeltItem(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
-        if (recipe != null && this.canSmelt(registryAccess, recipe)) {
+        if (recipe != null && this.canSmelt(registryAccess, recipe) && recipe.value() instanceof AbstractCookingRecipe cookingRecipe) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = recipe.value().getResultItem(registryAccess);
+            ItemStack itemstack1 = cookingRecipe.assemble(new SingleRecipeInput(itemstack), registryAccess);
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());
@@ -377,9 +398,9 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         int reflectorCount = this.getReflectorCount();
         double reflectorFactor = (reflectorCount > 0) ? 1D - ((1D - Services.CONFIG.getMaxReflectorTimeFactor()) / (double) SLOTS_REFLECTORS.length) * (double) reflectorCount : 1D;
         if (this.specificRecipeType.getClass().isInstance(rec.value().getType())) {
-            return (int) (rec.value().getCookingTime() * reflectorFactor);
+            return (int) (rec.value().cookingTime() * reflectorFactor);
         }
-        return (int) (rec.value().getCookingTime() * (Services.CONFIG.getCookTimeFactor() * reflectorFactor));
+        return (int) (rec.value().cookingTime() * (Services.CONFIG.getCookTimeFactor() * reflectorFactor));
     }
 
     @SuppressWarnings("unchecked")
@@ -393,11 +414,16 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             return curRecipe;
         } else {
             RecipeHolder<? extends AbstractCookingRecipe> rec = null;
-            if (this.level != null) {
-                rec = this.level.getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, recipeInput, this.level).orElse(null);
+            if (this.level != null && this.level.getServer() != null) {
+                rec = this.level.getServer().getRecipeManager().getRecipeFor((RecipeType<AbstractCookingRecipe>) this.specificRecipeType, recipeInput, this.level).orElse(null);
                 if (rec == null && Services.CONFIG.areVanillaRecipesEnabled()) {
-                    rec = this.level.getRecipeManager().getRecipesFor((RecipeType<AbstractCookingRecipe>) Services.CONFIG.getRecipeType(), recipeInput, this.level)
-                            .stream().filter(abstractCookingRecipe -> Services.CONFIG.isRecipeAllowed(abstractCookingRecipe.id())).findFirst().orElse(null);
+                    rec = this.level.getServer().getRecipeManager().getRecipes().stream()
+                            .filter(recipe -> recipe.value().getType() == Services.CONFIG.getRecipeType())
+                            .filter(recipe -> recipe.value() instanceof AbstractCookingRecipe)
+                            .map(recipe -> (RecipeHolder<AbstractCookingRecipe>) recipe)
+                            .filter(recipe -> recipe.value().matches(recipeInput, this.level))
+                            .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().location()))
+                            .findFirst().orElse(null);
                 }
             }
             if (rec == null) {
@@ -589,11 +615,13 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(Level p_235640_1_, Vec3 p_235640_2_) {
         List<RecipeHolder<?>> list = Lists.newArrayList();
 
-        for(Object2IntMap.Entry<ResourceLocation> entry : this.usedRecipes.object2IntEntrySet()) {
-            p_235640_1_.getRecipeManager().byKey(entry.getKey()).ifPresent((recipeHolder) -> {
-                list.add(recipeHolder);
-                createExperience(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)recipeHolder.value()).getExperience());
-            });
+        if (p_235640_1_.getServer() != null) {
+            for (Object2IntMap.Entry<ResourceKey<Recipe<?>>> entry : this.usedRecipes.object2IntEntrySet()) {
+                p_235640_1_.getServer().getRecipeManager().byKey(entry.getKey()).ifPresent((recipeHolder) -> {
+                    list.add(recipeHolder);
+                    createExperience(p_235640_1_, p_235640_2_, entry.getIntValue(), ((AbstractCookingRecipe)recipeHolder.value()).experience());
+                });
+            }
         }
 
         return list;
@@ -614,18 +642,16 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
 
     }
 
-    public void fillStackedContents(@Nonnull StackedContents helper) {
+    @Override
+    public void fillStackedContents(@Nonnull StackedItemContents stackedContents) {
         for(ItemStack itemstack : this.items) {
-            helper.accountStack(itemstack);
+            stackedContents.accountStack(itemstack);
         }
     }
 
     @Override
     public float getOpenNess(float partialTicks) {
-        if (this.level != null) {
-            return Mth.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
-        }
-        return 0;
+        return this.chestLidController.getOpenness(partialTicks);
     }
 
 }

@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "solarcooker:shining_diamond_block"
-    }
+    "solarcooker:shining_diamond_block"
   ],
   "result": {
     "id": "minecraft:diamond_block"
