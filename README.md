@@ -1,7 +1,7 @@
 # Solar Cooker 
 
-[![Curseforge](http://cf.way2muchnoise.eu/full_solar-cooker_downloads(0D0D0D-F16436-fff-010101-fff).svg)](https://www.curseforge.com/minecraft/mc-mods/solar-cooker)
-[![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_solar-cooker_all(0D0D0D-F16436-fff-010101).svg)](https://www.curseforge.com/minecraft/mc-mods/solar-cooker/files)
+[![Curseforge](http://cf.way2muchnoise.eu/full_436874_downloads(0D0D0D-F16436-fff-010101-fff).svg)](https://www.curseforge.com/minecraft/mc-mods/solar-cooker)
+[![Curseforge](http://cf.way2muchnoise.eu/versions/For%20MC_436874_all(0D0D0D-F16436-fff-010101).svg)](https://www.curseforge.com/minecraft/mc-mods/solar-cooker/files)
 [![Modrinth](https://img.shields.io/modrinth/dt/IsSapAeq?label=Modrinth&logo=modrinth)](https://modrinth.com/mod/solar-cooker)
 [![CI/CD](https://github.com/cech12/SolarCooker/actions/workflows/cicd-workflow.yml/badge.svg)](https://github.com/cech12/SolarCooker/actions/workflows/cicd-workflow.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/cech12/solarcooker/badge)](https://www.codefactor.io/repository/github/cech12/solarcooker)
