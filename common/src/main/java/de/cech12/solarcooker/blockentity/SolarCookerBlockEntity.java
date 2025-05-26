@@ -80,7 +80,6 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     private final ContainerOpenersCounter openersCounter;
     private final ChestLidController chestLidController;
     private boolean isLidOpen = false;
-    private boolean isRecipeActive = false;
     private final Object2IntOpenHashMap<ResourceKey<Recipe<?>>> usedRecipes = new Object2IntOpenHashMap<>();
 
     public SolarCookerBlockEntity(BlockEntityType<?> tileTypeIn, BlockPos pos, BlockState state,
@@ -215,12 +214,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         ContainerHelper.loadAllItems(compound, this.items, provider);
         this.cookTime = compound.getInt("CookTime");
         this.cookTimeTotal = compound.getInt("CookTimeTotal");
-        this.isRecipeActive = compound.getBoolean("IsRecipeActive");
-        if (this.level == null) { //at server initialisation
-            this.isLidOpen = this.isRecipeActive;
-        } else {
-            updateShouldLidBeOpen(this.openersCounter.getOpenerCount());
-        }
+        updateShouldLidBeOpen(this.openersCounter.getOpenerCount());
     }
 
     @Override
@@ -228,7 +222,6 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         super.saveAdditional(compound, provider);
         compound.putInt("CookTime", this.cookTime);
         compound.putInt("CookTimeTotal", this.cookTimeTotal);
-        compound.putBoolean("IsRecipeActive", this.isRecipeActive);
         ContainerHelper.saveAllItems(compound, this.items, provider);
     }
 
@@ -257,7 +250,6 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
                 RecipeHolder<? extends AbstractCookingRecipe> recipe = entity.getRecipe();
                 if (entity.canSmelt(level.registryAccess(), recipe)) {
-                    entity.isRecipeActive = true;
                     entity.cookTime++;
                     if (entity.cookTime == entity.cookTimeTotal) {
                         entity.cookTime = 0;
@@ -269,12 +261,9 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
                     }
                 } else {
                     entity.cookTime = 0;
-                    entity.isRecipeActive = false;
                 }
             } else if (!isSunlit && entity.cookTime > 0) {
                 entity.cookTime = Mth.clamp(entity.cookTime - 2, 0, entity.cookTimeTotal);
-            } else {
-                entity.isRecipeActive = false;
             }
 
             boolean isBurning = entity.cookTime > 0;
@@ -298,7 +287,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     public boolean shouldLidBeOpen(int numPlayersUsing) {
-        boolean recipeActive = this.isRecipeActive || (this.getLevel() != null && (this.canSmelt(this.getLevel().registryAccess(), getRecipe())));
+        boolean recipeActive = this.cookTime > 0 || (this.getLevel() != null && (this.canSmelt(this.getLevel().registryAccess(), getRecipe())));
         return numPlayersUsing > 0 || (recipeActive && this.isSunlit());
     }
 

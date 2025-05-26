@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [1.21.3-4.3.0.2] - 2024-02-22
+### Fixed
+- solar cooker lid did not close after last recipe
+
 ## [1.21.3-4.3.0.1] - 2024-02-22
 ### Fixed
 - solar cooker lid was moving when a recipe was finished although a next recipe is available
