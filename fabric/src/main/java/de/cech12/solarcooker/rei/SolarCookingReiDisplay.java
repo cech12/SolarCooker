@@ -31,7 +31,7 @@ public class SolarCookingReiDisplay extends BasicDisplay {
 
     public <T extends AbstractCookingRecipe> SolarCookingReiDisplay(RecipeHolder<T> recipe) {
         this(List.of(EntryIngredients.ofIngredient((recipe.value()).input())),
-                List.of(EntryIngredients.of(recipe.value().assemble(new SingleRecipeInput(new ItemStack(recipe.value().input().items().getFirst().value())), null))),
+                List.of(EntryIngredients.of(recipe.value().assemble(new SingleRecipeInput(new ItemStack(recipe.value().input().items().findFirst().get().value())), null))),
                 Optional.of(recipe.id().location()),
                 (recipe.value()).experience(),
                 recipe.value() instanceof SolarCookingRecipe ? recipe.value().cookingTime() : (recipe.value().cookingTime() * Services.CONFIG.getCookTimeFactor()));

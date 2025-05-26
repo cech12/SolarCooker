@@ -3,7 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
-## [1.21.3-4.3.0.2] - 2024-02-22
+## [1.21.4-4.4.0.0] - 2025-05-27
+### Changed
+- updated to Minecraft 1.21.4 (Fabric 0.116.0+1.21.4, NeoForge 21.4.88-beta, Forge 54.0.26)
+- updated Cloth Config support (17.0.144) (Fabric/Quilt)
+- updated ModMenu support (13.0.1) (Fabric/Quilt)
+- updated REI support (18.0.804) (Fabric/Quilt & NeoForge)
+
+## [1.21.3-4.3.0.2] - 2025-05-27
 ### Fixed
 - solar cooker lid did not close after last recipe
 

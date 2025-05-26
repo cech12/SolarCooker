@@ -98,7 +98,7 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     @Override
     @Nonnull
     public RenderShape getRenderShape(@Nonnull BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.MODEL;
     }
 
     @Override

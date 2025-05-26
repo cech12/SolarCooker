@@ -31,8 +31,8 @@ import javax.annotation.Nonnull;
 
 public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<SolarCookerBlockEntity> {
 
-    public static final ResourceLocation TEXTURE = Constants.id("textures/entity/solar_cooker.png");
-    public static final ResourceLocation TEXTURE_REFLECTOR = Constants.id("textures/entity/solar_cooker_reflector.png");
+    public static final ResourceLocation TEXTURE = Constants.id("textures/entity/chest/solar_cooker.png");
+    public static final ResourceLocation TEXTURE_REFLECTOR = Constants.id("textures/entity/chest/solar_cooker_reflector.png");
 
     private static final LayerDefinition innerCube = createInnerLayerDefinition();
     private static final LayerDefinition reflectorLeftCube = createReflectorLayerDefinition(true);
