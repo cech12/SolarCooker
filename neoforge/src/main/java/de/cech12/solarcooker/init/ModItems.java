@@ -2,6 +2,7 @@ package de.cech12.solarcooker.init;
 
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.item.ReflectorItem;
+import de.cech12.solarcooker.item.ShiningDiamondItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
@@ -19,7 +20,7 @@ public class ModItems {
     static {
         Constants.SOLAR_COOKER_ITEM = solarCookerItem();
         Constants.REFLECTOR_ITEM = item(Constants.REFLECTOR_NAME, () -> new ReflectorItem(new Item.Properties().setId(id(Constants.REFLECTOR_NAME))));
-        Constants.SHINING_DIAMOND_BLOCK_ITEM = fromBlock(Constants.SHINING_DIAMOND_BLOCK_NAME, Constants.SHINING_DIAMOND_BLOCK_BLOCK);
+        Constants.SHINING_DIAMOND_BLOCK_ITEM = shiningDiamondItem(Constants.SHINING_DIAMOND_BLOCK_NAME, Constants.SHINING_DIAMOND_BLOCK_BLOCK);
     }
 
     private static ResourceKey<Item> id(String name) {
@@ -30,8 +31,8 @@ public class ModItems {
         return ITEMS.register(name, itemSupplier);
     }
 
-    private static DeferredHolder<Item, Item> fromBlock(String name, Supplier<Block> block) {
-        return item(name, () -> new BlockItem(block.get(), new Item.Properties().setId(id(name))));
+    private static DeferredHolder<Item, Item> shiningDiamondItem(String name, Supplier<Block> block) {
+        return item(name, () -> new ShiningDiamondItem(block.get(), new Item.Properties().setId(id(name))));
     }
 
     private static DeferredHolder<Item, Item> solarCookerItem() {

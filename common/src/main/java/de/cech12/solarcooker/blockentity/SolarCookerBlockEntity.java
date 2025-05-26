@@ -188,7 +188,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             if (!this.level.isClientSide) {
                 return this.hasShiningBlockAbove() || (
                         this.level.dimensionType().hasSkyLight()
-                        && this.level.isDay()
+                        && this.level.isBrightOutside()
                         && !this.level.isRaining()
                         && this.level.canSeeSky(this.worldPosition.above()));
             } else {
@@ -212,8 +212,8 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         super.loadAdditional(compound, provider);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compound, this.items, provider);
-        this.cookTime = compound.getInt("CookTime");
-        this.cookTimeTotal = compound.getInt("CookTimeTotal");
+        this.cookTime = compound.getIntOr("CookTime", 0);
+        this.cookTimeTotal = compound.getIntOr("CookTimeTotal", 200);
         updateShouldLidBeOpen(this.openersCounter.getOpenerCount());
     }
 

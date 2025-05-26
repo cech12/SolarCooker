@@ -38,7 +38,7 @@ public class SolarCookingReiDisplay extends BasicDisplay {
     }
 
     public SolarCookingReiDisplay(List<EntryIngredient> input, List<EntryIngredient> output, Optional<ResourceLocation> id, CompoundTag tag) {
-        this(input, output, id, tag.getFloat("xp"), tag.getDouble("cookTime"));
+        this(input, output, id, tag.getFloatOr("xp", 0), tag.getDoubleOr("cookTime", 200));
     }
 
     public SolarCookingReiDisplay(List<EntryIngredient> input, List<EntryIngredient> output, Optional<ResourceLocation> id, float xp, double cookTime) {

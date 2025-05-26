@@ -26,8 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nonnull;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<SolarCookerBlockEntity> {
 
@@ -72,7 +72,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
     }
 
     @Override
-    public void render(SolarCookerBlockEntity blockEntity, float partialTicks, @Nonnull PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull SolarCookerBlockEntity blockEntity, float partialTicks, @NotNull PoseStack matrixStackIn, @NotNull MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn, @NotNull Vec3 vector) {
         Level world = blockEntity.getLevel();
         boolean isInWorld = world != null;
         BlockState blockstate = isInWorld ? blockEntity.getBlockState() : Constants.SOLAR_COOKER_BLOCK.get().defaultBlockState().setValue(ChestBlock.FACING, Direction.SOUTH);

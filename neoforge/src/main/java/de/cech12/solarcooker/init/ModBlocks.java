@@ -1,7 +1,6 @@
 package de.cech12.solarcooker.init;
 
 import de.cech12.solarcooker.Constants;
-import de.cech12.solarcooker.block.ShiningDiamondBlock;
 import de.cech12.solarcooker.block.SolarCookerBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -17,7 +16,7 @@ public final class ModBlocks {
 
     static {
         Constants.SOLAR_COOKER_BLOCK = BLOCKS.register(Constants.SOLAR_COOKER_NAME, () -> new SolarCookerBlock(BlockBehaviour.Properties.of().setId(id(Constants.SOLAR_COOKER_NAME)).mapColor(MapColor.WOOD).strength(2.5F, 3.5F).sound(SoundType.WOOD)));
-        Constants.SHINING_DIAMOND_BLOCK_BLOCK = BLOCKS.register(Constants.SHINING_DIAMOND_BLOCK_NAME, () -> new ShiningDiamondBlock(BlockBehaviour.Properties.of().setId(id(Constants.SHINING_DIAMOND_BLOCK_NAME)).mapColor(MapColor.DIAMOND).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).lightLevel(state -> 15)));
+        Constants.SHINING_DIAMOND_BLOCK_BLOCK = BLOCKS.register(Constants.SHINING_DIAMOND_BLOCK_NAME, () -> new Block(BlockBehaviour.Properties.of().setId(id(Constants.SHINING_DIAMOND_BLOCK_NAME)).mapColor(MapColor.DIAMOND).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL).lightLevel(state -> 15)));
     }
 
     private static ResourceKey<Block> id(String name) {
