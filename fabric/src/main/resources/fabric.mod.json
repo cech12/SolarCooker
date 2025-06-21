@@ -40,7 +40,6 @@
     "cloth-config": ">=${cloth_config_version}"
   },
   "suggests": {
-    "modmenu": ">=${mod_menu_version}",
-    "roughlyenoughitems": ">=${rei_version}"
+    "modmenu": ">=${mod_menu_version}"
   }
 }

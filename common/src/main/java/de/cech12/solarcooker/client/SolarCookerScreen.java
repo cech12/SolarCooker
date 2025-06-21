@@ -4,7 +4,7 @@ import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.inventory.SolarCookerContainer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -40,17 +40,17 @@ public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContai
             //draw gui
             int left = this.leftPos;
             int top = this.topPos;
-            guiGraphics.blit(RenderType::guiTextured, guiTexture, left, top, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, guiTexture, left, top, 0.0F, 0.0F, this.imageWidth, this.imageHeight, 256, 256);
             //draw flame
             if (this.menu.isBurning()) {
-                guiGraphics.blitSprite(RenderType::guiTextured, litSprite, 14, 14, 0, 0, left + 56, top + 36, 14, 14);
+                guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, litSprite, 14, 14, 0, 0, left + 56, top + 36, 14, 14);
             }
             //draw progress
             int progress = this.menu.getCookProgressionScaled();
-            guiGraphics.blitSprite(RenderType::guiTextured, burnProgressSprite, 24, 16, 0, 0, left + 79, top + 34, progress, 16);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, burnProgressSprite, 24, 16, 0, 0, left + 79, top + 34, progress, 16);
             //draw sun
             if (this.menu.isSunlit()) {
-                guiGraphics.blitSprite(RenderType::guiTextured, sunlightSprite, 18, 18, 0, 0, left + 55, top + 52, 18, 18);
+                guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sunlightSprite, 18, 18, 0, 0, left + 55, top + 52, 18, 18);
             }
         }
     }

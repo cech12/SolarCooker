@@ -14,7 +14,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -48,6 +47,8 @@ import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nonnull;
@@ -208,21 +209,21 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    protected void loadAdditional(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider provider) {
-        super.loadAdditional(compound, provider);
+    protected void loadAdditional(@Nonnull ValueInput valueInput) {
+        super.loadAdditional(valueInput);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compound, this.items, provider);
-        this.cookTime = compound.getIntOr("CookTime", 0);
-        this.cookTimeTotal = compound.getIntOr("CookTimeTotal", 200);
+        ContainerHelper.loadAllItems(valueInput, this.items);
+        this.cookTime = valueInput.getIntOr("CookTime", 0);
+        this.cookTimeTotal = valueInput.getIntOr("CookTimeTotal", 200);
         updateShouldLidBeOpen(this.openersCounter.getOpenerCount());
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag compound, @Nonnull HolderLookup.Provider provider) {
-        super.saveAdditional(compound, provider);
-        compound.putInt("CookTime", this.cookTime);
-        compound.putInt("CookTimeTotal", this.cookTimeTotal);
-        ContainerHelper.saveAllItems(compound, this.items, provider);
+    protected void saveAdditional(@Nonnull ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        valueOutput.putInt("CookTime", this.cookTime);
+        valueOutput.putInt("CookTimeTotal", this.cookTimeTotal);
+        ContainerHelper.saveAllItems(valueOutput, this.items);
     }
 
     @Override
@@ -235,11 +236,6 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    //@Override //overrides a Forge / Neoforge method ?! TODO
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        this.loadAdditional(pkt.getTag(), lookupProvider);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, SolarCookerBlockEntity entity) {

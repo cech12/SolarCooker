@@ -21,7 +21,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 
 @Mod(Constants.MOD_ID)
-@EventBusSubscriber(modid= Constants.MOD_ID, bus= EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid= Constants.MOD_ID)
 public class NeoForgeSolarCookerMod {
 
     public NeoForgeSolarCookerMod(IEventBus eventBus) {

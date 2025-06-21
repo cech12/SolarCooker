@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.rei;
-
+/*
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
 import de.cech12.solarcooker.platform.Services;
@@ -29,3 +29,4 @@ public class SolarCookerReiCommonPlugin implements REICommonPlugin {
     }
 
 }
+ */
