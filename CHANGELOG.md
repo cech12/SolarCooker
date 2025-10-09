@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [1.21.5-4.5.1.0] - 2025-10-09
+- updated NeoForge to 21.5.74
+- re-added JEI support (21.4.0.27) (NeoForge)
+
 ## [1.21.5-4.5.0.0] - 2025-05-27
 ### Changed
 - updated to Minecraft 1.21.5 (Fabric 0.120.0+1.21.5, NeoForge 21.5.47-beta, Forge 55.0.21)

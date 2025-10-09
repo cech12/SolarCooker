@@ -23,6 +23,13 @@ versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 [[dependencies.${mod_id}]]
+modId="jei"
+type="optional"
+versionRange="${jei_version_range}"
+referralUrl="https://github.com/mezz/JustEnoughItems"
+ordering="NONE"
+side="BOTH"
+[[dependencies.${mod_id}]]
 modId="roughlyenoughitems"
 type="optional"
 versionRange="${rei_version_range}"
