@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [1.21.6-4.6.1.0] - 2025-10-09
+- re-added REI support (20.0.811) (Fabric/Quilt & NeoForge)
+
 ## [1.21.6-4.6.0.0] - 2025-06-21
 ### Changed
 - updated to Minecraft 1.21.6 (Fabric 0.127.1+1.21.6, NeoForge 21.6.6-beta, Forge 56.0.3)

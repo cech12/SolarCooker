@@ -26,7 +26,7 @@
       "de.cech12.solarcooker.compat.ModMenuCompat"
     ],
     "rei_client": [
-      "de.cech12.solarcooker.rei.SolarCookerReiClientPlugin"
+        "de.cech12.solarcooker.client.SolarCookerReiClientPlugin"
     ],
     "rei_common": [
       "de.cech12.solarcooker.rei.SolarCookerReiCommonPlugin"
