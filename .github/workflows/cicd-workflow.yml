@@ -49,6 +49,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         forge
@@ -68,6 +69,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         forge
@@ -87,6 +89,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         neoforge
@@ -106,6 +109,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         neoforge
@@ -125,6 +129,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         fabric
@@ -145,6 +150,7 @@ jobs:
       game-versions: |
         1.21.6
         1.21.7
+        1.21.8
       release-type: release
       loaders: |
         fabric
