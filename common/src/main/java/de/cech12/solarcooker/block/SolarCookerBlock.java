@@ -46,7 +46,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::lidAnimateTick);
         }
         return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::tick);

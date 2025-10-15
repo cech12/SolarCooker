@@ -18,7 +18,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 @Mod(Constants.MOD_ID)
 @EventBusSubscriber(modid= Constants.MOD_ID)
@@ -51,7 +51,7 @@ public class NeoForgeSolarCookerMod {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SidedInvWrapper::new);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), (blockEntity, side) -> VanillaContainerWrapper.of(blockEntity));
     }
 
     @SubscribeEvent
