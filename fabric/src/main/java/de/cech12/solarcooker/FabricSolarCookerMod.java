@@ -6,13 +6,17 @@ import de.cech12.solarcooker.init.ModItems;
 import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.CreativeModeTabs;
 
 public class FabricSolarCookerMod implements ModInitializer {
+
+    private static MinecraftServer serverInstance;
 
     public record SolarCookerData(boolean empty) {
         public static final StreamCodec<RegistryFriendlyByteBuf, SolarCookerData> CODEC = StreamCodec.composite(
@@ -37,6 +41,12 @@ public class FabricSolarCookerMod implements ModInitializer {
             content.accept(Constants.REFLECTOR_ITEM.get());
             content.accept(Constants.SHINING_DIAMOND_BLOCK_ITEM.get());
         });
+        //register server instance listener
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);
+    }
+
+    public static MinecraftServer getServer() {
+        return serverInstance;
     }
 
 }

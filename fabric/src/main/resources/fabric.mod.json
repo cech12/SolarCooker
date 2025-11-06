@@ -15,6 +15,7 @@
   "license": "${mod_license}",
   "icon": "logo.png",
   "environment": "*",
+  "accessWidener": "${mod_id}.accesswidener",
   "entrypoints": {
     "main": [
       "de.cech12.solarcooker.FabricSolarCookerMod"
@@ -24,6 +25,9 @@
     ],
     "modmenu": [
       "de.cech12.solarcooker.compat.ModMenuCompat"
+    ],
+    "jei_mod_plugin": [
+      "de.cech12.solarcooker.jei.SolarCookerJEIPlugin"
     ]
   },
   "depends": {

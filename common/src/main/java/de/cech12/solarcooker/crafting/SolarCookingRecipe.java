@@ -13,8 +13,12 @@ import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.display.FurnaceRecipeDisplay;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class SolarCookingRecipe extends AbstractCookingRecipe {
 
@@ -26,6 +30,12 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
 
     public static SolarCookingRecipe convert(@Nonnull AbstractCookingRecipe recipe, RegistryAccess registryAccess) {
         return new SolarCookingRecipe(recipe.group(), recipe.category(), recipe.input(), recipe.assemble(new SingleRecipeInput(new ItemStack(recipe.input().items().findFirst().get())), registryAccess), recipe.experience(), (int) (recipe.cookingTime() * Services.CONFIG.getCookTimeFactor()));
+    }
+
+    @Override
+    @Nonnull
+    public List<RecipeDisplay> display() {
+        return List.of(new FurnaceRecipeDisplay(this.input().display(), SlotDisplay.Empty.INSTANCE, new SlotDisplay.ItemStackSlotDisplay(this.result()), new SlotDisplay.ItemSlotDisplay(this.furnaceIcon()), (int) (this.cookingTime() * Services.CONFIG.getCookTimeFactor()), this.experience()));
     }
 
     @Override

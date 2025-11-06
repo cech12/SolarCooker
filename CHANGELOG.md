@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [1.21.10-4.9.0.0] - 2025-11-06
+### Changed
+- updated to Minecraft 1.21.10 (Fabric 0.138.0+1.21.10, NeoForge 21.10.48-beta, Forge 60.0.17)
+- updated Cloth Config support (20.0.149) (Fabric/Quilt)
+- updated ModMenu support (16.0.0-rc.1) (Fabric/Quilt)
+- updated JEI support (26.1.0.16) (NeoForge)
+- re-added JEI support (26.1.0.16) (Fabric)
+
 ## [1.21.9-4.8.0.0] - 2025-10-14
 ### Changed
 - updated to Minecraft 1.21.9 (Fabric 0.134.0+1.21.9, NeoForge 21.9.15-beta, Forge 59.0.5)
