@@ -38,6 +38,7 @@
     "cloth-config": ">=${cloth_config_version}"
   },
   "suggests": {
-    "modmenu": ">=${mod_menu_version}"
+    "modmenu": ">=${mod_menu_version}",
+    "jei": ">=${jei_version}"
   }
 }
