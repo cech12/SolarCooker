@@ -10,13 +10,13 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
 
 @JeiPlugin
@@ -25,8 +25,8 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     private static SolarCookingCategory solarCookingCategory;
 
     @Override
-    @Nonnull
-    public ResourceLocation getPluginUid() {
+    @NotNull
+    public Identifier getPluginUid() {
         return Constants.id("plugin_" + Constants.MOD_ID);
     }
 
@@ -38,7 +38,7 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipes(@Nonnull IRecipeRegistration registration) {
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
         MinecraftServer server = FabricSolarCookerMod.getServer();
         if (server != null) {
             RecipeMap recipeMap = server.getRecipeManager().recipes;
@@ -46,7 +46,7 @@ public class SolarCookerJEIPlugin implements IModPlugin {
 
             if (Services.CONFIG.areVanillaRecipesEnabled()) {
                 registration.addRecipes(solarCookingCategory.getRecipeType(), recipeMap.byType(Services.CONFIG.getRecipeType()).stream()
-                        .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().location()))
+                        .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().identifier()))
                         .map(recipe -> new RecipeHolder<>(recipe.id(), SolarCookingRecipe.convert(recipe.value(), server.registryAccess())))
                         .collect(Collectors.toList()));
             }
@@ -54,7 +54,7 @@ public class SolarCookerJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
         registration.addCraftingStation(solarCookingCategory.getRecipeType(), new ItemStack(Constants.SOLAR_COOKER_BLOCK.get()));
     }
 

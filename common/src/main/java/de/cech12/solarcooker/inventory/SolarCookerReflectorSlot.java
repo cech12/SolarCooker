@@ -4,8 +4,7 @@ import de.cech12.solarcooker.ModTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SolarCookerReflectorSlot extends Slot {
 
@@ -14,7 +13,7 @@ public class SolarCookerReflectorSlot extends Slot {
     }
 
     @Override
-    public boolean mayPlace(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@NotNull ItemStack stack) {
         return stack.is(ModTags.Items.SOLAR_COOKER_REFLECTOR);
     }
 

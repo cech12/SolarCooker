@@ -17,8 +17,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SolarCookerContainer extends AbstractContainerMenu {
     private final RecipeType<? extends AbstractCookingRecipe> specificRecipeType;
@@ -61,7 +60,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(@Nonnull Player playerIn) {
+    public boolean stillValid(@NotNull Player playerIn) {
         return this.cooker.stillValid(playerIn);
     }
 
@@ -70,8 +69,8 @@ public class SolarCookerContainer extends AbstractContainerMenu {
      * inventory and the other inventory(s).
      */
     @Override
-    @Nonnull
-    public ItemStack quickMoveStack(@Nonnull Player playerIn, int index) {
+    @NotNull
+    public ItemStack quickMoveStack(@NotNull Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
@@ -115,7 +114,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
     }
 
     @Override
-    public void setItem(int slotID, int stateId, @Nonnull ItemStack stack) {
+    public void setItem(int slotID, int stateId, @NotNull ItemStack stack) {
         super.setItem(slotID, stateId, stack);
     }
 
@@ -131,7 +130,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
                         .filter(recipe -> recipe.value() instanceof AbstractCookingRecipe)
                         .map(recipe -> (RecipeHolder<AbstractCookingRecipe>) recipe)
                         .filter(recipe -> recipe.value().matches(recipeInput, this.level))
-                        .anyMatch(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().location()));
+                        .anyMatch(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().identifier()));
             }
         }
         return false;
@@ -141,7 +140,7 @@ public class SolarCookerContainer extends AbstractContainerMenu {
      * Called when the container is closed.
      */
     @Override
-    public void removed(@Nonnull Player playerIn) {
+    public void removed(@NotNull Player playerIn) {
         super.removed(playerIn);
         this.cooker.stopOpen(playerIn);
     }

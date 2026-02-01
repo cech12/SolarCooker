@@ -52,9 +52,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, LidBlockEntity {
@@ -92,26 +92,26 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         this.specificRecipeType = specificRecipeTypeIn;
         this.openersCounter = new ContainerOpenersCounter() {
             @Override
-            protected void onOpen(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+            protected void onOpen(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
                 if (level.getBlockEntity(pos) instanceof SolarCookerBlockEntity blockEntity && !blockEntity.shouldLidBeOpen(0)) {
                     playSound(level, pos, SoundEvents.CHEST_OPEN);
                 }
             }
 
             @Override
-            protected void onClose(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state) {
+            protected void onClose(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state) {
                 if (level.getBlockEntity(pos) instanceof SolarCookerBlockEntity blockEntity && !blockEntity.shouldLidBeOpen(0)) {
                     playSound(level, pos, SoundEvents.CHEST_CLOSE);
                 }
             }
 
             @Override
-            protected void openerCountChanged(@Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, int unknown, int numPlayerUsing) {
+            protected void openerCountChanged(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, int unknown, int numPlayerUsing) {
                 signalOpenCount(level, pos, state, numPlayerUsing, false);
             }
 
             @Override
-            public boolean isOwnContainer(@Nonnull Player player) {
+            public boolean isOwnContainer(@NotNull Player player) {
                 if (!(player.containerMenu instanceof SolarCookerContainer)) {
                     return false;
                 } else {
@@ -157,14 +157,14 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     };
 
     @Override
-    @Nonnull
+    @NotNull
     protected Component getDefaultName() {
         return Component.translatable("block.solarcooker.solar_cooker");
     }
 
     @Override
-    @Nonnull
-    protected AbstractContainerMenu createMenu(int id, @Nonnull Inventory player) {
+    @NotNull
+    protected AbstractContainerMenu createMenu(int id, @NotNull Inventory player) {
         return new SolarCookerContainer(specificRecipeType, id, player, this, this.dataAccess);
     }
 
@@ -212,7 +212,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    protected void loadAdditional(@Nonnull ValueInput valueInput) {
+    protected void loadAdditional(@NotNull ValueInput valueInput) {
         super.loadAdditional(valueInput);
         this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(valueInput, this.items);
@@ -222,7 +222,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    protected void saveAdditional(@Nonnull ValueOutput valueOutput) {
+    protected void saveAdditional(@NotNull ValueOutput valueOutput) {
         super.saveAdditional(valueOutput);
         valueOutput.putInt("CookTime", this.cookTime);
         valueOutput.putInt("CookTimeTotal", this.cookTimeTotal);
@@ -230,8 +230,8 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    @Nonnull
-    public CompoundTag getUpdateTag(@Nonnull HolderLookup.Provider provider) {
+    @NotNull
+    public CompoundTag getUpdateTag(@NotNull HolderLookup.Provider provider) {
         return this.saveWithoutMetadata(provider);
     }
 
@@ -320,14 +320,14 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    public void startOpen(@Nonnull ContainerUser user) {
+    public void startOpen(@NotNull ContainerUser user) {
         if (!this.remove && !user.getLivingEntity().isSpectator() && this.getLevel() != null) {
             this.openersCounter.incrementOpeners(user.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState(), user.getContainerInteractionRange());
         }
     }
 
     @Override
-    public void stopOpen(@Nonnull ContainerUser user) {
+    public void stopOpen(@NotNull ContainerUser user) {
         if (!this.remove && !user.getLivingEntity().isSpectator() && this.getLevel() != null) {
             this.openersCounter.decrementOpeners(user.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState());
         }
@@ -427,7 +427,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
                             .filter(recipe -> recipe.value() instanceof AbstractCookingRecipe)
                             .map(recipe -> (RecipeHolder<AbstractCookingRecipe>) recipe)
                             .filter(recipe -> recipe.value().matches(recipeInput, this.level))
-                            .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().location()))
+                            .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().identifier()))
                             .findFirst().orElse(null);
                 }
             }
@@ -474,8 +474,8 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    @Nonnull
-    public int[] getSlotsForFace(@Nonnull Direction side) {
+    @NotNull
+    public int[] getSlotsForFace(@NotNull Direction side) {
         if (side == Direction.UP) {
             return SLOTS_UP;
         }
@@ -486,7 +486,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Returns true if automation can insert the given item in the given slot from the given side.
      */
     @Override
-    public boolean canPlaceItemThroughFace(int index, @Nonnull ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStackIn, @Nullable Direction direction) {
         return this.canPlaceItem(index, itemStackIn);
     }
 
@@ -494,7 +494,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Returns true if automation can extract the given item in the given slot from the given side.
      */
     @Override
-    public boolean canTakeItemThroughFace(int index, @Nonnull ItemStack stack, @Nullable Direction direction) {
+    public boolean canTakeItemThroughFace(int index, @NotNull ItemStack stack, @Nullable Direction direction) {
         return direction != Direction.UP && index == OUTPUT;
     }
 
@@ -517,7 +517,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    @Nonnull
+    @NotNull
     protected NonNullList<ItemStack> getItems() {
         return this.items;
     }
@@ -526,7 +526,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Returns the stack in the given slot.
      */
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack getItem(int index) {
         return this.items.get(index);
     }
@@ -535,7 +535,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Removes up to a specified number of items from an inventory slot and returns them in a new stack.
      */
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack removeItem(int index, int count) {
         return ContainerHelper.removeItem(this.items, index, count);
     }
@@ -544,13 +544,13 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Removes a stack from the given slot and returns it.
      */
     @Override
-    @Nonnull
+    @NotNull
     public ItemStack removeItemNoUpdate(int index) {
         return ContainerHelper.takeItem(this.items, index);
     }
 
     @Override
-    protected void setItems(@Nonnull NonNullList<ItemStack> nonNullList) {
+    protected void setItems(@NotNull NonNullList<ItemStack> nonNullList) {
         this.items = nonNullList;
     }
 
@@ -576,7 +576,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * Don't rename this method to canInteractWith due to conflicts with Container
      */
     @Override
-    public boolean stillValid(@Nonnull Player player) {
+    public boolean stillValid(@NotNull Player player) {
         if (this.level != null && this.level.getBlockEntity(this.worldPosition) != this) {
             return false;
         } else {
@@ -589,7 +589,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
      * guis use Slot.isItemValid
      */
     @Override
-    public boolean canPlaceItem(int index, @Nonnull ItemStack stack) {
+    public boolean canPlaceItem(int index, @NotNull ItemStack stack) {
         return index == INPUT;
     }
 
@@ -648,7 +648,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     @Override
-    public void fillStackedContents(@Nonnull StackedItemContents stackedContents) {
+    public void fillStackedContents(@NotNull StackedItemContents stackedContents) {
         for(ItemStack itemstack : this.items) {
             stackedContents.accountStack(itemstack);
         }

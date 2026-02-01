@@ -19,9 +19,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
@@ -32,20 +31,20 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return Services.REGISTRY.getNewBlockEntity(pos, state);
     }
 
     @Override
     @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> entityType) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> entityType) {
         if (level.isClientSide()) {
             return createTickerHelper(entityType, Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntity::lidAnimateTick);
         }
@@ -53,7 +52,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
     }
 
     @Override
-    protected void tick(@Nonnull BlockState state, ServerLevel level, @Nonnull BlockPos pos, @Nonnull RandomSource random) {
+    protected void tick(@NotNull BlockState state, ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         BlockEntity blockentity = level.getBlockEntity(pos);
         if (blockentity instanceof SolarCookerBlockEntity solarCookerBlockEntity) {
             solarCookerBlockEntity.recheckOpen();
@@ -65,7 +64,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      * inside AbstractSolarCookerBlock.
      */
     @Override
-    protected void interactWith(Level level, @Nonnull BlockPos pos, @Nonnull Player player) {
+    protected void interactWith(Level level, @NotNull BlockPos pos, @NotNull Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity && player instanceof ServerPlayer) {
             player.openMenu((SolarCookerBlockEntity) blockEntity);
@@ -76,7 +75,7 @@ public class SolarCookerBlock extends AbstractSolarCookerBlock {
      * Called periodically clientside on blocks near the player to show effects (like furnace fire particles).
      */
     @Override
-    public void animateTick(BlockState stateIn, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull RandomSource rand) {
+    public void animateTick(BlockState stateIn, @NotNull Level worldIn, @NotNull BlockPos pos, @NotNull RandomSource rand) {
         if (stateIn.getValue(BURNING)) {
             double d0 = (double)pos.getX() + 0.5D;
             double d1 = pos.getY();

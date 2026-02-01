@@ -6,16 +6,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContainer> {
-    private static final ResourceLocation guiTexture = Constants.id("textures/gui/container/solar_cooker.png");
-    private static final ResourceLocation litSprite = Constants.id("container/solarcooker/lit");
-    private static final ResourceLocation burnProgressSprite = Constants.id("container/solarcooker/burn_progress");
-    private static final ResourceLocation sunlightSprite = Constants.id("container/solarcooker/sunlight");
+    private static final Identifier guiTexture = Constants.id("textures/gui/container/solar_cooker.png");
+    private static final Identifier litSprite = Constants.id("container/solarcooker/lit");
+    private static final Identifier burnProgressSprite = Constants.id("container/solarcooker/burn_progress");
+    private static final Identifier sunlightSprite = Constants.id("container/solarcooker/sunlight");
 
     public SolarCookerScreen(SolarCookerContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
@@ -28,14 +27,14 @@ public class SolarCookerScreen extends AbstractContainerScreen<SolarCookerContai
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(@Nonnull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
+    protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
         if (this.minecraft != null) {
             //draw gui
             int left = this.leftPos;

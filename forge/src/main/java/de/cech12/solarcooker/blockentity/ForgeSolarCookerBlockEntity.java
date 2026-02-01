@@ -8,9 +8,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeSolarCookerBlockEntity extends SolarCookerBlockEntity {
 
@@ -21,8 +20,8 @@ public class ForgeSolarCookerBlockEntity extends SolarCookerBlockEntity {
     LazyOptional<? extends IItemHandler>[] handlers = SidedInvWrapper.create(this, Direction.UP, Direction.NORTH);
 
     @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+    @NotNull
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
         if (!this.remove && facing != null && capability == ForgeCapabilities.ITEM_HANDLER) {
             if (facing == Direction.UP)
                 return handlers[0].cast();

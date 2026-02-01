@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -20,6 +19,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -126,7 +127,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
     private void renderModels(PoseStack matrixStackIn, SubmitNodeCollector submitNodeCollector, float lidAngle, int combinedLightIn) {
         this.lid.xRot = -(lidAngle * ((float)Math.PI / 2F));
         this.lock.xRot = this.lid.xRot;
-        RenderType renderType = MATERIAL_BASE.renderType(RenderType::entityTranslucent);
+        RenderType renderType = MATERIAL_BASE.renderType(RenderTypes::entityTranslucent);
         TextureAtlasSprite sprite = this.materials.get(MATERIAL_BASE);
         submitNodeCollector.submitModelPart(this.lid, matrixStackIn, renderType, combinedLightIn, OverlayTexture.NO_OVERLAY, sprite);
         submitNodeCollector.submitModelPart(this.lock, matrixStackIn, renderType, combinedLightIn, OverlayTexture.NO_OVERLAY, sprite);
@@ -136,7 +137,7 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
 
     private void renderReflectors(PoseStack matrixStackIn, SubmitNodeCollector submitNodeCollector, boolean hasLeftReflector, boolean hasRightReflector, float lidAngle, int combinedLightIn) {
         if (hasLeftReflector || hasRightReflector) {
-            RenderType renderType = MATERIAL_REFLECTOR.renderType(RenderType::entityTranslucent);
+            RenderType renderType = MATERIAL_REFLECTOR.renderType(RenderTypes::entityTranslucent);
             TextureAtlasSprite sprite = this.materials.get(MATERIAL_REFLECTOR);
             float angle = (lidAngle * ((float)Math.PI / 1.8F));
             if (hasLeftReflector) {

@@ -20,7 +20,7 @@ public class SolarCookerReiCommonPlugin implements REICommonPlugin {
         if (Services.CONFIG.areVanillaRecipesEnabled()) {
             registry.beginRecipeFiller(AbstractCookingRecipe.class)
                     .filterType((RecipeType<? super AbstractCookingRecipe>) Services.CONFIG.getRecipeType())
-                    .filter(recipeHolder -> Services.CONFIG.isRecipeAllowed(recipeHolder.id().location()))
+                    .filter(recipeHolder -> Services.CONFIG.isRecipeAllowed(recipeHolder.id().identifier()))
                     .fill(SolarCookingReiDisplay::new);
         }
     }

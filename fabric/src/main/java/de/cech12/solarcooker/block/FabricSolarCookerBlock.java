@@ -14,8 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 public class FabricSolarCookerBlock extends SolarCookerBlock {
 
     public FabricSolarCookerBlock(Properties builder) {
@@ -32,14 +30,14 @@ public class FabricSolarCookerBlock extends SolarCookerBlock {
                     return new FabricSolarCookerMod.SolarCookerData(false);
                 }
 
-                @Nonnull
+                @NotNull
                 @Override
                 public Component getDisplayName(){
                     return container.getDisplayName();
                 }
 
                 @Override
-                public AbstractContainerMenu createMenu(int windowId, @Nonnull Inventory inventory, @Nonnull Player player) {
+                public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory inventory, @NotNull Player player) {
                     return container.createMenu(windowId, inventory, player);
                 }
             });

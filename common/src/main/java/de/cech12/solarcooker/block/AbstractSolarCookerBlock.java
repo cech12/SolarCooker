@@ -23,8 +23,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -42,8 +41,8 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
     }
 
     @Override
-    @Nonnull
-    protected InteractionResult useWithoutItem(@Nonnull BlockState state, Level level, @Nonnull BlockPos pos, @Nonnull Player player, @Nonnull BlockHitResult hit) {
+    @NotNull
+    protected InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         } else {
@@ -64,13 +63,13 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
 
     @Override
     @Deprecated
-    public boolean hasAnalogOutputSignal(@Nonnull BlockState state) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState state) {
         return true;
     }
 
     @Override
     @Deprecated
-    public int getAnalogOutputSignal(@Nonnull BlockState blockState, Level worldIn, @Nonnull BlockPos pos, @Nonnull Direction direction) {
+    public int getAnalogOutputSignal(@NotNull BlockState blockState, Level worldIn, @NotNull BlockPos pos, @NotNull Direction direction) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
     }
 
@@ -78,14 +77,14 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
      * The type of render function called. MODEL for mixed tesr and static model
      */
     @Override
-    @Nonnull
-    public RenderShape getRenderShape(@Nonnull BlockState state) {
+    @NotNull
+    public RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    @Nonnull
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull BlockGetter worldIn, @Nonnull BlockPos pos, @Nonnull CollisionContext context) {
+    @NotNull
+    public VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 
@@ -94,7 +93,7 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
      */
     @Override
     @Deprecated
-    @Nonnull
+    @NotNull
     public BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
@@ -104,7 +103,7 @@ public abstract class AbstractSolarCookerBlock extends BaseEntityBlock {
      */
     @Override
     @Deprecated
-    @Nonnull
+    @NotNull
     public BlockState mirror(BlockState state, Mirror mirrorIn) {
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }

@@ -16,8 +16,8 @@ import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.display.FurnaceRecipeDisplay;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class SolarCookingRecipe extends AbstractCookingRecipe {
@@ -28,30 +28,30 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
         super(p_i50031_2_, category, p_i50031_3_, p_i50031_4_, p_i50031_5_, p_i50031_6_);
     }
 
-    public static SolarCookingRecipe convert(@Nonnull AbstractCookingRecipe recipe, RegistryAccess registryAccess) {
+    public static SolarCookingRecipe convert(@NotNull AbstractCookingRecipe recipe, RegistryAccess registryAccess) {
         return new SolarCookingRecipe(recipe.group(), recipe.category(), recipe.input(), recipe.assemble(new SingleRecipeInput(new ItemStack(recipe.input().items().findFirst().get())), registryAccess), recipe.experience(), (int) (recipe.cookingTime() * Services.CONFIG.getCookTimeFactor()));
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public List<RecipeDisplay> display() {
         return List.of(new FurnaceRecipeDisplay(this.input().display(), SlotDisplay.Empty.INSTANCE, new SlotDisplay.ItemStackSlotDisplay(this.result()), new SlotDisplay.ItemSlotDisplay(this.furnaceIcon()), (int) (this.cookingTime() * Services.CONFIG.getCookTimeFactor()), this.experience()));
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public RecipeType<? extends AbstractCookingRecipe> getType() {
         return Constants.SOLAR_COOKING_RECIPE_TYPE.get();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public Item furnaceIcon() {
         return Constants.SOLAR_COOKER_BLOCK.get().asItem();
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public RecipeSerializer<? extends AbstractCookingRecipe> getSerializer() {
         return SERIALIZER;
     }
@@ -62,7 +62,7 @@ public class SolarCookingRecipe extends AbstractCookingRecipe {
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public RecipeBookCategory recipeBookCategory() {
         return RecipeBookCategories.FURNACE_MISC;
     }

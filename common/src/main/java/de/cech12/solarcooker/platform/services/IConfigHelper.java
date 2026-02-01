@@ -1,6 +1,6 @@
 package de.cech12.solarcooker.platform.services;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
@@ -87,15 +87,15 @@ public interface IConfigHelper {
      * @param id ResourceLocation of recipe
      * @return true, if recipe is allowed, else false
      */
-    default boolean isRecipeAllowed(final ResourceLocation id) {
+    default boolean isRecipeAllowed(final Identifier id) {
         String configValue = getRecipeBlockedList().trim();
         if (!configValue.isEmpty()) {
             String[] ids = configValue.split(",");
             if (ids.length < 1) {
-                return !(ResourceLocation.parse(configValue).equals(id));
+                return !(Identifier.parse(configValue).equals(id));
             } else {
                 for (String recipeId : ids) {
-                    if (ResourceLocation.parse(recipeId.trim()).equals(id)) {
+                    if (Identifier.parse(recipeId.trim()).equals(id)) {
                         return false;
                     }
                 }
