@@ -47,7 +47,7 @@ public class SolarCookerJEIPlugin implements IModPlugin {
             if (Services.CONFIG.areVanillaRecipesEnabled()) {
                 registration.addRecipes(solarCookingCategory.getRecipeType(), recipeMap.byType(Services.CONFIG.getRecipeType()).stream()
                         .filter(recipe -> Services.CONFIG.isRecipeAllowed(recipe.id().identifier()))
-                        .map(recipe -> new RecipeHolder<>(recipe.id(), SolarCookingRecipe.convert(recipe.value(), server.registryAccess())))
+                        .map(recipe -> new RecipeHolder<>(recipe.id(), SolarCookingRecipe.convert(recipe.value())))
                         .collect(Collectors.toList()));
             }
         }

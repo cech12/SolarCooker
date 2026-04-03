@@ -12,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -248,13 +247,13 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             boolean isSunlit = entity.isSunlit();
             if (isSunlit && !entity.items.get(INPUT).isEmpty()) {
                 RecipeHolder<? extends AbstractCookingRecipe> recipe = entity.getRecipe();
-                if (entity.canSmelt(level.registryAccess(), recipe)) {
+                if (entity.canSmelt(recipe)) {
                     entity.cookTime++;
                     if (entity.cookTime == entity.cookTimeTotal) {
                         entity.cookTime = 0;
                         entity.cookTimeTotal = entity.getRecipeCookTime();
                         if (!level.isClientSide()) {
-                            entity.smeltItem(level.registryAccess(), recipe);
+                            entity.smeltItem(recipe);
                             dirty = true;
                         }
                     }
@@ -292,7 +291,7 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
     }
 
     public boolean shouldLidBeOpen(int numPlayersUsing) {
-        boolean recipeActive = this.cookTime > 0 || (this.getLevel() != null && (this.canSmelt(this.getLevel().registryAccess(), getRecipe())));
+        boolean recipeActive = this.cookTime > 0 || (this.getLevel() != null && (this.canSmelt(getRecipe())));
         return numPlayersUsing > 0 || (recipeActive && this.isSunlit());
     }
 
@@ -359,13 +358,13 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
             double x = (double)pos.getX() + 0.5D;
             double y = (double)pos.getY() + 0.5D;
             double z = (double)pos.getZ() + 0.5D;
-            level.playSound(null, x, y, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+            level.playSound(null, x, y, z, soundEvent, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
         }
     }
 
-    protected boolean canSmelt(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
+    protected boolean canSmelt(@Nullable RecipeHolder<?> recipe) {
         if (!this.items.get(INPUT).isEmpty() && recipe != null && recipe.value() instanceof AbstractCookingRecipe cookingRecipe) {
-            ItemStack recipeOutput = cookingRecipe.assemble(new SingleRecipeInput(this.items.get(INPUT)), registryAccess);
+            ItemStack recipeOutput = cookingRecipe.assemble(new SingleRecipeInput(this.items.get(INPUT)));
             if (!recipeOutput.isEmpty()) {
                 ItemStack output = this.items.get(OUTPUT);
                 if (output.isEmpty()) return true;
@@ -376,10 +375,10 @@ public class SolarCookerBlockEntity extends BaseContainerBlockEntity implements 
         return false;
     }
 
-    private void smeltItem(RegistryAccess registryAccess, @Nullable RecipeHolder<?> recipe) {
-        if (recipe != null && this.canSmelt(registryAccess, recipe) && recipe.value() instanceof AbstractCookingRecipe cookingRecipe) {
+    private void smeltItem(@Nullable RecipeHolder<?> recipe) {
+        if (recipe != null && this.canSmelt(recipe) && recipe.value() instanceof AbstractCookingRecipe cookingRecipe) {
             ItemStack itemstack = this.items.get(INPUT);
-            ItemStack itemstack1 = cookingRecipe.assemble(new SingleRecipeInput(itemstack), registryAccess);
+            ItemStack itemstack1 = cookingRecipe.assemble(new SingleRecipeInput(itemstack));
             ItemStack itemstack2 = this.items.get(OUTPUT);
             if (itemstack2.isEmpty()) {
                 this.items.set(1, itemstack1.copy());

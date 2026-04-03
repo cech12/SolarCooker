@@ -1,6 +1,7 @@
 package de.cech12.solarcooker;
 
 import de.cech12.solarcooker.client.SolarCookerBlockEntityRenderer;
+import de.cech12.solarcooker.client.SolarCookerModel;
 import de.cech12.solarcooker.client.SolarCookerScreen;
 import de.cech12.solarcooker.init.ModBlockEntityTypes;
 import de.cech12.solarcooker.init.ModBlocks;
@@ -10,6 +11,7 @@ import de.cech12.solarcooker.init.ModRecipeTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -37,6 +39,11 @@ public class ForgeSolarCookerMod {
     public static void onClientRegister(FMLClientSetupEvent event) {
         MenuScreens.register(Constants.SOLAR_COOKER_MENU_TYPE.get(), SolarCookerScreen::new);
         BlockEntityRenderers.register(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerBlockModels(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(SolarCookerBlockEntityRenderer.MODEL_LAYER_LOCATION, SolarCookerModel::createBodyLayer);
     }
 
     @SubscribeEvent

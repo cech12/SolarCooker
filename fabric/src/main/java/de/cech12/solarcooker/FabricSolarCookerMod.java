@@ -6,8 +6,8 @@ import de.cech12.solarcooker.init.ModItems;
 import de.cech12.solarcooker.init.ModMenuTypes;
 import de.cech12.solarcooker.init.ModRecipeTypes;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -36,7 +36,7 @@ public class FabricSolarCookerMod implements ModInitializer {
         //Config
         CommonLoader.init();
         //Register items in the creative tab.
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(content -> {
             content.accept(Constants.SOLAR_COOKER_ITEM.get());
             content.accept(Constants.REFLECTOR_ITEM.get());
             content.accept(Constants.SHINING_DIAMOND_BLOCK_ITEM.get());

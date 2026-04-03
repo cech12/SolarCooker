@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [26.1.1-5.0.0.0] - 2026-04-03
+### Changed
+- updated to Minecraft 26.1.1 (Fabric 0.145.3+26.1.1, NeoForge 26.1.1.1-beta, Forge 63.0.0)
+- updated Cloth Config support (26.1.154) (Fabric/Quilt)
+- updated ModMenu support (18.0.0-alpha.8) (Fabric/Quilt)
+- updated JEI support (29.3.0.22) (Fabric/Quilt & NeoForge)
+- temporary removed REI support until it is ported to 26.1.1 (Fabric/Quilt, NeoForge)
+- updated the texture "assets/solarcooker/textures/entity/chest/solar_coooker.png"
+
+### Removed
+- removed the texture "assets/solarcooker/textures/entity/chest/solar_coooker_reflector.png"
+
 ## [1.21.11-4.10.0.0] - 2026-02-01
 ### Changed
 - updated to Minecraft 1.21.11 (Fabric 0.141.2+1.21.11, NeoForge 21.11.37-beta, Forge 61.0.8)

@@ -1,6 +1,7 @@
 package de.cech12.solarcooker;
 
 import de.cech12.solarcooker.client.SolarCookerBlockEntityRenderer;
+import de.cech12.solarcooker.client.SolarCookerModel;
 import de.cech12.solarcooker.client.SolarCookerScreen;
 import de.cech12.solarcooker.init.ModBlockEntityTypes;
 import de.cech12.solarcooker.init.ModBlocks;
@@ -16,6 +17,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
@@ -42,6 +44,11 @@ public class NeoForgeSolarCookerMod {
     @SubscribeEvent
     public static void onClientRegister(FMLClientSetupEvent event) {
         BlockEntityRenderers.register(Constants.SOLAR_COOKER_ENTITY_TYPE.get(), SolarCookerBlockEntityRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerBlockModels(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(SolarCookerBlockEntityRenderer.MODEL_LAYER_LOCATION, SolarCookerModel::createBodyLayer);
     }
 
     @SubscribeEvent

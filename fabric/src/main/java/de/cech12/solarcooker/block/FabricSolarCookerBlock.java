@@ -2,7 +2,7 @@ package de.cech12.solarcooker.block;
 
 import de.cech12.solarcooker.FabricSolarCookerMod;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,14 +24,15 @@ public class FabricSolarCookerBlock extends SolarCookerBlock {
     protected void interactWith(Level level, @NotNull BlockPos pos, @NotNull Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof SolarCookerBlockEntity container) {
-            player.openMenu(new ExtendedScreenHandlerFactory<>() {
+            player.openMenu(new ExtendedMenuProvider<FabricSolarCookerMod.SolarCookerData>() {
                 @Override
-                public Object getScreenOpeningData(ServerPlayer player) {
+                @NotNull
+                public FabricSolarCookerMod.SolarCookerData getScreenOpeningData(@NotNull ServerPlayer player) {
                     return new FabricSolarCookerMod.SolarCookerData(false);
                 }
 
-                @NotNull
                 @Override
+                @NotNull
                 public Component getDisplayName(){
                     return container.getDisplayName();
                 }

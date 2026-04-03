@@ -28,12 +28,6 @@
     ],
     "jei_mod_plugin": [
       "de.cech12.solarcooker.jei.SolarCookerJEIPlugin"
-    ],
-    "rei_client": [
-      "de.cech12.solarcooker.client.SolarCookerReiClientPlugin"
-    ],
-    "rei_common": [
-      "de.cech12.solarcooker.rei.SolarCookerReiCommonPlugin"
     ]
   },
   "depends": {
@@ -45,7 +39,6 @@
   },
   "suggests": {
     "modmenu": ">=${mod_menu_version}",
-    "jei": ">=${jei_version}",
-    "roughlyenoughitems": ">=${rei_version}"
+    "jei": ">=${jei_version}"
   }
 }

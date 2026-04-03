@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.rei;
-
+/*
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
@@ -90,3 +90,4 @@ public class SolarCookingReiDisplay extends BasicDisplay {
                 ));
     }
 }
+ */
