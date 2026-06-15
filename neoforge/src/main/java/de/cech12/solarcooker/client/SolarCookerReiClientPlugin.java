@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.client;
-/*
+
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.rei.SolarCookingReiDisplayCategory;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
@@ -18,4 +18,3 @@ public class SolarCookerReiClientPlugin implements REIClientPlugin {
     }
 
 }
- */

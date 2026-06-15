@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.rei;
-/*
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.cech12.solarcooker.crafting.SolarCookingRecipe;
@@ -31,7 +31,7 @@ public class SolarCookingReiDisplay extends BasicDisplay {
 
     public <T extends AbstractCookingRecipe> SolarCookingReiDisplay(RecipeHolder<T> recipe) {
         this(List.of(EntryIngredients.ofIngredient((recipe.value()).input())),
-                List.of(EntryIngredients.of(recipe.value().assemble(new SingleRecipeInput(new ItemStack(recipe.value().input().items().findFirst().get().value())), null))),
+                List.of(EntryIngredients.of(recipe.value().assemble(new SingleRecipeInput(new ItemStack(recipe.value().input().items().findFirst().get().value()))))),
                 Optional.of(recipe.id().identifier()),
                 (recipe.value()).experience(),
                 recipe.value() instanceof SolarCookingRecipe ? recipe.value().cookingTime() : (recipe.value().cookingTime() * Services.CONFIG.getCookTimeFactor()));
@@ -90,4 +90,3 @@ public class SolarCookingReiDisplay extends BasicDisplay {
                 ));
     }
 }
- */

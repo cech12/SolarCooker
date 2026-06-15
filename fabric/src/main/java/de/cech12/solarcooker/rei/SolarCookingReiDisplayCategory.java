@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.rei;
-/*
+
 import com.google.common.collect.Lists;
 import de.cech12.solarcooker.Constants;
 import me.shedaniel.math.Point;
@@ -66,4 +66,3 @@ public class SolarCookingReiDisplayCategory implements DisplayCategory<SolarCook
     }
 
 }
- */
