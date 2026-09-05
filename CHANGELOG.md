@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [26.1.2-5.1.1.0] - 2026-09-05
+### Added
+- re-added The One Probe support
+
+### Changed
+- updated NeoForge to 26.1.2.94
+
 ## [26.1.2-5.1.0.0] - 2026-06-15
 ### Changed
 - Updated to Minecraft 26.1.2 (Fabric 0.150.0+26.1.2, NeoForge 26.1.2.71, Forge 64.0.9)
