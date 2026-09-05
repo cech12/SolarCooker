@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.compat;
-/*
+
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import mcjty.theoneprobe.api.ElementAlignment;
@@ -10,7 +10,7 @@ import mcjty.theoneprobe.api.ITheOneProbe;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.apiimpl.styles.ProgressStyle;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -31,7 +31,7 @@ public class TOPCompat {
         public Void apply(ITheOneProbe probe) {
             probe.registerProvider(new IProbeInfoProvider() {
                 @Override
-                public ResourceLocation getID() {
+                public Identifier getID() {
                     return Constants.id("solarcookerinfo");
                 }
 
@@ -54,4 +54,3 @@ public class TOPCompat {
         }
     }
 }
- */

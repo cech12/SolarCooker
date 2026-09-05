@@ -2,6 +2,7 @@ package de.cech12.solarcooker;
 
 import de.cech12.solarcooker.client.SolarCookerBlockEntityRenderer;
 import de.cech12.solarcooker.client.SolarCookerScreen;
+import de.cech12.solarcooker.compat.TOPCompat;
 import de.cech12.solarcooker.init.ModBlockEntityTypes;
 import de.cech12.solarcooker.init.ModBlocks;
 import de.cech12.solarcooker.init.ModItems;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -34,9 +36,9 @@ public class NeoForgeSolarCookerMod {
         //Config
         CommonLoader.init();
         //The One Probe registration.
-        //if (ModList.get().isLoaded("theoneprobe")) {
-        //    TOPCompat.register();
-        //}
+        if (ModList.get().isLoaded("theoneprobe")) {
+            TOPCompat.register();
+        }
     }
 
     @SubscribeEvent

@@ -7,6 +7,13 @@ repositories {
     maven { // TOP
         url = "https://maven.k-4u.nl"
     }
+    maven { // for TOP
+        name = 'Curseforge Maven'
+        url = 'https://www.cursemaven.com'
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -22,6 +29,7 @@ dependencies {
     implementation("dev.architectury:architectury-neoforge:$architectury_version")
 
     //implementation("mcjty.theoneprobe:theoneprobe:$top_version") {transitive = false}
+    implementation "curse.maven:theoneprobe-245211:${top_id}"
 }
 
 neoForge {
