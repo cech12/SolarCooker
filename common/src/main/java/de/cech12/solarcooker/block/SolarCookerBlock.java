@@ -1,6 +1,5 @@
 package de.cech12.solarcooker.block;
 
-import com.mojang.serialization.MapCodec;
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import de.cech12.solarcooker.platform.Services;
@@ -13,7 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -24,16 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class SolarCookerBlock extends AbstractSolarCookerBlock {
 
-    public static final MapCodec<AbstractSolarCookerBlock> CODEC = simpleCodec(SolarCookerBlock::new);
-
     public SolarCookerBlock(BlockBehaviour.Properties builder) {
         super(builder);
-    }
-
-    @Override
-    @NotNull
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Nullable

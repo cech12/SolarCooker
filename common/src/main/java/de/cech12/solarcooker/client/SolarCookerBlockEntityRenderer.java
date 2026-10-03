@@ -73,13 +73,13 @@ public class SolarCookerBlockEntityRenderer implements BlockEntityRenderer<Solar
     public void submit(@NotNull SolarCookerRenderState state, @NotNull PoseStack poseStack, @NotNull SubmitNodeCollector submitNodeCollector, @NotNull CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.mulPose(modelTransformation(state.facing));
-        submitNodeCollector.submitModel(model, state, poseStack, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, MATERIAL_BASE, this.sprites, 0, state.breakProgress);
+        submitNodeCollector.submitModel(model, state, poseStack, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, MATERIAL_BASE, this.sprites, 0);
         //render item
         ItemStackRenderState itemStackRenderState = state.stack;
         if (!itemStackRenderState.isEmpty()) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.55, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            poseStack.rotate(Axis.YP.rotationDegrees(180));
             poseStack.scale(0.5F, 0.5F, 0.5F);
             itemStackRenderState.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();

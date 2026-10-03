@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [this versioning scheme](https://gist.github.com/cech12/69319028e88c50349a6b044000a6607b).
 
+## [26.3-5.3.0.0] - 2026-10-03
+### Changed
+- updated to Minecraft 26.3 (Fabric 0.161.0+26.3, NeoForge 26.3.0.39-beta, Forge 66.0.9)
+- updated Cloth Config support (26.3.159) (Fabric/Quilt)
+- updated ModMenu support (21.0.0) (Fabric/Quilt)
+- updated JEI support (31.9.0.56) (NeoForge, Fabric/Quilt)
+- updated REI support (26.3.823) (NeoForge, Fabric/Quilt)
+- temporary removed The One Probe support until it is ported to 26.3 (NeoForge)
+
 ## [26.2-5.2.2.0] - 2026-09-05
 ### Added
 - re-added The One Probe support

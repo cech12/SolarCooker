@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "solarcooker:diamond_block"
+        "recipes": "solarcooker:diamond_block"
       }
     }
   },

@@ -25,7 +25,7 @@ import java.util.List;
 
 public class SolarCookingRecipe extends AbstractCookingRecipe {
 
-    public static final MapCodec<SolarCookingRecipe> MAP_CODEC = cookingMapCodec(SolarCookingRecipe::new, 200);
+    public static final MapCodec<SolarCookingRecipe> MAP_CODEC = cookingMapCodec(SolarCookingRecipe::new);
     public static final StreamCodec<RegistryFriendlyByteBuf, SolarCookingRecipe> STREAM_CODEC = cookingStreamCodec(SolarCookingRecipe::new);
     public static final RecipeSerializer<SolarCookingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
