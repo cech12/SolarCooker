@@ -1,5 +1,5 @@
 package de.cech12.solarcooker.compat;
-/*
+
 import de.cech12.solarcooker.Constants;
 import de.cech12.solarcooker.blockentity.SolarCookerBlockEntity;
 import mcjty.theoneprobe.api.ElementAlignment;
@@ -54,4 +54,3 @@ public class TOPCompat {
         }
     }
 }
- */
